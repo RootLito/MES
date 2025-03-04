@@ -1,10 +1,11 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
+import axios from "axios";
 
 const Survey = () => {
     const navigate = useNavigate();
-    const [isNoSelected, setIsNoSelected] = useState(false);
+
     const [formData, setFormData] = useState({
         form: {
             name: "",
@@ -25,16 +26,19 @@ const Survey = () => {
             dateReceived: "",
             mainIncome: "",
             otherIncome: "",
+            
             quantity: "",
             quantityReason: "",
             quantityRating: "",
             quality: "",
             qualityReason: "",
             qualityRating: "",
+
             q2: "",
             q2Reason: "",
             timelinessRating: "",
             uponRequest: "",
+
             q3: "",
             q3Reason: "",
             challenges: "",
@@ -69,6 +73,9 @@ const Survey = () => {
             q9_11other: "",
             q9_12: "",
             q9_12Spec: "",
+            q9_13: "",
+            q9_13other: "",
+            q9_14: "",
             impactRating: "",
             q10: "",
             q10Reason: "",
@@ -91,9 +98,16 @@ const Survey = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
+
+        try {
+            const res = await axios.post("http://localhost:5000/survey/add", formData.form)
+            console.log('Response:', res.data);
+        } catch (err) {
+            console.error('Error occurred:', err.response ? err.response.data : err.message);
+        }
+
     };
 
     const onClick = (link) => {
@@ -393,8 +407,7 @@ const Survey = () => {
                     <div className="flex flex-col flex-1">
                         <p className="text-sm">
                             <b>
-                                1. Quantity and quality of goods/project
-                                received
+                                1. Quantity and quality of goods/project received
                             </b>
                         </p>
                     </div>
@@ -411,8 +424,8 @@ const Survey = () => {
                             <input
                                 type="radio"
                                 name="quantity"
-                                id=""
-                                onChange={() => setIsNoSelected(false)}
+                                value="Yes"
+                                onChange={handleChange}
                                 required
                             />
                             Yes
@@ -421,8 +434,8 @@ const Survey = () => {
                             <input
                                 type="radio"
                                 name="quantity"
-                                id=""
-                                onChange={() => setIsNoSelected(true)}
+                                value="No"
+                                onChange={handleChange}
                                 required
                             />
                             No
@@ -432,7 +445,10 @@ const Survey = () => {
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If no, why?"
-                            required={isNoSelected}
+                            value={formData.form.quantityReason}
+                            onChange={handleChange}
+                            required={formData.form.quantity == "No" ? true : formData.form.quantityReason = ""}
+                            disabled={formData.form.quantity == "Yes" ? true : false}
                         />
                     </div>
                 </div>
@@ -449,13 +465,11 @@ const Survey = () => {
                         <select
                             className="flex-1 border-1 border-gray-400 px-3 py-2 rounded-md focus:outline-none"
                             name="quantityRating"
-                            value={formData.form.rating}
+                            value={formData.form.quantityRating}
                             onChange={handleChange}
                             required
                         >
-                            <option value="" selected disabled>
-                                - - Rate - -
-                            </option>
+                            <option value="" disabled>- - Rate - -</option>
                             <option value="1">⭐</option>
                             <option value="2">⭐⭐</option>
                             <option value="3">⭐⭐⭐</option>
@@ -475,9 +489,9 @@ const Survey = () => {
                         <div className="flex gap-2 text-sm">
                             <input
                                 type="radio"
-                                name="suit"
-                                id=""
-                                onChange={() => setIsNoSelected(false)}
+                                name="quality"
+                                value="Yes"
+                                onChange={handleChange}
                                 required
                             />
                             Yes
@@ -485,18 +499,22 @@ const Survey = () => {
                         <div className="flex gap-2 text-sm">
                             <input
                                 type="radio"
-                                name="suit"
-                                id=""
-                                onChange={() => setIsNoSelected(true)}
+                                name="quality"
+                                value="No"
+                                onChange={handleChange}
                                 required
                             />
                             No
                         </div>
                         <input
+                            name="qualityReason"
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If no, why?"
-                            required={isNoSelected}
+                            value={formData.form.qualityReason}
+                            onChange={handleChange}
+                            required={formData.form.quality == "No" ? true : formData.form.qualityReason = ""}
+                            disabled={formData.form.quality == "Yes" ? true : false}
                         />
                     </div>
                 </div>
@@ -511,14 +529,13 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <select
-                            name="rating"
-                            id=""
+                            name="qualityRating"
                             className="flex-1 border-1 border-gray-400 px-3 py-2 rounded-md focus:outline-none"
+                            value={formData.form.qualityRating}
+                            onChange={handleChange}
                             required
                         >
-                            <option value="" selected disabled>
-                                - - Rate - -
-                            </option>
+                            <option value="" disabled>- - Rate - -</option>
                             <option value="1">⭐</option>
                             <option value="2">⭐⭐</option>
                             <option value="3">⭐⭐⭐</option>
@@ -543,9 +560,9 @@ const Survey = () => {
                         <div className="flex gap-2 text-sm">
                             <input
                                 type="radio"
-                                name="season"
-                                id=""
-                                onChange={() => setIsNoSelected(false)}
+                                name="q2"
+                                value="Yes"
+                                onChange={handleChange}
                                 required
                             />
                             Yes
@@ -553,18 +570,22 @@ const Survey = () => {
                         <div className="flex gap-2 text-sm">
                             <input
                                 type="radio"
-                                name="season"
-                                id=""
-                                onChange={() => setIsNoSelected(true)}
+                                name="q2"
+                                value="No"
+                                onChange={handleChange}
                                 required
                             />
                             No
                         </div>
                         <input
                             type="text"
+                            name="q2Reason"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If no, why?"
-                            required={isNoSelected}
+                            value={formData.form.q2Reason}
+                            onChange={handleChange}
+                            required={formData.form.q2 == "No" ? true : formData.form.q2Reason = ""}
+                            disabled={formData.form.q2 == "Yes" ? true : false}
                         />
                     </div>
                 </div>
@@ -579,15 +600,14 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <select
-                            name="rating"
-                            id=""
+                            name="timelinessRating"
                             className="flex-1 border-1 border-gray-400 px-3 py-2 rounded-md focus:outline-none"
+                            value={formData.form.timelinessRating}
+                            onChange={handleChange}
                             required
                         >
-                            <option value="" selected disabled>
-                                - - Rate - -
-                            </option>
-                            <option value="1">⭐</option>
+                            <option value="" disabled>- - Rate - -</option>
+                            <option value="1" selected>⭐</option>
                             <option value="2">⭐⭐</option>
                             <option value="3">⭐⭐⭐</option>
                             <option value="4">⭐⭐⭐⭐</option>
@@ -604,18 +624,23 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suit" value="Yes" required />
+                            <input type="radio" name="uponRequest" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suit" value="No" required />
+                            <input type="radio" name="uponRequest" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                         <div className="flex gap-2 text-sm">
                             <input
                                 type="radio"
-                                name="suit"
+                                name="uponRequest"
                                 value="< 6 Months"
+                                onChange={handleChange}
                                 required
                             />
                             <span>{"<"} 6 months</span>
@@ -623,8 +648,9 @@ const Survey = () => {
                         <div className="flex gap-2 text-sm">
                             <input
                                 type="radio"
-                                name="suit"
+                                name="uponRequest"
                                 value="< 1 Year"
+                                onChange={handleChange}
                                 required
                             />
                             <span>{"<"} 1 year</span>
@@ -632,14 +658,16 @@ const Survey = () => {
                         <div className="flex gap-2 text-sm">
                             <input
                                 type="radio"
-                                name="suit"
+                                name="uponRequest"
                                 value="> 1 Year"
+                                onChange={handleChange}
                                 required
                             />
                             <span>{">"} 1 year</span>
                         </div>
                     </div>
                 </div>
+
 
                 {/* EFFICIENCY OF THE PROJECT================================================================= */}
                 <h1 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 mt-5 bg-blue-900 p-2">
@@ -656,17 +684,28 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q3" value="Yes"
+                                onChange={handleChange}
+                                required
+                            />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q3" value="No"
+                                onChange={handleChange}
+                                required
+                            />
                             No
                         </div>
                         <input
                             type="text"
+                            name="q3Reason"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If no, why?"
+                            value={formData.form.q3Reason}
+                            onChange={handleChange}
+                            required={formData.form.q3 == "No" ? true : formData.form.q3Reason = ""}
+                            disabled={formData.form.q3 == "Yes" ? true : false}
                         />
                     </div>
                 </div>
@@ -680,6 +719,10 @@ const Survey = () => {
                     <div className="flex flex-col flex-1 gap-2">
                         <input
                             type="text"
+                            name="challenges"
+                            value={formData.form.challenges}
+                            onChange={handleChange}
+                            required
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                         />
                     </div>
@@ -695,10 +738,13 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <select
-                            name="relevance"
-                            id=""
+                            name="relevanceRating"
                             className="flex-1 border-1 border-gray-400 px-3 py-2 rounded-md focus:outline-none"
+                            value={formData.form.relevanceRating}
+                            onChange={handleChange}
+                            required
                         >
+                            <option value="" selected>- - Rate - -</option>
                             <option value="1">⭐</option>
                             <option value="2">⭐⭐</option>
                             <option value="3">⭐⭐⭐</option>
@@ -719,20 +765,30 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q4" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q4" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                         <input
                             type="text"
+                            name="q4Reason"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If no, why?"
+                            value={formData.form.q4Reason}
+                            onChange={handleChange}
+                            required={formData.form.q4 == "No" ? true : formData.form.q4Reason = ""}
+                            disabled={formData.form.q4 == "Yes" ? true : false}
                         />
                     </div>
                 </div>
+
 
                 {/* EFFICIENCY OF THE PROJECT================================================================= */}
                 <h1 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 mt-5 bg-blue-900 p-2">
@@ -749,17 +805,26 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q5" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q5" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                         <input
+                            name="q5Reason"
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If no, why?"
+                            value={formData.form.q5Reason}
+                            onChange={handleChange}
+                            required={formData.form.q5 == "No" ? true : formData.form.q5Reason = ""}
+                            disabled={formData.form.q5 == "Yes" ? true : false}
                         />
                     </div>
                 </div>
@@ -773,10 +838,15 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <select
-                            name="coherence"
-                            id=""
+                            name="coherenceRating"
                             className="flex-1 border-1 border-gray-400 px-3 py-2 rounded-md focus:outline-none"
+                            value={formData.form.coherenceRating}
+                            onChange={handleChange}
+                            required
                         >
+                            <option value="" disabled>
+                                - - Rate - -
+                            </option>
                             <option value="1">⭐</option>
                             <option value="2">⭐⭐</option>
                             <option value="3">⭐⭐⭐</option>
@@ -797,20 +867,32 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q6" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q6" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                         <input
+                            name="q6Reason"
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If Yes, pls specify project from other NGA/NGO"
+                            value={formData.form.q6Reason}
+                            onChange={handleChange}
+                            required={formData.form.q6 == "Yes" ? true : formData.form.q6Reason = ""}
+                            disabled={formData.form.q6 == "Yes" ? false : true}
                         />
                     </div>
                 </div>
+
+
+
                 {/* EFFICIENCY OF THE PROJECT================================================================= */}
                 <h1 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 mt-5 bg-blue-900 p-2">
                     EFFECTIVENESS OF THE PROJECT
@@ -831,17 +913,26 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suff" id="" />
+                            <input type="radio" name="q7Satisfied" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suff" id="" />
+                            <input type="radio" name="q7Satisfied" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                         <input
+                            name="q7_1"
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If no, why?"
+                            value={formData.form.q7_1}
+                            onChange={handleChange}
+                            required={formData.form.q7Satisfied == "No" ? true : formData.form.q7_1 = ""}
+                            disabled={formData.form.q7Satisfied == "Yes" ? true : false}
                         />
                     </div>
                 </div>
@@ -856,10 +947,13 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <select
-                            name="rating"
-                            id=""
+                            name="satisfactionRating"
                             className="flex-1 border-1 border-gray-400 px-3 py-2 rounded-md focus:outline-none"
+                            value={formData.form.satisfactionRating}
+                            onChange={handleChange}
+                            required
                         >
+                            <option value="" disabled>- - Rate - -</option>
                             <option value="1">⭐</option>
                             <option value="2">⭐⭐</option>
                             <option value="3">⭐⭐⭐</option>
@@ -877,17 +971,26 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suit" id="" />
+                            <input type="radio" name="q7_2" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suit" id="" />
+                            <input type="radio" name="q7_2" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                         <input
+                            name="q7_2Reason"
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If No, please specify"
+                            value={formData.form.q7_2Reason}
+                            onChange={handleChange}
+                            required={formData.form.q7_2 == "No" ? true : formData.form.q7_2Reason = ""}
+                            disabled={formData.form.q7_2 == "Yes" ? true : false}
                         />
                     </div>
                 </div>
@@ -903,20 +1006,30 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="season" id="" />
+                            <input type="radio" name="q8" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="season" id="" />
+                            <input type="radio" name="q8" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                         <input
+                            name="q8Reason"
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If yes, please specify"
+                            value={formData.form.q8Reason}
+                            onChange={handleChange}
+                            required={formData.form.q8 == "Yes" ? true : formData.form.q8Reason = ""}
+                            disabled={formData.form.q8 == "Yes" ? false : true}
                         />
                     </div>
                 </div>
+
                 {/* EFFICIENCY OF THE PROJECT================================================================= */}
                 <h1 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 mt-5 bg-blue-900 p-2">
                     IMPACT OF THE PROJECT
@@ -936,21 +1049,32 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suff" id="" />
+                            <input type="radio" name="q9_1" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suff" id="" />
+                            <input type="radio" name="q9_1" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suff" id="" />
+                            <input type="radio" name="q9_1" value="N/A"
+                                onChange={handleChange}
+                                required />
                             N/A
                         </div>
                         <input
+                            name="q9_1Spec"
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="Species"
+                            value={formData.form.q9_1Spec}
+                            onChange={handleChange}
+                            required={formData.form.q9_1 == "Yes" ? true : formData.form.q9_1Spec = ""}
+                            disabled={formData.form.q9_1 == "Yes" ? false : true}
                         />
                     </div>
                 </div>
@@ -964,6 +1088,10 @@ const Survey = () => {
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                            name="q9_2"
+                            value={formData.form.q9_2}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
                 </div>
@@ -977,6 +1105,10 @@ const Survey = () => {
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                            name="q9_3"
+                            value={formData.form.q9_3}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
                 </div>
@@ -990,6 +1122,10 @@ const Survey = () => {
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                            name="q9_4"
+                            value={formData.form.q9_4}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
                 </div>
@@ -1006,6 +1142,10 @@ const Survey = () => {
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                            name="q9_5"
+                            value={formData.form.q9_5}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
                 </div>
@@ -1022,6 +1162,10 @@ const Survey = () => {
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                            name="q9_6"
+                            value={formData.form.q9_6}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
                 </div>
@@ -1034,11 +1178,17 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="income" id="" />
+                            <input type="radio" name="q9_7"
+                                value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="income" id="" />
+                            <input type="radio" name="q9_7"
+                                value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                     </div>
@@ -1054,6 +1204,10 @@ const Survey = () => {
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                            name="q9_8"
+                            value={formData.form.q9_8}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
                 </div>
@@ -1068,6 +1222,10 @@ const Survey = () => {
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                            name="q9_9"
+                            value={formData.form.q9_9}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
                 </div>
@@ -1080,11 +1238,15 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="imp" id="" />
+                            <input type="radio" name="q9_10" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="imp" id="" />
+                            <input type="radio" name="q9_10" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                     </div>
@@ -1095,15 +1257,21 @@ const Survey = () => {
 
                     <div className="flex flex-row flex-1 gap-6">
                         <div className="flex gap-2 text-sm items-center">
-                            <input type="radio" name="needs" id="" />
+                            <input type="radio" name="q9_11" value="Consumption"
+                                onChange={handleChange}
+                                required />
                             Consumption
                         </div>
                         <div className="flex gap-2 text-sm items-center">
-                            <input type="radio" name="needs" id="" />
+                            <input type="radio" name="q9_11" value="Education"
+                                onChange={handleChange}
+                                required />
                             Education
                         </div>
                         <div className="flex gap-2 text-sm items-center">
-                            <input type="radio" name="needs" id="" />
+                            <input type="radio" name="q9_11" value="Other HH needs"
+                                onChange={handleChange}
+                                required />
                             Other HH needs
                         </div>
                     </div>
@@ -1117,11 +1285,15 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="assoc" id="" />
+                            <input type="radio" name="q9_12" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="assoc" id="" />
+                            <input type="radio" name="q9_12" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                     </div>
@@ -1131,17 +1303,24 @@ const Survey = () => {
                     <div className="flex-1"></div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="assoc" id="" />
+                            <input type="radio" name="q9_13" value="Improved Skills/Knowledge"
+                                onChange={handleChange}
+                                required />
                             Improved Skills/Knowledge
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="assoc" id="" />
+                            <input type="radio" name="q9_13" value="From Association to Coop"
+                                onChange={handleChange}
+                                required />
                             From Association to Coop
                         </div>
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="Others (please specify)"
+                            name="q9_13other"
+                            value={formData.form.q9_13other}
+                            onChange={handleChange}
                         />
                     </div>
                 </div>
@@ -1154,21 +1333,31 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="assoc" id="" />
+                            <input type="radio" name="q9_14" value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="assoc" id="" />
+                            <input type="radio" name="q9_14" value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="assoc" id="" />
+                            <input type="radio" name="q9_14" value="N/A"
+                                onChange={handleChange}
+                                required />
                             N/A
                         </div>
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="Please specify"
+                            name="q9_12Spec"
+                            value={formData.form.q9_12Spec}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
                 </div>
@@ -1182,10 +1371,13 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <select
-                            name="rating"
-                            id=""
+                            name="impactRating"
                             className="flex-1 border-1 border-gray-400 px-3 py-2 rounded-md focus:outline-none"
+                            value={formData.form.impactRating}
+                            onChange={handleChange}
+                            required
                         >
+                            <option value="" disabled>- - Rate - -</option>
                             <option value="1">⭐</option>
                             <option value="2">⭐⭐</option>
                             <option value="3">⭐⭐⭐</option>
@@ -1207,17 +1399,28 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q10"
+                                value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q10"
+                                value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                             placeholder="If no, state reason why not operational/used"
+                            name="q10Reason"
+                            value={formData.form.q10Reason}
+                            onChange={handleChange}
+                            required={formData.form.q10 == "No" ? true : formData.form.q10Reason = ""}
+                            disabled={formData.form.q10 == "Yes" ? true : false}
                         />
                     </div>
                 </div>
@@ -1230,18 +1433,27 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suit" id="6-months" />
+                            <input type="radio" name="q10_1"
+                                value="< 3 months"
+                                onChange={handleChange}
+                                required={formData.form.q10 == "Yes" ? true : false} />
                             <span>{"<"} 3 months</span>
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="suit" id="1-year" />
+                            <input type="radio"
+                                name="q10_1"
+                                value="< 1 year"
+                                onChange={handleChange}
+                                required={formData.form.q10 == "Yes" ? true : false} />
                             <span>{"<"} 1 year</span>
                         </div>
                         <div className="flex gap-2 text-sm">
                             <input
                                 type="radio"
-                                name="suit"
-                                id="greater-than-1-year"
+                                name="q10_1"
+                                value="> 1 year"
+                                onChange={handleChange}
+                                required={formData.form.q10 == "Yes" ? true : false}
                             />
                             <span>{">"} 1 year</span>
                         </div>
@@ -1258,10 +1470,13 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <select
-                            name="rating"
-                            id=""
+                            name="sustainabilityRating"
                             className="flex-1 border-1 border-gray-400 px-3 py-2 rounded-md focus:outline-none"
+                            value={formData.form.sustainabilityRating}
+                            onChange={handleChange}
+                            required
                         >
+                            <option value="" disabled>- - Rate - -</option>
                             <option value="1">⭐</option>
                             <option value="2">⭐⭐</option>
                             <option value="3">⭐⭐⭐</option>
@@ -1282,11 +1497,18 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio"
+                                name="q11"
+                                value="Yes"
+                                onChange={handleChange}
+                                required />
                             Yes
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="chall" id="" />
+                            <input type="radio" name="q11"
+                                value="No"
+                                onChange={handleChange}
+                                required />
                             No
                         </div>
                     </div>
@@ -1300,15 +1522,27 @@ const Survey = () => {
                     </div>
                     <div className="flex flex-col flex-1 gap-2">
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="assoc" id="" />
+                            <input type="radio"
+                                name="q11_1"
+                                value="Vending"
+                                onChange={handleChange}
+                                required={formData.form.q11 == "Yes" ? true : false} />
                             Vending
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="assoc" id="" />
+                            <input type="radio"
+                                name="q11_1"
+                                value="Local Market"
+                                onChange={handleChange}
+                                required={formData.form.q11 == "Yes" ? true : false} />
                             Local Market
                         </div>
                         <div className="flex gap-2 text-sm">
-                            <input type="radio" name="assoc" id="" />
+                            <input type="radio"
+                                name="q11_1"
+                                value="Trader/Consignee"
+                                onChange={handleChange}
+                                required={formData.form.q11 == "Yes" ? true : false} />
                             Trader/Consignee
                         </div>
                     </div>
@@ -1334,6 +1568,10 @@ const Survey = () => {
                         <input
                             type="text"
                             className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                            name="q12"
+                            value={formData.form.q12}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
                 </div>
@@ -1341,7 +1579,6 @@ const Survey = () => {
                 <div className="flex px-5 flex-col mb-5 sm:p-2">
                     <p className="text-center mt-5">
                         <b>
-                            {" "}
                             Evaluator{"'"}s Note (cite practices, success
                             stories and other observations):
                         </b>
@@ -1349,11 +1586,17 @@ const Survey = () => {
                     <textarea
                         type="text"
                         className="border-1 border-gray-400 p-3 h-[96px] rounded-md focus:outline-none resize-none"
+                        name="note"
+                        value={formData.form.note}
+                        onChange={handleChange}
+                        required
                     />
                 </div>
 
+                
+
                 <div className="flex px-5 sm:p-2">
-                    <button className="mb-12 bg-green-600 h-[42px] flex-1 rounded-md cursor-pointer text-white">
+                    <button className="btn btn-soft btn-success mb-12 w-full">
                         Submit
                     </button>
                 </div>

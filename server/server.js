@@ -5,10 +5,20 @@ const mongoose = require( 'mongoose' )
 const surveyRoutes = require('./routes/surveyRoute')
 
 
+
+
+
+
+
+
 // VARIABLE DECLARATION
 const app = express()
 const db = process.env.ATLAS_URI
 const port = process.env.PORT || 5000
+
+
+
+
 
 
 
@@ -20,8 +30,17 @@ app.use(express.json())
 
 
 
+
+
+
+
+
 // ROUTES
 app.use('/survey', surveyRoutes);
+
+
+
+
 
 
 
@@ -31,7 +50,7 @@ mongoose.connect(db)
         console.log('Connected to MongoDB Atlas')
     })
     .catch((err) => {
-        console.log('Error connecting to MongoDB Atlas: " + err')
+        console.log('Error connecting to MongoDB Atlas: ' + err)
     })
 
 
