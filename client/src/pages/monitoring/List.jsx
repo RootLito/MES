@@ -99,7 +99,7 @@ const List = () => {
   };
 
   return (
-    <div className="max-w-[900px] min-h-screen mx-auto p-5 flex flex-col relative">
+    <div className="flex-1 mx-auto p-5 flex flex-col relative">
       {deleted && (
         <div className="toast toast-top toast-center">
           <div className="alert alert-success">
@@ -110,7 +110,7 @@ const List = () => {
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 max-w-[900px] mx-auto my-24">
+      <div className="rounded-box border border-base-content/5 bg-base-100my-24">
         <table className="table">
           <thead>
             <tr>

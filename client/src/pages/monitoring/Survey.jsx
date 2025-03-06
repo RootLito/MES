@@ -120,7 +120,7 @@ const Survey = () => {
   };
 
   return (
-    <div className="max-w-[900px] min-h-screen mx-auto p-5 flex flex-col relative bg-base-100 my-10 rounded-md">
+    <div className="max-w-[900px] mx-auto p-5 flex flex-col relative bg-base-100 rounded-md">
       <p className="text-2xl font-bold text-center mt-6">
         Field Monitoring and Evaluation Form
       </p>
@@ -1773,7 +1773,7 @@ const Survey = () => {
         </div>
 
         <div className="flex px-5 sm:p-2">
-          <button className="btn btn-success mb-5 w-full text-white">
+          <button className="btn btn-success w-full text-white">
             Submit
           </button>
         </div>

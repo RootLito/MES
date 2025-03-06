@@ -1,6 +1,79 @@
 import React from "react";
+import { Bar, BarChart, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,Radar  } from "recharts";
 
 const Dashboard = () => {
+  const dataset = [
+    {
+      name: "Page A",
+      uv: 4000,
+      pv: 2400,
+      amt: 2400,
+    },
+    {
+      name: "Page B",
+      uv: 3000,
+      pv: 1398,
+      amt: 2210,
+    },
+    {
+      name: "Page C",
+      uv: 2000,
+      pv: 9800,
+      amt: 2290,
+    },
+    {
+      name: "Page D",
+      uv: 2780,
+      pv: 3908,
+      amt: 2000,
+    },
+    {
+      name: "Page E",
+      uv: 1890,
+      pv: 4800,
+      amt: 2181,
+    },
+  ];
+
+  const data = [
+    {
+      subject: "Math",
+      A: 120,
+      B: 110,
+      fullMark: 150,
+    },
+    {
+      subject: "Chinese",
+      A: 98,
+      B: 130,
+      fullMark: 150,
+    },
+    {
+      subject: "English",
+      A: 86,
+      B: 130,
+      fullMark: 150,
+    },
+    {
+      subject: "Geography",
+      A: 99,
+      B: 100,
+      fullMark: 150,
+    },
+    {
+      subject: "Physics",
+      A: 85,
+      B: 90,
+      fullMark: 150,
+    },
+    {
+      subject: "History",
+      A: 65,
+      B: 85,
+      fullMark: 150,
+    },
+  ];
+
   return (
     <div className="w-full h-full flex gap-10 p-10">
       <div className="flex flex-1 flex-col gap-10">
@@ -8,12 +81,15 @@ const Dashboard = () => {
           <div className="card card-border bg-blue-950">
             <div className="card-body">
               <h2 className="card-title text-base-200 text-4xl mb-auto">
-                Highlights
+                Highlight
               </h2>
 
               <div className="cards-action text-center mb-auto">
                 <h1 className="text-8xl font-black text-blue-400">86%</h1>
-                <p className="text-base-200 mt-4">Eighty-six percent of all <br /> respondents are very satisfied.</p>
+                <p className="text-base-200 mt-4">
+                  Eighty-six percent of all <br /> respondents are very
+                  satisfied.
+                </p>
               </div>
             </div>
           </div>
@@ -39,10 +115,41 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="flex gap-5 bg-gray-50 flex-1 rounded-md shadow-sm"></div>
+        <div className="card card-border bg-base-100 h-1/2">
+          <div className="card-body">
+            <h2 className="card-title text-gray-500">Some Data</h2>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={dataset}>
+                <Tooltip />
+                <Bar dataKey="uv" fill="#1e3a8a" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
 
-      <div className="w-[500px] flex flex-col bg-gray-50 rounded-md shadow-sm"></div>
+      <div className="w-[500px] h-full flex flex-col">
+        <div className="card card-border bg-base-100 h-full">
+          <div className="card-body">
+            <h2 className="card-title text-gray-500">Perfomance</h2>
+            <p className="font-black text-4xl text-blue-950">Analysis</p>
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey="subject" />
+                <PolarRadiusAxis />
+                <Radar
+                  name="Mike"
+                  dataKey="A"
+                  stroke="#8884d8"
+                  fill="#8884d8"
+                  fillOpacity={0.6}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
