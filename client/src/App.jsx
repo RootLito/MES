@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import Survey from "./pages/Survey";
-import List from "./pages/List";
+import Survey from "./pages/monitoring/Survey";
+import List from "./pages/monitoring/List";
 import Home from "./pages/Home";
 import Update from "./pages/Update";
 import Analytics from "./pages/Analytics";
@@ -10,6 +10,7 @@ import Reports from "./pages/Reports";
 import Sidebar from "./components/Sidebar";
 import Nav from "./components/Nav";
 import Dashboard from "./pages/Dashboard";
+import Monitoring from "./pages/Monitoring";
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
           <div className="flex flex-col flex-1">
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/survey" element={<Survey />} />
+              <Route path="/monitoring" element={<Monitoring />} />
               <Route path="/list" element={<List />} />
               <Route path="/update/:id" element={<Update />} />
               <Route path="/analytics" element={<Analytics />} />

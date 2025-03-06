@@ -1,16 +1,77 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import { MdKeyboardBackspace } from "react-icons/md";
-import { useNavigate } from "react-router-dom"
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
+import { useNavigate } from "react-router-dom";
+import { Bar, BarChart, Tooltip, ResponsiveContainer, XAxis } from "recharts";
 
-
-import axios from 'axios';
+import axios from "axios";
 
 const Analytics = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
 
-    const [formData, setFormData] = useState([])
-    const [ratings, setRatings] = useState({
+  const [formData, setFormData] = useState([]);
+  const [ratings, setRatings] = useState({
+    quantityRating: [0, 0, 0, 0, 0],
+    qualityRating: [0, 0, 0, 0, 0],
+    timelinessRating: [0, 0, 0, 0, 0],
+    relevanceRating: [0, 0, 0, 0, 0],
+    coherenceRating: [0, 0, 0, 0, 0],
+    satisfactionRating: [0, 0, 0, 0, 0],
+    impactRating: [0, 0, 0, 0, 0],
+    sustainabilityRating: [0, 0, 0, 0, 0],
+  });
+  const [questionCounts, setQuestionCounts] = useState({
+    quantity: { yes: 0, no: 0 },
+    quality: { yes: 0, no: 0 },
+    q2: { yes: 0, no: 0 },
+    uponRequest: { yes: 0, no: 0 },
+    q3: { yes: 0, no: 0 },
+    q4: { yes: 0, no: 0 },
+    q1: { yes: 0, no: 0 },
+    q2: { yes: 0, no: 0 },
+    q3: { yes: 0, no: 0 },
+    q4: { yes: 0, no: 0 },
+    q5: { yes: 0, no: 0 },
+    q6: { yes: 0, no: 0 },
+    q7: { yes: 0, no: 0 },
+    q7_1: { yes: 0, no: 0 },
+    q7_2: { yes: 0, no: 0 },
+    q8: { yes: 0, no: 0 },
+    q9: { yes: 0, no: 0 },
+    q9_1: { yes: 0, no: 0 },
+    q9_7: { yes: 0, no: 0 },
+    q9_10: { yes: 0, no: 0 },
+    q9_12: { yes: 0, no: 0 },
+    q9_13: { yes: 0, no: 0 },
+    q10: { yes: 0, no: 0 },
+    q11: { yes: 0, no: 0 },
+  });
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const res = await axios.get("http://localhost:5000/survey/");
+        setFormData(res.data);
+      };
+      fetchData();
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    const newRatings = formData.reduce(
+      (acc, item) => {
+        Object.keys(acc).forEach((key) => {
+          if (item.hasOwnProperty(key)) {
+            const rating = item[key];
+            if (rating >= 1 && rating <= 5) {
+              acc[key][rating - 1] += 1;
+            }
+          }
+        });
+        return acc;
+      },
+      {
         quantityRating: [0, 0, 0, 0, 0],
         qualityRating: [0, 0, 0, 0, 0],
         timelinessRating: [0, 0, 0, 0, 0],
@@ -19,8 +80,28 @@ const Analytics = () => {
         satisfactionRating: [0, 0, 0, 0, 0],
         impactRating: [0, 0, 0, 0, 0],
         sustainabilityRating: [0, 0, 0, 0, 0],
-    });
-    const [questionCounts, setQuestionCounts] = useState({
+      }
+    );
+
+    setRatings(newRatings);
+  }, [formData]);
+
+  useEffect(() => {
+    const newQuestionCounts = formData.reduce(
+      (acc, item) => {
+        Object.keys(acc).forEach((key) => {
+          if (item.hasOwnProperty(key)) {
+            const answer = item[key];
+            if (answer === "Yes") {
+              acc[key].yes += 1;
+            } else if (answer === "No") {
+              acc[key].no += 1;
+            }
+          }
+        });
+        return acc;
+      },
+      {
         quantity: { yes: 0, no: 0 },
         quality: { yes: 0, no: 0 },
         q2: { yes: 0, no: 0 },
@@ -28,9 +109,6 @@ const Analytics = () => {
         q3: { yes: 0, no: 0 },
         q4: { yes: 0, no: 0 },
         q1: { yes: 0, no: 0 },
-        q2: { yes: 0, no: 0 },
-        q3: { yes: 0, no: 0 },
-        q4: { yes: 0, no: 0 },
         q5: { yes: 0, no: 0 },
         q6: { yes: 0, no: 0 },
         q7: { yes: 0, no: 0 },
@@ -45,132 +123,203 @@ const Analytics = () => {
         q9_13: { yes: 0, no: 0 },
         q10: { yes: 0, no: 0 },
         q11: { yes: 0, no: 0 },
-    });
+      }
+    );
 
+    setQuestionCounts(newQuestionCounts);
+  }, [formData]);
 
-    useEffect(() => {
-        try {
-            const fetchData = async () => {
-                const res = await axios.get('http://localhost:5000/survey/')
-                setFormData(res.data)
-            }
-            fetchData()
-        } catch (err) {
-            console.log(err)
-        }
-    }, [])
+  const dataset = [
+    {
+      name: "Page A",
+      uv: 4000,
+      pv: 2400,
+      amt: 2400,
+    },
+    {
+      name: "Page B",
+      uv: 3000,
+      pv: 1398,
+      amt: 2210,
+    },
+    {
+      name: "Page C",
+      uv: 2000,
+      pv: 9800,
+      amt: 2290,
+    },
+    {
+      name: "Page D",
+      uv: 2780,
+      pv: 3908,
+      amt: 2000,
+    },
+    {
+      name: "Page E",
+      uv: 1890,
+      pv: 4800,
+      amt: 2181,
+    },
+  ];
 
+  return (
+    <div className="flex-1 grid grid-cols-2 grid-rows-4 p-10 gap-10">
+      <div className="card bg-base-100 h-100 shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Quantity
+          </h2>
+          <p>
+            A card component has a figure, a body part, and inside body there
+            are title and actions parts
+          </p>
 
-    useEffect(() => {
-        const newRatings = formData.reduce(
-            (acc, item) => {
-                Object.keys(acc).forEach((key) => {
-                    if (item.hasOwnProperty(key)) {
-                        const rating = item[key];
-                        if (rating >= 1 && rating <= 5) {
-                            acc[key][rating - 1] += 1;
-                        }
-                    }
-                });
-                return acc;
-            },
-            {
-                quantityRating: [0, 0, 0, 0, 0],
-                qualityRating: [0, 0, 0, 0, 0],
-                timelinessRating: [0, 0, 0, 0, 0],
-                relevanceRating: [0, 0, 0, 0, 0],
-                coherenceRating: [0, 0, 0, 0, 0],
-                satisfactionRating: [0, 0, 0, 0, 0],
-                impactRating: [0, 0, 0, 0, 0],
-                sustainabilityRating: [0, 0, 0, 0, 0],
-            }
-        );
+          <div className="h-full w-full mt-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart width={150} height={40} data={dataset}>
+                <Tooltip />
+                <Bar dataKey="uv" fill="#1e3a8a" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+      <div className="card bg-base-100 h-100 shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Quality
+          </h2>
+          <p>
+            A card component has a figure, a body part, and inside body there
+            are title and actions parts
+          </p>
 
-        setRatings(newRatings);
-    }, [formData]);
+          <div className="h-full w-full mt-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart width={150} height={40} data={dataset}>
+                <Tooltip />
+                <Bar dataKey="uv" fill="#1e3a8a" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+      <div className="card bg-base-100 h-100 shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Timeliness
+          </h2>
+          <p>
+            A card component has a figure, a body part, and inside body there
+            are title and actions parts
+          </p>
+          <div className="h-full w-full mt-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart width={150} height={40} data={dataset}>
+                <Tooltip />
+                <Bar dataKey="uv" fill="#1e3a8a" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+      <div className="card bg-base-100 h-100 shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Relevance
+          </h2>
+          <p>
+            A card component has a figure, a body part, and inside body there
+            are title and actions parts
+          </p>
+          <div className="h-full w-full mt-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart width={150} height={40} data={dataset}>
+                <Tooltip />
+                <Bar dataKey="uv" fill="#1e3a8a" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+      <div className="card bg-base-100 h-100 shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Coherance
+          </h2>
+          <p>
+            A card component has a figure, a body part, and inside body there
+            are title and actions parts
+          </p>
+          <div className="h-full w-full mt-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart width={150} height={40} data={dataset}>
+                <Tooltip />
+                <Bar dataKey="uv" fill="#1e3a8a" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+      <div className="card bg-base-100 h-100 shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Satisfaction
+          </h2>
+          <p>
+            A card component has a figure, a body part, and inside body there
+            are title and actions parts
+          </p>
+          <div className="h-full w-full mt-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart width={150} height={40} data={dataset}>
+                <Tooltip />
+                <Bar dataKey="uv" fill="#1e3a8a" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+      <div className="card bg-base-100 h-100 shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Impact
+          </h2>
+          <p>
+            A card component has a figure, a body part, and inside body there
+            are title and actions parts
+          </p>
+          <div className="h-full w-full mt-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart width={150} height={40} data={dataset}>
+                <Tooltip />
+                <Bar dataKey="uv" fill="#1e3a8a" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+      <div className="card bg-base-100 h-100 shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Sustainability
+          </h2>
+          <p>
+            A card component has a figure, a body part, and inside body there
+            are title and actions parts
+          </p>
+          <div className="h-full w-full mt-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart width={150} height={40} data={dataset}>
+                <Tooltip />
+                <Bar dataKey="uv" fill="#1e3a8a"/>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
 
-    useEffect(() => {
-        const newQuestionCounts = formData.reduce((acc, item) => {
-            Object.keys(acc).forEach((key) => {
-                if (item.hasOwnProperty(key)) {
-                    const answer = item[key];
-                    if (answer === 'Yes') {
-                        acc[key].yes += 1;
-                    } else if (answer === 'No') {
-                        acc[key].no += 1;
-                    }
-                }
-            });
-            return acc;
-        }, {
-            quantity: { yes: 0, no: 0 },
-            quality: { yes: 0, no: 0 },
-            q2: { yes: 0, no: 0 },
-            uponRequest: { yes: 0, no: 0 },
-            q3: { yes: 0, no: 0 },
-            q4: { yes: 0, no: 0 },
-            q1: { yes: 0, no: 0 },
-            q5: { yes: 0, no: 0 },
-            q6: { yes: 0, no: 0 },
-            q7: { yes: 0, no: 0 },
-            q7_1: { yes: 0, no: 0 },
-            q7_2: { yes: 0, no: 0 },
-            q8: { yes: 0, no: 0 },
-            q9: { yes: 0, no: 0 },
-            q9_1: { yes: 0, no: 0 },
-            q9_7: { yes: 0, no: 0 },
-            q9_10: { yes: 0, no: 0 },
-            q9_12: { yes: 0, no: 0 },
-            q9_13: { yes: 0, no: 0 },
-            q10: { yes: 0, no: 0 },
-            q11: { yes: 0, no: 0 },
-        });
-
-        setQuestionCounts(newQuestionCounts);
-    }, [formData]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const data = [
-        { name: "A", value: 800 },
-        { name: "B", value: 300 },
-        { name: "C", value: 100 },
-        { name: "D", value: 50 },
-    ];
-
-    const data2 = [
-        { name: "Jan", Yes: 400, No: 200 },
-        { name: "Feb", Yes: 300, No: 500 },
-        { name: "Mar", Yes: 450, No: 250 },
-        { name: "Apr", Yes: 600, No: 300 },
-    ];
-
-    const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50"];
-
-    return (
-        <div className="max-w-[900px] min-h-screen mx-auto p-5 flex flex-col relative">
-            <div className="absolute left-5 top-8 flex gap-5 items-center">
+      {/* <div className="absolute left-5 top-8 flex gap-5 items-center">
                 <MdKeyboardBackspace
                     className="text-2xl cursor-pointer text-red-600"
                     onClick={() => navigate("/")}
@@ -385,9 +534,9 @@ const Analytics = () => {
                         </tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-    )
-}
+            </div> */}
+    </div>
+  );
+};
 
-export default Analytics
+export default Analytics;
