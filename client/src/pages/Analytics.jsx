@@ -440,30 +440,48 @@ const Analytics = () => {
                         </tr>
                         <tr className="hover:bg-base-300">
                             <td>8. Were there problems encountered during project operation?</td>
+                            <td>{questionCounts['q8'].yes}</td>
+                            <td>{questionCounts['q8'].no}</td>
                         </tr>
                         <tr className="hover:bg-base-300">
                             <td>9. Benefits from the project</td>
+                            <td></td>
+                            <td></td>
                         </tr>
                         <tr className="hover:bg-base-300">
                             <td className='opacity-50'>- Did it increase your catch/production (kg)?</td>
+                            <td>{questionCounts['q9_1'].yes}</td>
+                            <td>{questionCounts['q9_1'].no}</td>
                         </tr>
                         <tr className="hover:bg-base-300">
                             <td className='opacity-50'>- Did it increase your income (Php)?</td>
+                            <td>{questionCounts['q9_7'].yes}</td>
+                            <td>{questionCounts['q9_7'].no}</td>
                         </tr>
                         <tr className="hover:bg-base-300">
                             <td className='opacity-50'>- Any improvement in your family/household? </td>
+                            <td>{questionCounts['q9_10'].yes}</td>
+                            <td>{questionCounts['q9_10'].no}</td>
                         </tr>
                         <tr className="hover:bg-base-300">
                             <td className='opacity-50'>    - Any improvement in your association?</td>
+                            <td>{questionCounts['q9_12'].yes}</td>
+                            <td>{questionCounts['q9_12'].no}</td>
                         </tr>
                         <tr className="hover:bg-base-300">
                             <td className='opacity-50'>- Any improvement in the community?</td>
+                            <td>{questionCounts['q9_13'].yes}</td>
+                            <td>{questionCounts['q9_13'].no}</td>
                         </tr>
                         <tr className="hover:bg-base-300">
                             <td>10. Is the project ongoing/operational/used?</td>
+                            <td>{questionCounts['q10'].yes}</td>
+                            <td>{questionCounts['q10'].no}</td>
                         </tr>
                         <tr className="hover:bg-base-300">
                             <td>11. Availability of market for the produce (fresh or processed)?</td>
+                            <td>{questionCounts['q11'].yes}</td>
+                            <td>{questionCounts['q11'].no}</td>
                         </tr>
                     </tbody>
                 </table>
