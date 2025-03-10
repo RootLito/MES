@@ -80,36 +80,36 @@ const Dashboard = () => {
         <div className="grid grid-cols-3  gap-10 flex-1">
           <div className="card card-border bg-blue-950">
             <div className="card-body">
-              <h2 className="card-title text-base-200 text-4xl mb-auto">
+              <h2 className="card-title text-base-200 text-2xl mb-auto">
                 Highlight
               </h2>
 
               <div className="cards-action text-center mb-auto">
-                <h1 className="text-8xl font-black text-blue-400">86%</h1>
+                <h1 className="text-6xl font-black text-blue-400">86%</h1>
                 <p className="text-base-200 mt-4">
-                  Eighty-six percent of all <br /> respondents are very
+                  Eighty-six percent of all respondents are very
                   satisfied.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="card card-border bg-base-100 h-80">
+          <div className="card card-border bg-base-100 ">
             <div className="card-body">
               <h2 className="card-title text-gray-500">Total</h2>
-              <p className="font-black text-4xl text-blue-950">Locations</p>
+              <p className="font-black text-2xl text-blue-950">Locations</p>
               <div className="card-actions justify-end">
-                <h1 className="text-8xl font-black">132</h1>
+                <h1 className="text-6xl font-black">132</h1>
               </div>
             </div>
           </div>
 
-          <div className="card card-border bg-base-100 h-80">
+          <div className="card card-border bg-base-100">
             <div className="card-body">
               <h2 className="card-title text-gray-500">Total</h2>
-              <p className="font-black text-4xl text-blue-950">Respondents</p>
+              <p className="font-black text-2xl text-blue-950">Respondents</p>
               <div className="card-actions justify-end">
-                <h1 className="text-8xl font-black">791</h1>
+                <h1 className="text-6xl font-black">791</h1>
               </div>
             </div>
           </div>
@@ -132,7 +132,7 @@ const Dashboard = () => {
         <div className="card card-border bg-base-100 h-full">
           <div className="card-body">
             <h2 className="card-title text-gray-500">Perfomance</h2>
-            <p className="font-black text-4xl text-blue-950">Analysis</p>
+            <p className="font-black text-2xl text-blue-950">Analysis</p>
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
                 <PolarGrid />

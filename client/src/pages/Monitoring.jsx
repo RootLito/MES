@@ -5,43 +5,24 @@ import List from "./monitoring/List";
 const Monitoring = () => {
   return (
     <div className="flex-1 p-10 ">
-      <div className="w-full h-full p-10 bg-base-200 rounded-md shadow-sm flex flex-col">
-        <h2 className="font-bold text-2xl mb-10">
+      <div className="w-full p-10 bg-base-200 rounded-md shadow-sm flex flex-col">
+        <h2 className="font-bold text-2xl mb-5 text-blue-950">
           Field Monitoring and Evaluation
         </h2>
 
-        <div className="tabs tabs-box">
-          <input
-            type="radio"
-            name="my_tabs_6"
-            className="tab mt-2 w-40"
-            aria-label="Evaluation Form"
-            defaultChecked
-          />
-          <div className="tab-content bg-base-100 border-base-300 p-6 mt-2">
+        <div className="tabs tabs-border">
+          <input type="radio" name="form_tabs" className="tab w-20" aria-label="Evaluation Form" defaultChecked />
+          <div className="tab-content border-base-300 bg-base-100 p-10">
             <Survey />
           </div>
 
-          <input
-            type="radio"
-            name="my_tabs_6"
-            className="tab mt-2 w-40"
-            aria-label="List of Forms "
-          />
-          <div className="tab-content bg-base-100 border-base-300 p-6 mt-2">
+          <input type="radio" name="form_tabs" className="tab w-20" aria-label="Form Lists" />
+          <div className="tab-content border-base-300 bg-base-100 p-10">
             <List />
           </div>
-
-          <input
-            type="radio"
-            name="my_tabs_6"
-            className="tab mt-2 w-40"
-            aria-label="Tab 3"
-          />
-          <div className="tab-content bg-base-100 border-base-300 p-6 mt-2">
-            Tab content 3
-          </div>
         </div>
+
+        
       </div>
     </div>
   );

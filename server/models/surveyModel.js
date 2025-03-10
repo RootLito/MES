@@ -44,7 +44,7 @@ const surveySchema = new Schema({
   q6: { type: String, required: true },
   q6Reason: { type: String },
   q7Satisfied: { type: String, required: true },
-  q7_1: { type: String, required: true },
+  q7_1: { type: String},
   q7_1Reason: { type: String },
   satisfactionRating: { type: Number, min: 1, max: 5, required: true },
   q7_2: { type: String, required: true },

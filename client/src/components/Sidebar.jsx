@@ -12,7 +12,7 @@ const Sidebar = () => {
   return (
     <>
       <div className="flex flex-col w-[300px] h-screen bg-base-100 border-r-1 border-base-300 p-5 sticky top-0 left-0">
-        <div className="flex flex-col justify-center items-center my-6">
+        <div className="flex flex-col justify-center items-center my-4">
           <img src={logo} alt="BFAR logo" className="w-30" />
           <h1 className="font-black text-2xl text-blue-950">BFAR XI</h1>
         </div>
@@ -25,7 +25,7 @@ const Sidebar = () => {
                 : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
             }
           >
-            <MdDashboard className="ml-5" />
+            <MdDashboard className="ml-5" size={18}/>
             Dashboard
           </NavLink>
           <NavLink
@@ -36,7 +36,7 @@ const Sidebar = () => {
                 : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
             }
           >
-            <MdInsertDriveFile className="ml-5" /> Monitoring
+            <MdInsertDriveFile className="ml-5" size={18}/> Monitoring
           </NavLink>
           <NavLink
             to="/analytics"
@@ -46,7 +46,7 @@ const Sidebar = () => {
                 : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
             }
           >
-            <MdAssessment className="ml-5" />
+            <MdAssessment className="ml-5" size={18}/>
             Analytics
           </NavLink>
           <NavLink
@@ -57,7 +57,7 @@ const Sidebar = () => {
                 : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
             }
           >
-            <MdFolder className="ml-5" />
+            <MdFolder className="ml-5" size={18}/>
             Report
           </NavLink>
         </div>

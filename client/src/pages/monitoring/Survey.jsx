@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdKeyboardBackspace } from "react-icons/md";
 import axios from "axios";
+import { MdCheckCircle } from "react-icons/md";
 
 const Survey = () => {
   const navigate = useNavigate();
@@ -88,6 +88,9 @@ const Survey = () => {
     },
   });
 
+  const [loading, setLoading] = useState(false)
+  const [showToast, setShowToast] = useState(false);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({
@@ -100,6 +103,7 @@ const Survey = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await axios.post(
@@ -107,11 +111,17 @@ const Survey = () => {
         formData.form
       );
       console.log("Response:", res.data);
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false); 
+      }, 3000);
     } catch (err) {
       console.error(
         "Error occurred:",
         err.response ? err.response.data : err.message
-      );
+      )
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,6 +134,13 @@ const Survey = () => {
       <p className="text-2xl font-bold text-center mt-6">
         Field Monitoring and Evaluation Form
       </p>
+      {showToast && (
+        <div className="toast toast-top toast-center z-2">
+          <div className="alert alert-success">
+            <span className="flex items-center text-green-50"><MdCheckCircle size={18} className="mr-2"/> Form submitted</span>
+          </div>
+        </div>
+      )}
 
       {/* PERSONAL --------------------- */}
 
@@ -1773,8 +1790,16 @@ const Survey = () => {
         </div>
 
         <div className="flex px-5 sm:p-2">
-          <button className="btn btn-success w-full text-white">
-            Submit
+          <button
+            type="submit"
+            className="btn btn-success w-full text-white"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              "Submit"
+            )}
           </button>
         </div>
       </form>

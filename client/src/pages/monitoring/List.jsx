@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 import {
   MdDeleteForever,
   MdEditDocument,
-  MdKeyboardBackspace,
+  MdVisibility
 } from "react-icons/md";
+
 
 const List = () => {
   const [selectedSurvey, setSelectedSurvey] = useState(null);
@@ -15,14 +16,48 @@ const List = () => {
   const [deleted, setDeleted] = useState(false);
   const [delError, setDelError] = useState(null);
 
+
+  // Search filter and pagination
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [filteredSurveys, setFilteredSurveys] = useState([]);
+
+
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+
+    if (query) {
+      const filteredData = surveys.filter(survey => {
+        return (
+          survey.name.toLowerCase().includes(query) ||
+          survey.baranggay.toLowerCase().includes(query) ||
+          survey.municipality.toLowerCase().includes(query) ||
+          survey.province.toLowerCase().includes(query) ||
+          survey.projectReceived.toLowerCase().includes(query) ||
+          survey.specProject.toLowerCase().includes(query)
+        );
+      });
+      setFilteredSurveys(filteredData);
+    } else {
+      setFilteredSurveys(surveys);
+    }
+  };
+
+
   const modalRef = useRef(null);
   const navigate = useNavigate();
+
 
   const fetchSurveys = async () => {
     try {
       const response = await axios.get("http://localhost:5000/survey");
 
+
       setSurveys(response.data);
+      setFilteredSurveys(response.data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -30,9 +65,11 @@ const List = () => {
     }
   };
 
+
   useEffect(() => {
     fetchSurveys();
   }, []);
+
 
   if (loading) {
     return (
@@ -45,6 +82,7 @@ const List = () => {
     );
   }
 
+
   if (error) {
     return (
       <div className="toast toast-top toast-center">
@@ -55,16 +93,20 @@ const List = () => {
     );
   }
 
+
   const onClick = (link) => {
     navigate(link);
   };
 
+
   // OPEN MODAL
+
 
   const openModal = (id) => {
     setSelectedSurvey(id);
     modalRef.current.showModal();
   };
+
 
   // DELETE
   const handleDelete = async (id) => {
@@ -87,6 +129,7 @@ const List = () => {
         }, 3000);
       }
       setSurveys((prevSurveys) => prevSurveys.filter(({ _id }) => _id !== id));
+      setFilteredSurveys((prevFilteredSurveys) => prevFilteredSurveys.filter(({ _id }) => _id !== id));
     } catch (err) {
       return (
         <div className="toast toast-top toast-center">
@@ -97,6 +140,21 @@ const List = () => {
       );
     }
   };
+
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentSurveys = filteredSurveys.slice(indexOfFirstItem, indexOfLastItem);
+
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(filteredSurveys.length / itemsPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
 
   return (
     <div className="flex-1 mx-auto p-5 flex flex-col relative">
@@ -110,37 +168,58 @@ const List = () => {
         </div>
       )}
 
-      <div className="rounded-box border border-base-content/5 bg-base-100my-24">
+      <label className="input ring-0 focus-0 w-1/2">
+        <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></g></svg>
+        <input
+          type="search"
+          className="grow focus:outline-none focus:ring-0 ring-0 border-none"
+          placeholder="Search"
+          value={searchQuery}
+          onChange={handleSearch}
+        />
+      </label>
+
+
+      <div className="rounded-box border border-base-content/5 bg-base-100 my-4">
         <table className="table">
           <thead>
             <tr>
               <th>Survey #</th>
               <th>Name</th>
               <th>Address</th>
+              <th>Project Received</th>
+              <th>Specific Project</th>
               <th>Date</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {surveys.length === 0 ? (
-              <td colSpan="4">No Records</td>
+            {currentSurveys.length === 0 ? (
+              <td colSpan="7">No Records</td>
             ) : (
-              surveys.map((survey) => (
+              currentSurveys.map((survey, index) => (
                 <tr key={survey._id} className="hover:bg-base-300">
-                  <td>{survey._id}</td>
+                  <td>{indexOfFirstItem + index + 1}</td>
                   <td>{survey.name}</td>
                   <td>
                     {survey.baranggay}, {survey.municipality}, {survey.province}
                   </td>
+                  <td>{survey.projectReceived}</td>
+                  <td>{survey.specProject}</td>
                   <td>
                     {survey.createdAt
                       ? new Date(survey.createdAt).toLocaleDateString("en-CA")
                       : "N/A"}
                   </td>
+
+
                   <td className="flex gap-3 text-xl">
+                    <MdVisibility
+                      className="text-green-600 cursor-pointer"
+                      onClick={() => navigate(`/monitoring/view/${survey._id}`)} />
                     <MdEditDocument
                       className="text-primary cursor-pointer"
-                      onClick={() => navigate(`/update/${survey._id}`)}
+                      onClick={() => navigate(`/monitoring/update/${survey._id}`)}
                     />
                     <MdDeleteForever
                       className="text-error cursor-pointer"
@@ -152,30 +231,56 @@ const List = () => {
             )}
           </tbody>
         </table>
-        <dialog ref={modalRef} id="delete_modal" className="modal">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Delete</h3>
-            <p className="py-4">Are you sure you want to delete this form?</p>
-            <div className="modal-action">
-              <button
-                type="button"
-                className="btn btn-success text-white mr-2 w-[60px] focus:right-0"
-                onClick={() => {
-                  handleDelete(selectedSurvey);
-                  modalRef.current.close();
-                }}
-              >
-                Yes
-              </button>
-              <form method="dialog">
-                <button className="btn btn-error text-white">Cancel</button>
-              </form>
-            </div>
-          </div>
-        </dialog>
+
       </div>
+
+      <div className="join flex justify-center">
+        <button className="join-item btn"
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}>«</button>
+
+
+        {pageNumbers.map(number => (
+          <button
+            key={number}
+            onClick={() => paginate(number)}
+            className={`join-item btn ${currentPage === number ? 'btn-active' : ''}`}
+          >
+            {number}
+          </button>
+        ))}
+        <button
+          className="join-item btn"
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage >= pageNumbers.length}>»</button>
+      </div>
+
+
+
+      <dialog ref={modalRef} id="delete_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Delete</h3>
+          <p className="py-4">Are you sure you want to delete this form?</p>
+          <div className="modal-action">
+            <button
+              type="button"
+              className="btn btn-success text-white mr-2 w-[60px] focus:right-0"
+              onClick={() => {
+                handleDelete(selectedSurvey);
+                modalRef.current.close();
+              }}
+            >
+              Yes
+            </button>
+            <form method="dialog">
+              <button className="btn btn-error text-white">Cancel</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };
+
 
 export default List;
