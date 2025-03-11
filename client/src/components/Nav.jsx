@@ -18,9 +18,9 @@ const Nav = () => {
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
             <div className="indicator text-gray-600">
               <MdOutlineNotificationsNone size={24} />
-              <span className="badge badge-error badge-sm text-white indicator-item">
+              {/* <span className="badge badge-error badge-sm text-white indicator-item">
                 8
-              </span>
+              </span> */}
             </div>
           </div>
 

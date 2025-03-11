@@ -124,9 +124,9 @@ const View = () => {
         <div className="p-10">
             <div className="max-w-[900px] mx-auto p-5 flex flex-col relative bg-base-100 rounded-md">
                 <MdKeyboardBackspace
-                                        className="text-2xl cursor-pointer text-red-600"
-                                        onClick={() => navigate("/monitoring/")}
-                                    />
+                    className="text-2xl cursor-pointer text-red-600"
+                    onClick={() => navigate("/monitoring/")}
+                />
                 <p className="text-2xl font-bold text-center mt-6">
                     Field Monitoring and Evaluation Form
                 </p>
@@ -134,9 +134,136 @@ const View = () => {
                 {/* PERSONAL --------------------- */}
 
                 <form className="flex flex-col mt-12" onSubmit={handleSubmit}>
-                    <table>
+                    <div className="overflow-x-auto rounded-box bg-base-100">
+                        <table className="table">
+                            <tbody>
+                                <tr>
+                                    <td>Name of Respondent: <b> {"Angelito Sentillas Jr."}</b></td>
+                                    <td>Civil Status: {"Married"}</td>
+                                    <td>Sex: {"Male"}</td>
+                                    <td>Age: {"23"}</td>
+                                </tr>
+                                <tr>
+                                    <td>No. of Houshold Member: {2}</td>
+                                    <td>FishR: {344}</td>
+                                    <td>BoatR: {201}</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Name of Association: {"Bla Bla"}</td>
+                                    <td>Total No. of Members: {123}</td>
+                                </tr>
+                                <tr>
+                                    <td>Province: {"Davao del Sur"}</td>
+                                    <td>Municipality: {"Malalag"}</td>
+                                    <td>Baranggay: {"Poblacion"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Project Received: {"Bla bla"}</td>
+                                    <td>Specific Project: {"Bla bla"}</td>
+                                </tr>
 
-                    </table>
+                                <tr>
+                                    <td>No. of Units Received: {3243}</td>
+                                    <td>Date Received/Implemented: {"Bla bla"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Main Source of Income: {"Employment"}</td>
+                                    <td>Other Source of Income: {"Freelancing"}</td>
+                                </tr>
+
+                                <tr>
+
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table className="table mt-5">
+                            <tbody>
+                                <tr>
+                                    <td>Name of Respondent: <b> {"Angelito Sentillas Jr."}</b></td>
+                                    <td>Civil Status: {"Married"}</td>
+                                    <td>Sex: {"Male"}</td>
+                                    <td>Age: {"23"}</td>
+                                </tr>
+                                <tr>
+                                    <td>No. of Houshold Member: {2}</td>
+                                    <td>FishR: {344}</td>
+                                    <td>BoatR: {201}</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Name of Association: {"Bla Bla"}</td>
+                                    <td>Total No. of Members: {123}</td>
+                                </tr>
+                                <tr>
+                                    <td>Province: {"Davao del Sur"}</td>
+                                    <td>Municipality: {"Malalag"}</td>
+                                    <td>Baranggay: {"Poblacion"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Project Received: {"Bla bla"}</td>
+                                    <td>Specific Project: {"Bla bla"}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>No. of Units Received: {3243}</td>
+                                    <td>Date Received/Implemented: {"Bla bla"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Main Source of Income: {"Employment"}</td>
+                                    <td>Other Source of Income: {"Freelancing"}</td>
+                                </tr>
+
+                                <tr>
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table className="table mt-5">
+                            <tbody>
+                                <tr>
+                                    <td>Name of Respondent: <b> {"Angelito Sentillas Jr."}</b></td>
+                                    <td>Civil Status: {"Married"}</td>
+                                    <td>Sex: {"Male"}</td>
+                                    <td>Age: {"23"}</td>
+                                </tr>
+                                <tr>
+                                    <td>No. of Houshold Member: {2}</td>
+                                    <td>FishR: {344}</td>
+                                    <td>BoatR: {201}</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Name of Association: {"Bla Bla"}</td>
+                                    <td>Total No. of Members: {123}</td>
+                                </tr>
+                                <tr>
+                                    <td>Province: {"Davao del Sur"}</td>
+                                    <td>Municipality: {"Malalag"}</td>
+                                    <td>Baranggay: {"Poblacion"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Project Received: {"Bla bla"}</td>
+                                    <td>Specific Project: {"Bla bla"}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>No. of Units Received: {3243}</td>
+                                    <td>Date Received/Implemented: {"Bla bla"}</td>
+                                </tr>
+                                <tr>
+                                    <td>Main Source of Income: {"Employment"}</td>
+                                    <td>Other Source of Income: {"Freelancing"}</td>
+                                </tr>
+
+                                <tr>
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </form>
             </div>
         </div>

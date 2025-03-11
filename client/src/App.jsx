@@ -25,7 +25,7 @@ function App() {
               <Route path="/monitoring/list" element={<List />} />
               <Route path="/monitoring/view/:id" element={<View />} />
               <Route path="/monitoring/update/:id" element={<Update />} />
-              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/analytics" element={<Analytics key="analytics-page" />} />
               <Route path="/reports" element={<Reports />} />
             </Routes>
           </div>

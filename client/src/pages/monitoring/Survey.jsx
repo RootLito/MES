@@ -113,7 +113,7 @@ const Survey = () => {
       console.log("Response:", res.data);
       setShowToast(true);
       setTimeout(() => {
-        setShowToast(false); 
+        setShowToast(false);
       }, 3000);
     } catch (err) {
       console.error(
@@ -131,13 +131,13 @@ const Survey = () => {
 
   return (
     <div className="max-w-[900px] mx-auto p-5 flex flex-col relative bg-base-100 rounded-md">
-      <p className="text-2xl font-bold text-center mt-6">
+      <p className="text-2xl font-bold text-center">
         Field Monitoring and Evaluation Form
       </p>
       {showToast && (
         <div className="toast toast-top toast-center z-2">
           <div className="alert alert-success">
-            <span className="flex items-center text-green-50"><MdCheckCircle size={18} className="mr-2"/> Form submitted</span>
+            <span className="flex items-center text-green-50"><MdCheckCircle size={18} className="mr-2" /> Form submitted</span>
           </div>
         </div>
       )}
@@ -183,11 +183,13 @@ const Survey = () => {
           <div className="flex flex-col sm:w-[150px]">
             <p className="text-sm">Age</p>
             <input
-              type="text"
+              type="number"
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="age"
               value={formData.form.age}
               onChange={handleChange}
+              inputMode="numeric"
+              pattern="[0-9]*"
             />
           </div>
         </div>

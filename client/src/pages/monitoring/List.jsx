@@ -168,11 +168,11 @@ const List = () => {
         </div>
       )}
 
-      <label className="input ring-0 focus-0 w-1/2">
+      <label className="input w-1/2">
         <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></g></svg>
         <input
           type="search"
-          className="grow focus:outline-none focus:ring-0 ring-0 border-none"
+          className="grow "
           placeholder="Search"
           value={searchQuery}
           onChange={handleSearch}
