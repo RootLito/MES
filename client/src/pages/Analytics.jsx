@@ -22,7 +22,7 @@ const Analytics = () => {
   useEffect(() => {
     try {
       const fetchData = async () => {
-        const res = await axios.get("http://localhost:5000/survey/");
+        const res = await axios.get("https://bfar-server.onrender.com/survey/");
         setFormData(res.data);
       };
       fetchData();

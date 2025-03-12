@@ -181,9 +181,9 @@ const List = () => {
 
 
       <div className="rounded-box border border-base-content/5 bg-base-100 my-4">
-        <table className="table">
+        <table className="table overflow-hidden">
           <thead>
-            <tr>
+            <tr className="bg-blue-950 text-white">
               <th>Survey #</th>
               <th>Name</th>
               <th>Address</th>

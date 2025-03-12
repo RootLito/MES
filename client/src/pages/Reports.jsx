@@ -1,37 +1,37 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
 import axios from 'axios';
+import { MdPrint, MdFileOpen } from "react-icons/md";
+import { useReactToPrint } from "react-to-print";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+
 
 const Reports = () => {
   const currentDate = new Date();
   const date = format(currentDate, 'MM/dd/yyyy');
-
-  const [totalRes, setTotalRes] = useState(21)
-
-
+  const [totalRes, setTotalRes] = useState(0);
   const [surveys, setSurveys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const fetchSurveys = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/survey");
-
-
-      setSurveys(response.data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  const contentRef = useRef(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
 
   useEffect(() => {
+    const fetchSurveys = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/survey");
+        setSurveys(response.data);
+        setTotalRes(response.data.length);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchSurveys();
   }, []);
-
 
   if (loading) {
     return (
@@ -44,7 +44,6 @@ const Reports = () => {
     );
   }
 
-
   if (error) {
     return (
       <div className="toast toast-top toast-center z-2">
@@ -55,42 +54,161 @@ const Reports = () => {
     );
   }
 
+  const exportExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Survey Data");
 
+    const headers = [
+      "Respondent No.",
+      "Province/City",
+      "Municipality/District",
+      "Baranggay",
+      "Project Received",
+      "Specific Project",
+      "No. of Units Received",
+      "Remarks on Sufficiency",
+      "Remarks on Quality",
+    ];
 
+    const headerRow = worksheet.addRow(headers);
+
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FF4F81BD" },
+      };
+      cell.alignment = { horizontal: "center" };
+      cell.border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" },
+      };
+    });
+
+    surveys.forEach((survey, index) => {
+      const row = worksheet.addRow([
+        index + 1,
+        survey.province,
+        survey.municipality,
+        survey.baranggay,
+        survey.projectReceived,
+        survey.specProject,
+        survey.unitsReceived || "N/A",
+        survey.remarksSufficiency || "N/A",
+        survey.remarksQuality || "N/A",
+      ]);
+
+      row.getCell(1).alignment = { horizontal: "center" };
+
+      if (index % 2 === 0) {
+        row.eachCell((cell) => {
+          cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFF2F2F2" },
+          };
+        });
+      }
+    });
+
+    worksheet.columns.forEach((column) => {
+      column.width = 20;
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "ReportSummary.xlsx");
+  };
 
   return (
-    <div className="w-full p-10 flex flex-col gap-10">
-      <div className="card bg-base-100 shadow-sm w-full">
-        <div className="card-body flex flex-row p-5 items-center">
-          <h2 className='font-bold text-md text-gray-700'>Total No. of Respondents as of {date}: </h2>
-          <div className="badge badge-xl badge-soft badge-info font-bold">{totalRes} </div>
-        </div>
-      </div>
+    <div className="w-full p-10 flex flex-col gap-10 overflow-xp-auto">
+
 
       <div className="p-10 bg-white rounded-box shadow-sm overflow-x-auto">
-        <div className="overflow-x-auto border border-base-content/5 bg-base-100 text-xs">
-          <table className="table">
+        <h2 className="text-center font-black text-lg text-gray-600">TOTAL NO. OF RESPONDENTS =  {totalRes}</h2>
+        <div className="badge badge-success badge-lg mx-auto block mb-10 font-bold text-white">As of {date}</div>
+
+        <div className="flex justify-between mb-8 items-end">
+          <div className="felx flex-col">
+            <h2 className="card-title text-blue-950 font-black">
+              Field Monitoring and Evaluation Summary
+            </h2>
+          </div>
+          <div className="flex gap-2">
+            <button className="btn btn-success w-32 text-green-50" onClick={exportExcel}>
+              <MdFileOpen /> Export
+            </button>
+            <button className="btn btn-error w-32 text-blue-50" onClick={() => reactToPrintFn()}>
+              <MdPrint /> Print
+            </button>
+          </div>
+        </div>
+
+
+        <div ref={contentRef} className="overflow-x-auto border border-base-content/5 bg-base-100 text-xs">
+          <table className="table table-zebra text-sm">
             <tbody>
-              <tr>
-                <th className='bg-blue-950 text-white' rowSpan="2">Respondent No.</th>
-                <th className="text-center bg-blue-950 text-white" colSpan="3">Location</th>
-                <th className='bg-blue-950 text-white' rowSpan="2">Project Received</th>
-                <th className='bg-blue-950 text-white' rowSpan="2">Specific Project</th>
-              </tr>
-              <tr className='bg-blue-900 text-white'>
-                <th>Province/City</th>
-                <th>Municipality/District</th>
-                <th>Baranggay</th>
+              <tr className='bg-blue-950 text-white'>
+                <th className='py-2 whitespace-nowrap' rowSpan="2">No.</th>
+                <th className='py-2 whitespace-nowrap text-center' colSpan="3">Location</th>
+                <th className='py-2 whitespace-nowrap' rowSpan="2">Project Received</th>
+                <th className='py-2 whitespace-nowrap' rowSpan="2">Specific Project</th>
+                <th className='py-2 whitespace-nowrap' rowSpan="2">No. of Units Received</th>
+
+                <th className='py-2 whitespace-nowrap text-center' colSpan="3">Efficiency of the Project</th>
+                <th className='py-2 whitespace-nowrap text-center' colSpan="2">Relevance of the Project</th>
+                <th className='py-2 whitespace-nowrap text-center' colSpan="2">Coherence of the Project</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
+
               </tr>
 
+              <tr className='bg-gray-600'>
+                <th className='py-2 whitespace-nowrap'>Province/City</th>
+                <th className='py-2 whitespace-nowrap'>Municipality/District</th>
+                <th className='py-2 whitespace-nowrap'>Baranggay</th>
+
+                <th className='py-2 whitespace-nowrap'>Remarks on Sufficiency</th>
+                <th className='py-2 whitespace-nowrap'>Remarks on Quality</th>
+                <th className='py-2 whitespace-nowrap'>Remarks on Timeliness</th>
+
+                <th className='py-2 whitespace-nowrap'>Remarks on Relevance</th>
+                <th className='py-2 whitespace-nowrap'>Remarks on Sustainability</th>
+
+                <th className='py-2 whitespace-nowrap'>Remarks on Coherance</th>
+                <th className='py-2 whitespace-nowrap'>Remarks on Project Duplication</th>
+              </tr>
               {surveys.map((survey, index) => (
-                <tr key={index} >
-                  <th>{index + 1}</th>
-                  <td>{survey.province}</td>
-                  <td>{survey.municipality}</td>
-                  <td>{survey.baranggay}</td>
-                  <td>{survey.projectReceived}</td>
-                  <td>{survey.specProject}</td>
+                <tr key={index} className='py-0'>
+                  <th className='py-1 whitespace-nowrap'>{index + 1}</th>
+                  <td className='py-1 whitespace-nowrap'>{survey.province}</td>
+                  <td className='py-1 whitespace-nowrap'>{survey.municipality}</td>
+                  <td className='py-1 whitespace-nowrap'>{survey.baranggay}</td>
+                  <td className='py-1 whitespace-nowrap'>{survey.projectReceived}</td>
+                  <td className='py-1 whitespace-nowrap'>{survey.specProject}</td>
                 </tr>
               ))}
             </tbody>
@@ -98,7 +216,7 @@ const Reports = () => {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Reports
+export default Reports;
