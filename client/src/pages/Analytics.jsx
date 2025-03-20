@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { MdKeyboardBackspace } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { Bar, BarChart, Tooltip, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from "recharts";
 import axios from "axios";
 
 const Analytics = () => {
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState([]);
   const [ratings, setRatings] = useState({
@@ -71,13 +69,12 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Quantity</h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
 
           <div className="h-full w-full mt-5">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" >
               <BarChart data={ratingData(ratings.quantityRating)}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="rating" />
+                <XAxis dataKey="rating"/>
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} />
@@ -90,7 +87,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Quality</h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
 
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
@@ -109,7 +105,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Timeliness</h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
 
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
@@ -128,7 +123,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Relevance</h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
 
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
@@ -147,7 +141,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Coherence</h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
 
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
@@ -166,7 +159,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Satisfaction</h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
 
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
@@ -185,7 +177,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Impact</h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
 
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
@@ -204,7 +195,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Sustainability</h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
 
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">

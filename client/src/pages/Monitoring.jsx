@@ -5,19 +5,19 @@ import List from "./monitoring/List";
 const Monitoring = () => {
   return (
     <div className="flex-1">
-      <div className="w-full p-10  rounded-md shadow-sm flex flex-col">
+      <div className="w-full p-10 flex flex-col">
         <h2 className="font-bold text-2xl mb-5 text-blue-950">
           Field Monitoring and Evaluation
         </h2>
 
-        <div className="tabs tabs-border">
-          <input type="radio" name="form_tabs" className="tab w-20 border-0" aria-label="Evaluation Form" defaultChecked />
-          <div className="tab-content border-base-300 bg-base-100 p-10 rounded-box">
+        <div className="tabs tabs-border rounded-box shadow-sm overflow-hidden bg-white">
+          <input type="radio" name="form_tabs" className="tab w-20" aria-label="Evaluation Form" defaultChecked />
+          <div className="tab-content border-base-300 bg-base-100 p-10">
             <Survey />
           </div>
 
           <input type="radio" name="form_tabs" className="tab w-20" aria-label="Form Lists" />
-          <div className="tab-content border-base-300 bg-base-100 p-10 rounded-box">
+          <div className="tab-content border-base-300 bg-base-100 p-10">
             <List />
           </div>
         </div>

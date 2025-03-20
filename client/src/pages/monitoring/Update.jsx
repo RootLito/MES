@@ -150,7 +150,7 @@ const Update = () => {
 
     return (
         <div className="p-10">
-            <div className="max-w-[900px] mx-auto p-5 flex flex-col relative bg-white rounded-md shadow-sm">
+            <div className="w-full mx-auto p-5 flex flex-col relative bg-white rounded-md shadow-sm">
 
                 {loading && (
                     <div className="toast toast-top toast-center">

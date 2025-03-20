@@ -122,7 +122,7 @@ const View = () => {
 
     return (
         <div className="p-10">
-            <div className="max-w-[900px] mx-auto p-5 flex flex-col relative bg-base-100 rounded-md">
+            <div className="w-full mx-auto p-5 flex flex-col relative bg-base-100 rounded-md">
                 <MdKeyboardBackspace
                     className="text-2xl cursor-pointer text-red-600"
                     onClick={() => navigate("/monitoring/")}

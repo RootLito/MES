@@ -199,7 +199,7 @@ const List = () => {
             ) : (
               currentSurveys.map((survey, index) => (
                 <tr key={survey._id} className="hover:bg-base-300">
-                  <td>{indexOfFirstItem + index + 1}</td>
+                  <th>{indexOfFirstItem + index + 1}</th>
                   <td>{survey.name}</td>
                   <td>
                     {survey.baranggay}, {survey.municipality}, {survey.province}

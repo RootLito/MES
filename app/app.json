@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "BFAR XI",
+    "slug": "MyApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/bfar.svg",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/bfar.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.MyApp"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

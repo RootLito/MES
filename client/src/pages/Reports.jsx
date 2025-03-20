@@ -1,15 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
-import { format } from 'date-fns';
-import axios from 'axios';
+import { useState, useEffect, useRef } from "react";
+import { format } from "date-fns";
+import axios from "axios";
 import { MdPrint, MdFileOpen } from "react-icons/md";
 import { useReactToPrint } from "react-to-print";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
-
 const Reports = () => {
   const currentDate = new Date();
-  const date = format(currentDate, 'MM/dd/yyyy');
+  const date = format(currentDate, "MM/dd/yyyy");
   const [totalRes, setTotalRes] = useState(0);
   const [surveys, setSurveys] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -127,11 +126,15 @@ const Reports = () => {
 
   return (
     <div className="w-full p-10 flex flex-col gap-10 overflow-xp-auto">
-
-
       <div className="p-10 bg-white rounded-box shadow-sm overflow-x-auto">
-        <h2 className="text-center font-black text-lg text-gray-600">TOTAL NO. OF RESPONDENTS =  {totalRes}</h2>
-        <div className="badge badge-success badge-lg mx-auto block mb-10 font-bold text-white">As of {date}</div>
+        <h2 className="text-center font-black text-lg text-gray-600">
+          TOTAL NO. OF RESPONDENTS AS OF {date}
+        </h2>
+        <div className="text-center">
+          <div className="inline-block rounded-xl bg-blue-950 mb-10 font-bold text-white text-center text-5xl p-2">
+            {totalRes}
+          </div>
+        </div>
 
         <div className="flex justify-between mb-8 items-end">
           <div className="felx flex-col">
@@ -140,75 +143,258 @@ const Reports = () => {
             </h2>
           </div>
           <div className="flex gap-2">
-            <button className="btn btn-success w-32 text-green-50" onClick={exportExcel}>
+            <button
+              className="btn btn-success w-32 text-green-50"
+              onClick={exportExcel}
+            >
               <MdFileOpen /> Export
             </button>
-            <button className="btn btn-error w-32 text-blue-50" onClick={() => reactToPrintFn()}>
+            {/* <button className="btn btn-error w-32 text-blue-50" onClick={() => reactToPrintFn()}>
               <MdPrint /> Print
-            </button>
+            </button> */}
           </div>
         </div>
 
-
-        <div ref={contentRef} className="overflow-x-auto border border-base-content/5 bg-base-100 text-xs">
+        <div
+          ref={contentRef}
+          className="overflow-x-auto border border-base-content/5 bg-base-100 text-xs"
+        >
           <table className="table table-zebra text-sm">
+            <thead>
+              <tr className="bg-blue-950 text-white">
+                <th className="py-2 whitespace-nowrap" rowSpan="2">
+                  No.
+                </th>
+                <th className="py-2 whitespace-nowrap text-center" colSpan="3">
+                  Location
+                </th>
+                <th className="py-2 whitespace-nowrap" rowSpan="2">
+                  Project Received
+                </th>
+                <th className="py-2 whitespace-nowrap" rowSpan="2">
+                  Specific Project
+                </th>
+                <th className="py-2 whitespace-nowrap" rowSpan="2">
+                  No. of Units Received
+                </th>
+
+                <th className="py-2 whitespace-nowrap text-center" colSpan="3">
+                  Efficiency of the Project
+                </th>
+                <th className="py-2 whitespace-nowrap text-center" colSpan="2">
+                  Relevance of the Project
+                </th>
+                <th className="py-2 whitespace-nowrap text-center" colSpan="2">
+                  Coherence of the Project
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Units Received
+                </th>
+              </tr>
+              <tr className="bg-blue-900 text-white">
+                <th className="py-2 whitespace-nowrap">Province/City</th>
+                <th className="py-2 whitespace-nowrap">
+                  Municipality/District
+                </th>
+                <th className="py-2 whitespace-nowrap">Baranggay</th>
+
+                <th className="py-2 whitespace-nowrap">
+                  Remarks on Sufficiency
+                </th>
+                <th className="py-2 whitespace-nowrap">Remarks on Quality</th>
+                <th className="py-2 whitespace-nowrap">
+                  Remarks on Timeliness
+                </th>
+
+                <th className="py-2 whitespace-nowrap">Remarks on Relevance</th>
+                <th className="py-2 whitespace-nowrap">
+                  Remarks on Sustainability
+                </th>
+
+                <th className="py-2 whitespace-nowrap">Remarks on Coherance</th>
+                <th className="py-2 whitespace-nowrap">
+                  Remarks on Project Duplication
+                </th>
+              </tr>
+            </thead>
             <tbody>
-              <tr className='bg-blue-950 text-white'>
-                <th className='py-2 whitespace-nowrap' rowSpan="2">No.</th>
-                <th className='py-2 whitespace-nowrap text-center' colSpan="3">Location</th>
-                <th className='py-2 whitespace-nowrap' rowSpan="2">Project Received</th>
-                <th className='py-2 whitespace-nowrap' rowSpan="2">Specific Project</th>
-                <th className='py-2 whitespace-nowrap' rowSpan="2">No. of Units Received</th>
-
-                <th className='py-2 whitespace-nowrap text-center' colSpan="3">Efficiency of the Project</th>
-                <th className='py-2 whitespace-nowrap text-center' colSpan="2">Relevance of the Project</th>
-                <th className='py-2 whitespace-nowrap text-center' colSpan="2">Coherence of the Project</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-                <th className='py-2 whitespace-nowrap'>No. of Units Received</th>
-
-              </tr>
-
-              <tr className='bg-gray-600'>
-                <th className='py-2 whitespace-nowrap'>Province/City</th>
-                <th className='py-2 whitespace-nowrap'>Municipality/District</th>
-                <th className='py-2 whitespace-nowrap'>Baranggay</th>
-
-                <th className='py-2 whitespace-nowrap'>Remarks on Sufficiency</th>
-                <th className='py-2 whitespace-nowrap'>Remarks on Quality</th>
-                <th className='py-2 whitespace-nowrap'>Remarks on Timeliness</th>
-
-                <th className='py-2 whitespace-nowrap'>Remarks on Relevance</th>
-                <th className='py-2 whitespace-nowrap'>Remarks on Sustainability</th>
-
-                <th className='py-2 whitespace-nowrap'>Remarks on Coherance</th>
-                <th className='py-2 whitespace-nowrap'>Remarks on Project Duplication</th>
-              </tr>
               {surveys.map((survey, index) => (
-                <tr key={index} className='py-0'>
-                  <th className='py-1 whitespace-nowrap'>{index + 1}</th>
-                  <td className='py-1 whitespace-nowrap'>{survey.province}</td>
-                  <td className='py-1 whitespace-nowrap'>{survey.municipality}</td>
-                  <td className='py-1 whitespace-nowrap'>{survey.baranggay}</td>
-                  <td className='py-1 whitespace-nowrap'>{survey.projectReceived}</td>
-                  <td className='py-1 whitespace-nowrap'>{survey.specProject}</td>
+                <tr key={index} className="py-0">
+                  <th className="py-2 whitespace-nowrap">{index + 1}</th>
+                  <td className="py-2 whitespace-nowrap">{survey.province}</td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.municipality}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">{survey.baranggay}</td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.projectReceived}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+
+
+
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.specProject}
+                  </td>
+                  
                 </tr>
               ))}
             </tbody>
@@ -217,6 +403,6 @@ const Reports = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Reports;

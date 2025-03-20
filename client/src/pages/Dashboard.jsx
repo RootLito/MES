@@ -1,152 +1,248 @@
-import React from "react";
-import { Bar, BarChart, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,Radar  } from "recharts";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { MdMale, MdFemale, MdFilterAlt } from "react-icons/md";
 
 const Dashboard = () => {
-  const dataset = [
-    {
-      name: "Page A",
-      uv: 4000,
-      pv: 2400,
-      amt: 2400,
-    },
-    {
-      name: "Page B",
-      uv: 3000,
-      pv: 1398,
-      amt: 2210,
-    },
-    {
-      name: "Page C",
-      uv: 2000,
-      pv: 9800,
-      amt: 2290,
-    },
-    {
-      name: "Page D",
-      uv: 2780,
-      pv: 3908,
-      amt: 2000,
-    },
-    {
-      name: "Page E",
-      uv: 1890,
-      pv: 4800,
-      amt: 2181,
-    },
-  ];
+  const [surveys, setSurveys] = useState([]);
+  const [maleCount, setMaleCount] = useState(0);
+  const [femaleCount, setFemaleCount] = useState(0);
+  const [isAZAscending, setIsAZAscending] = useState(true);
+  const [isNumAscending, setIsNumAscending] = useState(true);
+  const [totalRes, setTotalRes] = useState(0);
+  const [barangayData, setBarangayData] = useState([]);
+  const [mostRespondents, setMostRespondents] = useState({
+    count: 0,
+    name: "N/A",
+  });
+  const [leastRespondents, setLeastRespondents] = useState({
+    count: 0,
+    name: "N/A",
+  });
+  const [ratings, setRatings] = useState([]);
+  const [fiveStarCount, setFiveStarCount] = useState(0);
+  const [fiveStarPercentage, setFiveStarPercentage] = useState(0);
+  const [sortType, setSortType] = useState("");
 
-  const data = [
-    {
-      subject: "Math",
-      A: 120,
-      B: 110,
-      fullMark: 150,
-    },
-    {
-      subject: "Chinese",
-      A: 98,
-      B: 130,
-      fullMark: 150,
-    },
-    {
-      subject: "English",
-      A: 86,
-      B: 130,
-      fullMark: 150,
-    },
-    {
-      subject: "Geography",
-      A: 99,
-      B: 100,
-      fullMark: 150,
-    },
-    {
-      subject: "Physics",
-      A: 85,
-      B: 90,
-      fullMark: 150,
-    },
-    {
-      subject: "History",
-      A: 65,
-      B: 85,
-      fullMark: 150,
-    },
-  ];
+  useEffect(() => {
+    const fetchSurveys = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/survey");
+        setSurveys(response.data);
+        setTotalRes(response.data.length);
+
+        const barangayCounts = response.data.reduce((acc, survey) => {
+          acc[survey.baranggay] = (acc[survey.baranggay] || 0) + 1;
+          return acc;
+        }, {});
+
+        const barangayArray = Object.entries(barangayCounts).map(
+          ([name, count]) => ({ name, count })
+        );
+
+        setBarangayData(barangayArray);
+
+        const male = response.data.filter(
+          (survey) => survey.sex === "Male"
+        ).length;
+        const female = response.data.filter(
+          (survey) => survey.sex === "Female"
+        ).length;
+
+        setMaleCount(male);
+        setFemaleCount(female);
+
+        setRatings(response.data);
+
+        const totalRatings = response.data.length;
+        const countFiveStars = response.data.filter(
+          (rate) => rate === 5
+        ).length;
+        setFiveStarCount(countFiveStars);
+
+        if (totalRatings > 0) {
+          setFiveStarPercentage(
+            ((countFiveStars / totalRatings) * 100).toFixed(2)
+          );
+        }
+
+        // Sorting Function
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+
+    fetchSurveys();
+  }, []);
+
+  const handleSort = (type) => {
+    let sortedData = [...barangayData];
+
+    switch (type) {
+      case "A-Z":
+        sortedData.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "Z-A":
+        sortedData.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "0-9":
+        sortedData.sort((a, b) => a.count - b.count);
+        break;
+      case "9-0":
+        sortedData.sort((a, b) => b.count - a.count);
+        break;
+      default:
+        return;
+    }
+
+    setBarangayData(sortedData);
+    setSortType(type);
+  };
+
+  useEffect(() => {
+    if (barangayData.length > 0) {
+      const sortedBarangays = [...barangayData].sort(
+        (a, b) => b.count - a.count
+      );
+
+      setMostRespondents(sortedBarangays[0] || { count: 0, name: "N/A" });
+      setLeastRespondents(
+        sortedBarangays[sortedBarangays.length - 1] || { count: 0, name: "N/A" }
+      );
+    }
+  }, [barangayData]);
 
   return (
     <div className="w-full h-full flex gap-10 p-10">
       <div className="flex flex-1 flex-col gap-10">
-        <div className="grid grid-cols-3  gap-10 flex-1">
+        <div className="grid grid-cols-3 gap-10 flex-1">
           <div className="card card-border bg-blue-950">
-            <div className="card-body">
-              <h2 className="card-title text-base-200 text-2xl mb-auto">
-                Highlight
-              </h2>
-
-              <div className="cards-action text-center mb-auto">
-                <h1 className="text-6xl font-black text-blue-400">86%</h1>
-                <p className="text-base-200 mt-4">
-                  Eighty-six percent of all respondents are very
-                  satisfied.
+            <div className="card-body flex flex-col justify-between">
+              <p className="font-black text-xl text-blue-200">Highlight</p>
+              <div className="data">
+                <p className="text-5xl font-black text-blue-100">
+                  {fiveStarPercentage}%
+                </p>
+                <p className="text-md italic font-semibold text-blue-200 text-center mt-2">
+                  Satisfied Rating <br />({fiveStarCount} out of{" "}
+                  {ratings.length})
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="card card-border bg-base-100 ">
-            <div className="card-body">
-              <h2 className="card-title text-gray-500">Total</h2>
-              <p className="font-black text-2xl text-blue-950">Locations</p>
-              <div className="card-actions justify-end">
-                <h1 className="text-6xl font-black">132</h1>
+          <div className="card card-border bg-base-100 shadow-sm">
+            <div className="card-body flex flex-col justify-between">
+              <MdMale
+                size={52}
+                className="bg-blue-100 rounded-full p-2 text-blue-900"
+              />
+              <div className="data">
+                <p className="text-5xl font-black text-blue-950">{maleCount}</p>
+                <p className="text-md italic font-semibold text-gray-500">
+                  Male
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="card card-border bg-base-100">
-            <div className="card-body">
-              <h2 className="card-title text-gray-500">Total</h2>
-              <p className="font-black text-2xl text-blue-950">Respondents</p>
-              <div className="card-actions justify-end">
-                <h1 className="text-6xl font-black">791</h1>
+          <div className="card card-border bg-base-100 shadow-sm">
+            <div className="card-body flex flex-col justify-between">
+              <MdFemale
+                size={52}
+                className="bg-blue-100 rounded-full p-2 text-blue-900"
+              />
+              <div className="data">
+                <p className="text-5xl font-black text-blue-950">
+                  {femaleCount}
+                </p>
+                <p className="text-md italic font-semibold text-gray-500">
+                  Female
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="card card-border bg-base-100 h-1/2">
-          <div className="card-body">
-            <h2 className="card-title text-gray-500">Some Data</h2>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dataset}>
-                <Tooltip />
-                <Bar dataKey="uv" fill="#1e3a8a" />
-              </BarChart>
-            </ResponsiveContainer>
+        <div className="card card-border bg-base-100 h-1/2 p-10 shadow-sm">
+          <p className="text-center p-2 bg-blue-950 rounded-box text-blue-200 font-black text-xl">
+            Total Respondent: {totalRes}
+          </p>
+
+          <div className="flex h-full w-full justify-between">
+            <div className="flex-1 text-center flex flex-col">
+              <p className="font-bold text-gray-500 text-sm italic mb-auto mt-5">
+                Most Respondents
+              </p>
+              <p className="text-5xl font-black text-blue-950">
+                {mostRespondents?.count ?? 0}
+              </p>
+              <p className="font-black text-blue-950 text-2xl uppercase">
+                {mostRespondents?.name ?? "N/A"}
+              </p>
+            </div>
+
+            <div className="divider divider-horizontal divider-start"></div>
+
+            <div className="flex-1 text-center flex flex-col">
+              <p className="font-bold text-gray-500 text-sm italic mb-auto mt-5">
+                Least Respondents
+              </p>
+              <p className="text-5xl font-black text-blue-950">
+                {leastRespondents?.count ?? 0}
+              </p>
+              <p className="font-black text-blue-950 text-2xl uppercase">
+                {leastRespondents?.name ?? "N/A"}
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="w-[500px] h-full flex flex-col">
+      <div className="w-[500px] max-h-[calc(100vh - 84px)] flex flex-col rounded-box shadow-sm">
         <div className="card card-border bg-base-100 h-full">
           <div className="card-body">
-            <h2 className="card-title text-gray-500">Perfomance</h2>
-            <p className="font-black text-2xl text-blue-950">Analysis</p>
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="subject" />
-                <PolarRadiusAxis />
-                <Radar
-                  name="Mike"
-                  dataKey="A"
-                  stroke="#8884d8"
-                  fill="#8884d8"
-                  fillOpacity={0.6}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
+            <p className="font-black text-xl text-blue-950 text-center">
+              Monitoring and Evaluation Distribution
+            </p>
+
+            <div className="dropdown">
+              <div tabIndex={0} role="button" className="btn m-1">
+                Sort <MdFilterAlt size={18} />
+              </div>
+              <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                <li>
+                  <a onClick={() => handleSort("A-Z")}>Barangay: A-Z</a>
+                </li>
+                <li>
+                  <a onClick={() => handleSort("Z-A")}>Barangay: Z-A</a>
+                </li>
+                <li>
+                  <a onClick={() => handleSort("0-9")}>Total: 0-9</a>
+                </li>
+                <li>
+                  <a onClick={() => handleSort("9-0")}>Total: 9-0</a>
+                </li>
+              </ul>
+
+              <div className="h-100 overflow-y-auto border border-gray-200 rounded-box scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+                <table className="table table-pin-rows">
+                  <thead>
+                    <tr className="bg-blue-950 p-2 text-blue-100">
+                      <th width="80%">Address</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {barangayData.map((barangay) => (
+                      <tr key={barangay.name}>
+                        <td>{barangay.name}</td>
+                        <td>{barangay.count}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
