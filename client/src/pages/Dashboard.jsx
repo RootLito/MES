@@ -74,29 +74,29 @@ const Dashboard = () => {
     fetchSurveys();
   }, []);
 
-  const handleSort = (type) => {
-    let sortedData = [...barangayData];
+//   const handleSort = (type) => {
+//     let sortedData = [...barangayData];
 
-    switch (type) {
-      case "A-Z":
-        sortedData.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "Z-A":
-        sortedData.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case "0-9":
-        sortedData.sort((a, b) => a.count - b.count);
-        break;
-      case "9-0":
-        sortedData.sort((a, b) => b.count - a.count);
-        break;
-      default:
-        return;
-    }
+//     switch (type) {
+//       case "A-Z":
+//         sortedData.sort((a, b) => a.name.localeCompare(b.name));
+//         break;
+//       case "Z-A":
+//         sortedData.sort((a, b) => b.name.localeCompare(a.name));
+//         break;
+//       case "0-9":
+//         sortedData.sort((a, b) => a.count - b.count);
+//         break;
+//       case "9-0":
+//         sortedData.sort((a, b) => b.count - a.count);
+//         break;
+//       default:
+//         return;
+//     }
 
-    setBarangayData(sortedData);
-    setSortType(type);
-  };
+//     setBarangayData(sortedData);
+//     setSortType(type);
+//   };
 
   useEffect(() => {
     if (barangayData.length > 0) {
@@ -115,7 +115,7 @@ const Dashboard = () => {
     <div className="w-full h-full flex gap-10 p-10">
       <div className="flex flex-1 flex-col gap-10">
         <div className="grid grid-cols-3 gap-10 flex-1">
-          <div className="card card-border bg-blue-950">
+          <div className="card bg-white shadow-sm">
             <div className="card-body flex flex-col justify-between">
               <p className="font-black text-xl text-blue-200">Highlight</p>
               <div className="data">
@@ -130,7 +130,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="card card-border bg-base-100 shadow-sm">
+          <div className="card bg-white shadow-sm">
             <div className="card-body flex flex-col justify-between">
               <MdMale
                 size={52}
@@ -145,7 +145,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="card card-border bg-base-100 shadow-sm">
+          <div className="card bg-white shadow-sm">
             <div className="card-body flex flex-col justify-between">
               <MdFemale
                 size={52}
@@ -163,7 +163,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="card card-border bg-base-100 h-1/2 p-10 shadow-sm">
+        <div className="card h-1/2 p-10 bg-white shadow-sm">
           <p className="text-center p-2 bg-blue-950 rounded-box text-blue-200 font-black text-xl">
             Total Respondent: {totalRes}
           </p>
@@ -199,14 +199,14 @@ const Dashboard = () => {
       </div>
 
       <div className="w-[500px] max-h-[calc(100vh - 84px)] flex flex-col rounded-box shadow-sm">
-        <div className="card card-border bg-base-100 h-full">
+        <div className="card h-full bg-white shadow-sm">
           <div className="card-body">
             <p className="font-black text-xl text-blue-950 text-center">
               Monitoring and Evaluation Distribution
             </p>
 
             <div className="dropdown">
-              <div tabIndex={0} role="button" className="btn m-1">
+              {/* <div tabIndex={0} role="button" className="btn m-1">
                 Sort <MdFilterAlt size={18} />
               </div>
               <ul className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
@@ -222,7 +222,7 @@ const Dashboard = () => {
                 <li>
                   <a onClick={() => handleSort("9-0")}>Total: 9-0</a>
                 </li>
-              </ul>
+              </ul> */}
 
               <div className="h-100 overflow-y-auto border border-gray-200 rounded-box scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
                 <table className="table table-pin-rows">

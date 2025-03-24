@@ -10,7 +10,7 @@ const Nav = () => {
   const nav = path.split('/').pop().toUpperCase();
 
   return (
-    <div className="navbar bg-base-100 sticky top-0 z-1 border-b-1 border-base-300 px-10 justify-between">
+    <div className="navbar bg-white sticky top-0 z-1 border-b-1 border-gray-100 px-10 justify-between">
       <h2 className="font-black text-gray-600">BFAR XI</h2>
 
       <div className="">

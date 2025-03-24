@@ -11,7 +11,7 @@ import {
 const Sidebar = () => {
   return (
     <>
-      <div className="flex flex-col w-[300px] h-screen bg-base-100 border-r-1 border-base-300 p-5 sticky top-0 left-0">
+      <div className="flex flex-col w-[300px] h-screen bg-white border-r-1 border-gray-100 p-5 sticky top-0 left-0">
         <div className="flex flex-col justify-center items-center my-4">
           <img src={logo} alt="BFAR logo" className="w-30" />
           <h1 className="font-black text-2xl text-blue-950">BFAR XI</h1>

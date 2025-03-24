@@ -130,7 +130,7 @@ const Survey = () => {
   };
 
   return (
-    <div className="max-w-[900px] mx-auto p-5 flex flex-col relative bg-base-100 rounded-md">
+    <div className="max-w-[900px] mx-auto p-5 flex flex-col relative bg-white rounded-md">
       <p className="text-2xl font-bold text-center">
         Field Monitoring and Evaluation Form
       </p>
