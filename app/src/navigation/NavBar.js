@@ -30,10 +30,10 @@ const NavBar = () => {
             return <Icon name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: "#182553",
-          tabBarInactiveTintColor: "gray",
+          tabBarInactiveTintColor: "#ccc",
           tabBarPressColor: "transparent",
+          tabBarPressOpacity: 1,
           headerShown: false,
-
           tabBarStyle: {
             backgroundColor: "#fff",
             height: 60,

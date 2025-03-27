@@ -6,10 +6,13 @@ import {
   View,
   Text,
   ScrollView,
+  Image,
+  ActivityIndicator,
+  Alert,
+  FlatList,
 } from "react-native";
 import { useState, useEffect } from "react";
 import Icon from "react-native-vector-icons/Feather";
-import { DataTable } from "react-native-paper";
 import axios from "axios";
 
 export default function Home() {
@@ -54,10 +57,13 @@ export default function Home() {
           <Icon
             name={isConnected ? "wifi" : "wifi-off"}
             size={14}
-            color={isConnected ? "green" : "red"}
+            color={isConnected ? "#54cf95" : "red"}
           />
           <Text
-            style={[styles.textStatus, { color: isConnected ? "green" : "red" }]}
+            style={[
+              styles.textStatus,
+              { color: isConnected ? "#54cf95" : "red" },
+            ]}
           >
             {isConnected === null
               ? "Checking connection..."
@@ -90,33 +96,52 @@ export default function Home() {
             </Text>
           </View>
         </View>
-        {loading ? (
-          <Text>Loading surveys...</Text>
+
+        {!isConnected ? (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Text
+              style={{ fontSize: 30, fontWeight: "bold", color: "#ec6978" }}
+            >
+              Error Fetching Data
+            </Text>
+            <Text>No internet connection, use offline mode</Text>
+            <Image
+              source={require("./../../assets/bfar.png")}
+              style={{ width: 200, height: 200, opacity: 0.2 }}
+            ></Image>
+          </View>
+        ) : loading ? (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <ActivityIndicator size="large" color="#54cf95" />
+            <Text>Fetching data...</Text>
+          </View>
         ) : surveys.length > 0 ? (
-          <ScrollView style={{ flex: 1, marginTop: 16 }}>
-            <ScrollView horizontal>
-              <View style={{ flexGrow: 1 }}>
-                <DataTable>
-                  <DataTable.Header>
-                    <DataTable.Title style={styles.cell}>#</DataTable.Title>
-                    <DataTable.Title style={styles.cell}>Name</DataTable.Title>
-                    <DataTable.Title style={styles.cell}>Address</DataTable.Title>
-                    <DataTable.Title style={styles.cell}>Date</DataTable.Title>
-                  </DataTable.Header>
-                  {surveys.map((survey, index) => (
-                    <DataTable.Row key={index}>
-                      <DataTable.Cell style={styles.cell}>{index + 1}</DataTable.Cell>
-                      <DataTable.Cell style={styles.cell}>{survey.name}</DataTable.Cell>
-                      <DataTable.Cell style={styles.cell}>
-                        {survey.baranggay}, {survey.municipality}, {survey.province}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={styles.cell}>{survey.createdAt}</DataTable.Cell>
-                    </DataTable.Row>
-                  ))}
-                </DataTable>
+          <FlatList
+            style={{ flex: 1, marginTop: 16 }}
+            showsVerticalScrollIndicator={false}
+            data={surveys}
+            keyExtractor={(item, index) => index.toString()}
+            ListHeaderComponent={
+              <View style={styles.header}>
+                <Text style={[styles.cell1, styles.headerText]}>#</Text>
+                <Text style={[styles.cell2, styles.headerText]}>Name</Text>
+                <Text style={[styles.cell3, styles.headerText]}>Address</Text>
               </View>
-            </ScrollView>
-          </ScrollView>
+            }
+            renderItem={({ item, index }) => (
+              <View style={styles.row}>
+                <Text style={styles.cell1}>{index + 1}</Text>
+                <Text style={styles.cell2}>{item.name}</Text>
+                <Text style={styles.cell3}>
+                  {item.baranggay}, {item.municipality}, {item.province}
+                </Text>
+              </View>
+            )}
+          />
         ) : (
           <Text>No surveys found.</Text>
         )}
@@ -177,7 +202,36 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 
-  cell: {
-    textAlign: "left", // Align text to the left
+  // FLATLIST
+  header: {
+    flexDirection: "row",
+    gap: 10,
+    backgroundColor: "#182553",
+    padding: 10,
+    borderRadius: 5,
+  },
+  headerText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  row: {
+    flexDirection: "row",
+    padding: 10,
+    borderBottomWidth: 0.2,
+    borderBottomColor: "#ccc",
+    gap: 10,
+  },
+  cell1: {
+    flex: 1,
+    textAlign: "left",
+    fontWeight: "bold"
+  },
+  cell2: {
+    flex: 4,
+    textAlign: "left",
+  },
+  cell3: {
+    flex: 5,
+    textAlign: "left",
   },
 });

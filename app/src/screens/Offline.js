@@ -1,9 +1,17 @@
 import NetInfo from "@react-native-community/netinfo";
-import { Platform, StatusBar, StyleSheet, View, Text, TouchableOpacity, FlatList } from "react-native";
+import {
+  Platform,
+  StatusBar,
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  FlatList,
+} from "react-native";
+
 import { useState, useEffect } from "react";
 import Icon from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DataTable, Button } from 'react-native-paper'; // Import React Native Paper components
 
 export default function List() {
   const [isConnected, setIsConnected] = useState(null);
@@ -14,15 +22,12 @@ export default function List() {
       setIsConnected(state.isConnected);
     });
 
-    // Fetch data every 2 seconds
     const intervalId = setInterval(() => {
       fetchSavedData();
     }, 2000);
 
-    // Initial fetch
     fetchSavedData();
 
-    // Clean up the interval when component unmounts
     return () => {
       clearInterval(intervalId);
       unsubscribe();
@@ -33,7 +38,7 @@ export default function List() {
     try {
       const data = await AsyncStorage.getItem("formDataList");
       if (data) {
-        setSavedData(JSON.parse(data)); 
+        setSavedData(JSON.parse(data));
       } else {
         setSavedData([]);
       }
@@ -43,7 +48,7 @@ export default function List() {
   };
 
   const handleReload = () => {
-    fetchSavedData(); // Reload data when the button is pressed
+    fetchSavedData();
   };
 
   return (
@@ -54,9 +59,14 @@ export default function List() {
           <Icon
             name={isConnected ? "wifi" : "wifi-off"}
             size={14}
-            color={isConnected ? "green" : "red"}
+            color={isConnected ? "#54cf95" : "red"}
           />
-          <Text style={[styles.textStatus, { color: isConnected ? "green" : "red" }]}>
+          <Text
+            style={[
+              styles.textStatus,
+              { color: isConnected ? "#54cf95" : "red" },
+            ]}
+          >
             {isConnected === null
               ? "Checking connection..."
               : isConnected
@@ -70,35 +80,39 @@ export default function List() {
         <View style={styles.total}>
           <View style={styles.totalRow}>
             <View>
-              <Text style={{ color: "#fff", fontWeight: "900", fontSize: 22 }}>TOTAL</Text>
+              <Text style={{ color: "#fff", fontWeight: "900", fontSize: 22 }}>
+                TOTAL
+              </Text>
               <Text style={{ color: "#fff" }}>Total offline saved files</Text>
             </View>
             <Text style={{ color: "#fff", fontSize: 52, fontWeight: "900" }}>
               {savedData.length}
             </Text>
           </View>
-          <Button mode="contained" onPress={handleReload} style={styles.reloadButton}>
-            Reload Data
-          </Button>
         </View>
 
-        <DataTable style={styles.tableContainer}>
-          <DataTable.Header style={styles.tableHeader}>
-            <DataTable.Title>Name</DataTable.Title>
-            <DataTable.Title>Email</DataTable.Title>
-          </DataTable.Header>
-
-          {savedData.length > 0 ? (
-            savedData.map((item, index) => (
-              <DataTable.Row key={index}>
-                <DataTable.Cell>{item.name}</DataTable.Cell>
-                <DataTable.Cell>{item.email}</DataTable.Cell>
-              </DataTable.Row>
-            ))
-          ) : (
-            <Text style={styles.emptyText}>No saved data yet.</Text>
+        <FlatList
+          style={{ flex: 1, marginTop: 16 }}
+          showsVerticalScrollIndicator={false}
+          data={savedData}
+          keyExtractor={(item, index) => index.toString()}
+          ListHeaderComponent={
+            <View style={styles.header}>
+              <Text style={[styles.cell1, styles.headerText]}>#</Text>
+              <Text style={[styles.cell2, styles.headerText]}>Name</Text>
+              <Text style={[styles.cell3, styles.headerText]}>Address</Text>
+            </View>
+          }
+          renderItem={({ item, index }) => (
+            <View style={styles.row}>
+              <Text style={styles.cell1}>{index + 1}</Text>
+              <Text style={styles.cell2}>{item.name}</Text>
+              <Text style={styles.cell3}>
+                {item.baranggay}, {item.municipality}, {item.province}
+              </Text>
+            </View>
           )}
-        </DataTable>
+        />
       </View>
     </View>
   );
@@ -164,7 +178,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   tableHeader: {
-    backgroundColor: '#ADD8E6', // Light Blue background
+    backgroundColor: "#ADD8E6",
   },
   emptyText: {
     textAlign: "center",
@@ -172,4 +186,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "gray",
   },
+    // FLATLIST
+    header: {
+        flexDirection: "row",
+        gap: 10,
+        backgroundColor: "#182553",
+        padding: 10,
+        borderRadius: 5,
+      },
+      headerText: {
+        color: "#fff",
+        fontWeight: "bold",
+      },
+      row: {
+        flexDirection: "row",
+        padding: 10,
+        borderBottomWidth: 0.2,
+        borderBottomColor: "#ccc",
+        gap: 10,
+      },
+      cell1: {
+        flex: 1,
+        textAlign: "left",
+        fontWeight: "bold"
+      },
+      cell2: {
+        flex: 4,
+        textAlign: "left",
+      },
+      cell3: {
+        flex: 5,
+        textAlign: "left",
+      },
 });

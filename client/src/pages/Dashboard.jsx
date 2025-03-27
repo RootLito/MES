@@ -117,12 +117,12 @@ const Dashboard = () => {
         <div className="grid grid-cols-3 gap-10 flex-1">
           <div className="card bg-white shadow-sm">
             <div className="card-body flex flex-col justify-between">
-              <p className="font-black text-xl text-blue-200">Highlight</p>
+              <p className="font-black text-xl text-blue-950">Highlight</p>
               <div className="data">
-                <p className="text-5xl font-black text-blue-100">
+                <p className="text-5xl font-black text-blue-950">
                   {fiveStarPercentage}%
                 </p>
-                <p className="text-md italic font-semibold text-blue-200 text-center mt-2">
+                <p className="text-md italic font-semibold text-gray-500 text-center mt-2">
                   Satisfied Rating <br />({fiveStarCount} out of{" "}
                   {ratings.length})
                 </p>

@@ -3,8 +3,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MdCheckCircle } from "react-icons/md";
 
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 const Survey = () => {
   const navigate = useNavigate();
+  const [startDate, setStartDate] = useState(new Date());
 
   const [formData, setFormData] = useState({
     form: {
@@ -88,7 +93,61 @@ const Survey = () => {
     },
   });
 
-  const [loading, setLoading] = useState(false)
+  const [provinces, setProvinces] = useState([]);
+  const [municipalities, setMunicipalities] = useState([]);
+  const [barangays, setBarangays] = useState([]);
+
+  // Fetch provinces filtered by regionCode 110000000
+  useEffect(() => {
+    fetch("https://psgc.gitlab.io/api/provinces")
+      .then((res) => res.json())
+      .then((data) => {
+        const filteredProvinces = data.filter(
+          (prov) => prov.regionCode === "110000000"
+        );
+        setProvinces(filteredProvinces);
+      })
+      .catch((err) => console.error("Error fetching provinces:", err));
+  }, []);
+
+  // Handle province selection and fetch municipalities
+  const handleProvinceChange = (e) => {
+    const selectedProvince = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      form: {
+        ...prev.form,
+        province: selectedProvince,
+        municipality: "",
+        baranggay: "",
+      },
+    }));
+
+    fetch(
+      `https://psgc.gitlab.io/api/provinces/${selectedProvince}/municipalities`
+    )
+      .then((res) => res.json())
+      .then((data) => setMunicipalities(data))
+      .catch((err) => console.error("Error fetching municipalities:", err));
+  };
+
+  // Handle municipality selection and fetch barangays
+  const handleMunicipalityChange = (e) => {
+    const selectedMunicipality = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      form: { ...prev.form, municipality: selectedMunicipality, baranggay: "" },
+    }));
+
+    fetch(
+      `https://psgc.gitlab.io/api/municipalities/${selectedMunicipality}/barangays`
+    )
+      .then((res) => res.json())
+      .then((data) => setBarangays(data))
+      .catch((err) => console.error("Error fetching barangays:", err));
+  };
+
+  const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
   const handleChange = (event) => {
@@ -119,7 +178,7 @@ const Survey = () => {
       console.error(
         "Error occurred:",
         err.response ? err.response.data : err.message
-      )
+      );
     } finally {
       setLoading(false);
     }
@@ -137,7 +196,9 @@ const Survey = () => {
       {showToast && (
         <div className="toast toast-top toast-center z-2">
           <div className="alert alert-success">
-            <span className="flex items-center text-green-50"><MdCheckCircle size={18} className="mr-2" /> Form submitted</span>
+            <span className="flex items-center text-green-50">
+              <MdCheckCircle size={18} className="mr-2" /> Form submitted
+            </span>
           </div>
         </div>
       )}
@@ -148,6 +209,8 @@ const Survey = () => {
         <h2 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 bg-blue-950 p-2">
           BENEFICIARY INFORMATION
         </h2>
+
+        
 
         <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
@@ -251,35 +314,62 @@ const Survey = () => {
         </div>
 
         <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
+          {/* Province Dropdown */}
           <div className="flex flex-col flex-1">
             <p className="text-sm">Province</p>
-            <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+            <select
               name="province"
               value={formData.form.province}
-              onChange={handleChange}
-            />
+              onChange={handleProvinceChange}
+              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+            >
+              <option value="" disabled>Select Province</option>
+              {provinces.map((prov) => (
+                <option key={prov.code} value={prov.code}>
+                  {prov.name}
+                </option>
+              ))}
+            </select>
           </div>
+
+          {/* Municipality Dropdown */}
           <div className="flex flex-col flex-1">
             <p className="text-sm">Municipality</p>
-            <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+            <select
               name="municipality"
               value={formData.form.municipality}
-              onChange={handleChange}
-            />
+              onChange={handleMunicipalityChange}
+              disabled={!formData.form.province}
+              className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none 
+        ${!formData.form.province ? "bg-gray-200 cursor-not-allowed" : ""}`}
+            >
+              <option value="" disabled>Select Municipality</option>
+              {municipalities.map((mun) => (
+                <option key={mun.code} value={mun.code}>
+                  {mun.name}
+                </option>
+              ))}
+            </select>
           </div>
+
+          {/* Barangay Dropdown */}
           <div className="flex flex-col flex-1">
-            <p className="text-sm">Baranggay</p>
-            <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+            <p className="text-sm">Barangay</p>
+            <select
               name="baranggay"
               value={formData.form.baranggay}
               onChange={handleChange}
-            />
+              disabled={!formData.form.municipality}
+              className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none 
+        ${!formData.form.municipality ? "bg-gray-200 cursor-not-allowed" : ""}`}
+            >
+              <option value="" disabled>Select Barangay</option>
+              {barangays.map((brgy) => (
+                <option key={brgy.code} value={brgy.code}>
+                  {brgy.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -371,7 +461,7 @@ const Survey = () => {
             <p className="text-sm">No. of Units Received</p>
             <input
               type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="noUnitsReceived"
               value={formData.form.noUnitsReceived}
               onChange={handleChange}
@@ -379,13 +469,8 @@ const Survey = () => {
           </div>
           <div className="flex flex-col flex-1">
             <p className="text-sm">Date Received/Implemented</p>
-            <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="dateReceived"
-              value={formData.form.dateReceived}
-              onChange={handleChange}
-            />
+            {/* <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"/> */}
+            <input type="date" className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"/>
           </div>
         </div>
 
@@ -1710,7 +1795,7 @@ const Survey = () => {
         <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
             <p className="text-sm sm:indent-5 flex-1">
-              Rating on Sustainability
+              Please specify
             </p>
           </div>
           <div className="flex flex-col flex-1 gap-2">
