@@ -14,8 +14,7 @@ import Icon from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
-import RadioGroup from "react-native-radio-buttons-group";
-import { Rating, AirbnbRating } from "react-native-ratings";
+import { Rating } from "react-native-ratings";
 
 export default function Monitoring() {
   const [isConnected, setIsConnected] = useState(null);
@@ -125,19 +124,7 @@ export default function Monitoring() {
               <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                   <Text style={styles.label}>Civil Status</Text>
-                  <RNPickerSelect
-                    onValueChange={(value) =>
-                      console.log("Selected Sex:", value)
-                    }
-                    items={[
-                      { label: "Male", value: "male" },
-                      { label: "Female", value: "female" },
-                      { label: "Other", value: "other" },
-                    ]}
-                  />
-                </View>
-                <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>Sex</Text>
+                  
                   <RNPickerSelect
                     onValueChange={(value) =>
                       console.log("Selected Civil Status:", value)
@@ -147,6 +134,18 @@ export default function Monitoring() {
                       { label: "Married", value: "married" },
                       { label: "Divorced", value: "divorced" },
                       { label: "Widowed", value: "widowed" },
+                    ]}
+                  />
+                </View>
+                <View style={{ flex: 1, flexDirection: "column" }}>
+                  <Text style={styles.label}>Sex</Text>
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      console.log("Selected Sex:", value)
+                    }
+                    items={[
+                      { label: "Male", value: "male" },
+                      { label: "Female", value: "female" },
                     ]}
                   />
                 </View>
@@ -824,9 +823,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  //   formContainer: {
-  //     padding: 10,
-  //   },
 
   label: {
     marginTop: 14,

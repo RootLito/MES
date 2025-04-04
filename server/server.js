@@ -5,23 +5,10 @@ const mongoose = require( 'mongoose' )
 const surveyRoutes = require('./routes/surveyRoute')
 
 
-
-
-
-
-
-
 // VARIABLE DECLARATION
 const app = express()
 const db = process.env.ATLAS_URI
 const port = process.env.PORT || 5000
-
-
-
-
-
-
-
 
 
 // MIDDLEWARE
@@ -29,19 +16,8 @@ app.use(cors())
 app.use(express.json())
 
 
-
-
-
-
-
-
 // ROUTES
 app.use('/survey', surveyRoutes);
-
-
-
-
-
 
 
 // DB CONNECTION 
@@ -52,9 +28,6 @@ mongoose.connect(db)
     .catch((err) => {
         console.log('Error connecting to MongoDB Atlas: ' + err)
     })
-
-
-
 
 
 // START SERVER 

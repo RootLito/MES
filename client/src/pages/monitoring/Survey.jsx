@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MdCheckCircle } from "react-icons/md";
 
-
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -210,8 +209,6 @@ const Survey = () => {
           BENEFICIARY INFORMATION
         </h2>
 
-        
-
         <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
             <p className="text-sm">Name</p>
@@ -323,7 +320,9 @@ const Survey = () => {
               onChange={handleProvinceChange}
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
             >
-              <option value="" disabled>Select Province</option>
+              <option value="" disabled>
+                Select Province
+              </option>
               {provinces.map((prov) => (
                 <option key={prov.code} value={prov.code}>
                   {prov.name}
@@ -343,7 +342,9 @@ const Survey = () => {
               className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none 
         ${!formData.form.province ? "bg-gray-200 cursor-not-allowed" : ""}`}
             >
-              <option value="" disabled>Select Municipality</option>
+              <option value="" disabled>
+                Select Municipality
+              </option>
               {municipalities.map((mun) => (
                 <option key={mun.code} value={mun.code}>
                   {mun.name}
@@ -363,7 +364,9 @@ const Survey = () => {
               className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none 
         ${!formData.form.municipality ? "bg-gray-200 cursor-not-allowed" : ""}`}
             >
-              <option value="" disabled>Select Barangay</option>
+              <option value="" disabled>
+                Select Barangay
+              </option>
               {barangays.map((brgy) => (
                 <option key={brgy.code} value={brgy.code}>
                   {brgy.name}
@@ -470,7 +473,10 @@ const Survey = () => {
           <div className="flex flex-col flex-1">
             <p className="text-sm">Date Received/Implemented</p>
             {/* <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"/> */}
-            <input type="date" className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"/>
+            <input
+              type="date"
+              className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
+            />
           </div>
         </div>
 
@@ -524,7 +530,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="quantity"
-                value="Yes"
+                value="sufficient"
                 onChange={handleChange}
                 required
               />
@@ -534,7 +540,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="quantity"
-                value="No"
+                value="not sufficient"
                 onChange={handleChange}
                 required
               />
@@ -596,7 +602,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="quality"
-                value="Yes"
+                value="no defects"
                 onChange={handleChange}
                 required
               />
@@ -606,7 +612,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="quality"
-                value="No"
+                value="has defects"
                 onChange={handleChange}
                 required
               />
@@ -762,7 +768,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="uponRequest"
-                value="< 6 Months"
+                value="provided upon request (<6 months)"
                 onChange={handleChange}
                 required
               />
@@ -772,7 +778,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="uponRequest"
-                value="< 1 Year"
+                value="not provided upon request (<1 yeear)"
                 onChange={handleChange}
                 required
               />
@@ -1794,9 +1800,7 @@ const Survey = () => {
 
         <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
-            <p className="text-sm sm:indent-5 flex-1">
-              Please specify
-            </p>
+            <p className="text-sm sm:indent-5 flex-1">Please specify</p>
           </div>
           <div className="flex flex-col flex-1 gap-2">
             <div className="flex gap-2 text-sm">

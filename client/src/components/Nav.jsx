@@ -14,16 +14,25 @@ const Nav = () => {
       <h2 className="font-black text-gray-600">BFAR XI</h2>
 
       <div className="">
-        <div className="dropdown dropdown-end mr-2">
+        <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
             <div className="indicator text-gray-600">
               <MdOutlineNotificationsNone size={24} />
-              {/* <span className="badge badge-error badge-sm text-white indicator-item">
-                8
-              </span> */}
             </div>
           </div>
 
+          
+          <div
+            tabIndex={0}
+            className="card card-compact dropdown-content bg-base-100 z-1 mt-3 w-52 shadow"
+          >
+            <div className="card-body">
+              <span className="text-sm text-center text-error">Under Development</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="dropdown dropdown-end mr-2">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
             <div className="indicator text-gray-600">
               <MdOutlineSettings size={24} />
@@ -34,14 +43,14 @@ const Nav = () => {
             className="card card-compact dropdown-content bg-base-100 z-1 mt-3 w-52 shadow"
           >
             <div className="card-body">
-              <span className="text-lg font-bold">8 Items</span>
-              <span className="text-info">Subtotal: $999</span>
-              <div className="card-actions">
-                <button className="btn btn-primary btn-block">View cart</button>
-              </div>
+              <span className="text-sm text-center text-error">Under Development</span>
             </div>
           </div>
         </div>
+
+
+
+
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}

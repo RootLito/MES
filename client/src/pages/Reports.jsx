@@ -53,39 +53,59 @@ const Reports = () => {
     );
   }
 
-  const exportExcel = async () => {
+  const exportToExcel = async () => {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Survey Data");
+    const worksheet = workbook.addWorksheet("Surveys");
 
-    const headers = [
-      "Respondent No.",
-      "Province/City",
-      "Municipality/District",
-      "Baranggay",
-      "Project Received",
-      "Specific Project",
-      "No. of Units Received",
-      "Remarks on Sufficiency",
-      "Remarks on Quality",
-    ];
+    // Add headers
+    worksheet.mergeCells("A1:A2");
+    worksheet.getCell("A1").value = "No.";
+    worksheet.mergeCells("B1:D1");
+    worksheet.getCell("B1").value = "Location";
+    worksheet.mergeCells("E1:E2");
+    worksheet.getCell("E1").value = "Project Received";
+    worksheet.mergeCells("F1:F2");
+    worksheet.getCell("F1").value = "Specific Project";
+    worksheet.mergeCells("G1:G2");
+    worksheet.getCell("G1").value = "No. of Units Received";
+    worksheet.mergeCells("H1:J1");
+    worksheet.getCell("H1").value = "Efficiency of the Project";
+    worksheet.mergeCells("K1:L1");
+    worksheet.getCell("K1").value = "Relevance of the Project";
+    worksheet.mergeCells("M1:N1");
+    worksheet.getCell("M1").value = "Coherence of the Project";
+    worksheet.mergeCells("O1:P1");
+    worksheet.getCell("O1").value = "Effectiveness of the Project";
+    worksheet.mergeCells("Q1:W1");
+    worksheet.getCell("Q1").value = "Impact of the Project";
+    worksheet.mergeCells("X1:Y1");
+    worksheet.getCell("X1").value = "Sustainability of the Project";
+    worksheet.mergeCells("Z1:Z2");
+    worksheet.getCell("Z1").value = "Needs Assessment";
+    worksheet.mergeCells("AA1:AA2");
+    worksheet.getCell("AA1").value = "Evaluator's Note";
 
-    const headerRow = worksheet.addRow(headers);
-
-    headerRow.eachCell((cell) => {
-      cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
-      cell.fill = {
-        type: "pattern",
-        pattern: "solid",
-        fgColor: { argb: "FF4F81BD" },
-      };
-      cell.alignment = { horizontal: "center" };
-      cell.border = {
-        top: { style: "thin" },
-        left: { style: "thin" },
-        bottom: { style: "thin" },
-        right: { style: "thin" },
-      };
-    });
+    worksheet.getCell("B2").value = "Province/City";
+    worksheet.getCell("C2").value = "Municipality/District";
+    worksheet.getCell("D2").value = "Baranggay";
+    worksheet.getCell("H2").value = "Remarks on Sufficiency";
+    worksheet.getCell("I2").value = "Remarks on Quality";
+    worksheet.getCell("J2").value = "Remarks on Timeliness";
+    worksheet.getCell("K2").value = "Remarks on Relevance";
+    worksheet.getCell("L2").value = "Remarks on Sustainability";
+    worksheet.getCell("M2").value = "Remarks on Coherance";
+    worksheet.getCell("N2").value = "Remarks on Project Duplication";
+    worksheet.getCell("O2").value = "Remarks on Satisfaction";
+    worksheet.getCell("P2").value = "Problems Encountered during Project Implementation";
+    worksheet.getCell("Q2").value = "Catch/Yield in Kgs";
+    worksheet.getCell("R2").value = "Remarks on Contribution to Production";
+    worksheet.getCell("S2").value = "Species Caught (Capture Only)";
+    worksheet.getCell("T2").value = "Income in Php";
+    worksheet.getCell("U2").value = "Improvement in Family/Household";
+    worksheet.getCell("V2").value = "Improvement in Association";
+    worksheet.getCell("W2").value = "Improvement in Community";
+    worksheet.getCell("X2").value = "Remarks on Sustainability";
+    worksheet.getCell("Y2").value = "Availability of Market";
 
     surveys.forEach((survey, index) => {
       const row = worksheet.addRow([
@@ -95,33 +115,28 @@ const Reports = () => {
         survey.baranggay,
         survey.projectReceived,
         survey.specProject,
-        survey.unitsReceived || "N/A",
-        survey.remarksSufficiency || "N/A",
-        survey.remarksQuality || "N/A",
+        survey.noUnitsReceived,
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.specProject, // Replace with actual data
+        survey.q12,
+        survey.note,
       ]);
-
-      row.getCell(1).alignment = { horizontal: "center" };
-
-      if (index % 2 === 0) {
-        row.eachCell((cell) => {
-          cell.fill = {
-            type: "pattern",
-            pattern: "solid",
-            fgColor: { argb: "FFF2F2F2" },
-          };
-        });
-      }
-    });
-
-    worksheet.columns.forEach((column) => {
-      column.width = 20;
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    saveAs(blob, "ReportSummary.xlsx");
+    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "MONITORING & EVALUATION DATA.xlsx");
   };
 
   return (
@@ -145,7 +160,7 @@ const Reports = () => {
           <div className="flex gap-2">
             <button
               className="btn btn-success w-32 text-green-50"
-              onClick={exportExcel}
+              onClick={exportToExcel}
             >
               <MdFileOpen /> Export
             </button>
@@ -187,67 +202,26 @@ const Reports = () => {
                 <th className="py-2 whitespace-nowrap text-center" colSpan="2">
                   Coherence of the Project
                 </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
+                <th className="py-2 whitespace-nowrap text-center" colSpan="2">
+                  Effectiveness of the Project
                 </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
+                <th className="py-2 whitespace-nowrap text-center" colSpan="7">
+                  Impact of the Project
                 </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
+
+                <th className="py-2 whitespace-nowrap text-center" colSpan="2">
+                  Sustainability of the Project
                 </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
+
+                <th className="py-2 whitespace-nowrap text-center" rowSpan={2}>
+                  Needs Assessment
                 </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
-                </th>
-                <th className="py-2 whitespace-nowrap">
-                  No. of Units Received
+
+                <th className="py-2 whitespace-nowrap text-center" rowSpan={2}>
+                  Evaluator's Note
                 </th>
               </tr>
+
               <tr className="bg-blue-900 text-white">
                 <th className="py-2 whitespace-nowrap">Province/City</th>
                 <th className="py-2 whitespace-nowrap">
@@ -272,8 +246,44 @@ const Reports = () => {
                 <th className="py-2 whitespace-nowrap">
                   Remarks on Project Duplication
                 </th>
+
+                <th className="py-2 whitespace-nowrap">
+                  Remarks on Satisfaction
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  Problems Encountered during Project Implementation
+                </th>
+
+                <th className="py-2 whitespace-nowrap">Catch/Yield in Kgs</th>
+
+                <th className="py-2 whitespace-nowrap">
+                  Remarks on Contribution to Production
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  Species Caught (Capture Only)
+                </th>
+
+                <th className="py-2 whitespace-nowrap">Income in Php</th>
+                <th className="py-2 whitespace-nowrap">
+                  Improvement in Family/Household
+                </th>
+
+                <th className="py-2 whitespace-nowrap">
+                  Improvement in Association
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  Improvement in Community
+                </th>
+
+                <th className="py-2 whitespace-nowrap">
+                  Remarks on Sustainability
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  Availability of Market
+                </th>
               </tr>
             </thead>
+
             <tbody>
               {surveys.map((survey, index) => (
                 <tr key={index} className="py-0">
@@ -290,10 +300,8 @@ const Reports = () => {
                     {survey.specProject}
                   </td>
 
-
-
                   <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
+                    {survey.noUnitsReceived}
                   </td>
                   <td className="py-2 whitespace-nowrap">
                     {survey.specProject}
@@ -349,52 +357,8 @@ const Reports = () => {
                   <td className="py-2 whitespace-nowrap">
                     {survey.specProject}
                   </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  
+                  <td className="py-2 whitespace-nowrap">{survey.q12}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.note}</td>
                 </tr>
               ))}
             </tbody>
