@@ -24,7 +24,7 @@ const Dashboard = () => {
 
   const fetchSurveys = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/survey");
+      const response = await axios.get("https://bfar-server.onrender.com/survey");
       const surveys = response.data;
       setTotalRes(surveys.length);
 
@@ -107,55 +107,49 @@ const Dashboard = () => {
       ],
     },
   };
+  
 
-  const barData = {
-    series: [
-      {
-        data: [302, 201, 448],
-      },
-    ],
-    options: {
-      chart: {
-        type: "bar",
-        height: "100%",
-        toolbar: {
-          show: false,
-        },
-        padding: {
-          bottom: 0,
-        },
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 0,
-          horizontal: true,
-        },
-      },
-      dataLabels: {
-        enabled: true,
-      },
-      yaxis: {
-        categories: ["Fishing", "Agri", "Others"],
-        labels: { 
-            style: {
-              fontSize: '14px' ,
-            }
+  const [barData, setBarData] = useState(null);
+
+  useEffect(() => {
+    // Simulating data fetch
+    setTimeout(() => {
+      setBarData({
+        series: [{ data: [302, 201, 448] }],
+        options: {
+          chart: {
+            type: "bar",
+            height: "100%",
+            toolbar: { show: false },
+            padding: { bottom: 0 },
+            animations: {
+              enabled: true,
+              easing: "easeinout",
+              speed: 5000, // 3 seconds duration
+            },
           },
-      },
-      xaxis: {
-        categories: ["Fishing", "Agri", "Others"],
-      },
-      tooltip: {
-        y: {
-          title: {
-            formatter: function (seriesName) {
-              return 'Total:'; 
-            }
-          }
-        }
-      }
-    },
-  };
+          plotOptions: {
+            bar: { borderRadius: 0, horizontal: true },
+          },
+          dataLabels: { enabled: true },
+          yaxis: {
+            categories: ["Fishing", "Agri", "Others"],
+            labels: { style: { fontSize: "14px" } },
+          },
+          xaxis: {
+            categories: ["Fishing", "Agri", "Others"],
+          },
+          tooltip: {
+            y: {
+              title: {
+                formatter: () => "Total:",
+              },
+            },
+          },
+        },
+      });
+    }, 5000);
+  }, [location.pathname]);
 
   return (
     <div className="w-full h-full flex gap-10 p-10">
@@ -222,14 +216,21 @@ const Dashboard = () => {
             <FaCoins size={22} className="text-blue-950" />
             <p className="font-black text-xl text-blue-950"> Income Source</p>
           </div>
-          <div className="flex-1">
-            <ReactApexChart
-              options={barData.options}
-              series={barData.series}
-              type="bar"
-              width="100%"
-              height="100%"
-            />
+          <div className="flex-1 flex items-center justify-center">
+            {barData ? (
+              <div className="flex-1 h-full">
+                <ReactApexChart
+                  key={JSON.stringify(barData)}
+                  options={barData.options}
+                  series={barData.series}
+                  type="bar"
+                  width="100%"
+                  height="100%"
+                />
+              </div>
+            ) : (
+              <span class="loading loading-spinner loading-xl"></span>
+            )}
           </div>
         </div>
       </div>
