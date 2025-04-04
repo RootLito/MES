@@ -81,38 +81,54 @@ const Dashboard = () => {
     fetchSurveys();
   }, [location.pathname]);
 
-  const chartData = {
-    series: data.map((item) => item.value),
-    options: {
-      chart: {
-        type: "donut",
-      },
-      labels: data.map((item) => item.name),
-      legend: {
-        position: "bottom",
-        horizontalAlign: "center",
-        itemMargin: {
-          horizontal: 10,
-        },
-      },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            legend: {
-              position: "bottom",
-            },
+  const [chartData, setChartData] = useState(null);
+
+useEffect(() => {
+  // Reset donut chart on route change
+  setChartData(null);
+
+  setTimeout(() => {
+    setChartData({
+      series: data.map((item) => item.value),
+      options: {
+        chart: {
+          type: "donut",
+          animations: {
+            enabled: true,
+            easing: "easeinout",
+            speed: 2000, 
+            animateGradually: { enabled: true, delay: 200 },
+            dynamicAnimation: { enabled: true, speed: 1000 },
           },
         },
-      ],
-    },
-  };
+        labels: data.map((item) => item.name),
+        legend: {
+          position: "bottom",
+          horizontalAlign: "center",
+          itemMargin: {
+            horizontal: 10,
+          },
+        },
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              legend: {
+                position: "bottom",
+              },
+            },
+          },
+        ],
+      },
+    });
+  }, 1000); 
+}, [location.pathname, data]); 
+
   
 
   const [barData, setBarData] = useState(null);
 
   useEffect(() => {
-    // Simulating data fetch
     setTimeout(() => {
       setBarData({
         series: [{ data: [302, 201, 448] }],
@@ -125,7 +141,7 @@ const Dashboard = () => {
             animations: {
               enabled: true,
               easing: "easeinout",
-              speed: 5000, // 3 seconds duration
+              speed: 1000,
             },
           },
           plotOptions: {
@@ -148,7 +164,7 @@ const Dashboard = () => {
           },
         },
       });
-    }, 5000);
+    }, 1000);
   }, [location.pathname]);
 
   return (
@@ -160,16 +176,22 @@ const Dashboard = () => {
               <FaCalendarDay size={20} className="text-blue-950" />
               <p className="font-black text-xl text-blue-950">Age Bracket</p>
             </div>
-
-            <div className="flex-1 p-2">
-              <ReactApexChart
+            <div className="flex-1 flex items-center justify-center">
+            {barData ? (
+              <div className="flex-1 p-2">
+                <ReactApexChart
                 options={chartData.options}
                 series={chartData.series}
                 type="donut"
                 width="100%"
                 height="100%"
               />
-            </div>
+              </div>
+            ) : (
+              <span class="loading loading-spinner loading-xl"></span>
+            )}
+          </div>
+
           </div>
 
           <div className="flex flex-col p-6 rounded-box bg-white shadow-sm">
