@@ -165,7 +165,7 @@ const Survey = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/survey/add",
+        "https://bfar-server.onrender.com/survey/add",
         formData.form
       );
       console.log("Response:", res.data);
@@ -218,27 +218,45 @@ const Survey = () => {
               name="name"
               value={formData.form.name}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="flex flex-col sm:w-[150px]">
             <p className="text-sm">Civil Status</p>
-            <input
-              type="text"
+            <select
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="civilStatus"
               value={formData.form.civilStatus}
               onChange={handleChange}
-            />
+              required
+            >
+              <option value="" disabled>
+                Select Status
+              </option>
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+              <option value="Widowed">Widowed</option>
+              <option value="Divorced">Divorced</option>
+              <option value="Separated">Separated</option>
+            </select>
           </div>
+
           <div className="flex flex-col sm:w-[150px]">
             <p className="text-sm">Sex</p>
-            <input
-              type="text"
+            <select
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="sex"
               value={formData.form.sex}
               onChange={handleChange}
-            />
+              required
+            >
+              <option value="" disabled>
+                Select Sex
+              </option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              {/* <option value="Other">Other</option> */}
+            </select>
           </div>
           <div className="flex flex-col sm:w-[150px]">
             <p className="text-sm">Age</p>
@@ -250,6 +268,7 @@ const Survey = () => {
               onChange={handleChange}
               inputMode="numeric"
               pattern="[0-9]*"
+              required
             />
           </div>
         </div>
@@ -258,11 +277,12 @@ const Survey = () => {
           <div className="flex flex-col flex-1">
             <p className="text-sm">No. of Household Members</p>
             <input
-              type="text"
+              type="number"
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="hhMember"
               value={formData.form.hhMember}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="flex flex-col flex-1">
@@ -273,6 +293,7 @@ const Survey = () => {
               name="fishR"
               value={formData.form.fishR}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="flex flex-col flex-1">
@@ -283,6 +304,7 @@ const Survey = () => {
               name="boatR"
               value={formData.form.boatR}
               onChange={handleChange}
+              required
             />
           </div>
         </div>
@@ -296,16 +318,18 @@ const Survey = () => {
               name="nameAssoc"
               value={formData.form.nameAssoc}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="flex flex-col">
             <p className="text-sm">Total No. of Memebers</p>
             <input
-              type="text"
+              type="number"
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="totalMember"
               value={formData.form.totalMember}
               onChange={handleChange}
+              required
             />
           </div>
         </div>
@@ -319,6 +343,7 @@ const Survey = () => {
               value={formData.form.province}
               onChange={handleProvinceChange}
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              required
             >
               <option value="" disabled>
                 Select Province
@@ -339,6 +364,7 @@ const Survey = () => {
               value={formData.form.municipality}
               onChange={handleMunicipalityChange}
               disabled={!formData.form.province}
+              required
               className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none 
         ${!formData.form.province ? "bg-gray-200 cursor-not-allowed" : ""}`}
             >
@@ -361,6 +387,7 @@ const Survey = () => {
               value={formData.form.baranggay}
               onChange={handleChange}
               disabled={!formData.form.municipality}
+              required
               className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none 
         ${!formData.form.municipality ? "bg-gray-200 cursor-not-allowed" : ""}`}
             >
@@ -387,6 +414,7 @@ const Survey = () => {
                   name="projectReceived"
                   value="Capture"
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="flex gap-2">
@@ -396,6 +424,7 @@ const Survey = () => {
                   name="projectReceived"
                   value="Aquaculture"
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="flex gap-2">
@@ -405,6 +434,7 @@ const Survey = () => {
                   name="projectReceived"
                   value="Post-harvest"
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="flex gap-2">
@@ -414,6 +444,7 @@ const Survey = () => {
                   name="projectReceived"
                   value="Small-scale"
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="flex gap-2">
@@ -423,6 +454,7 @@ const Survey = () => {
                   name="projectReceived"
                   value="Medium-scale"
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="flex gap-2">
@@ -432,6 +464,7 @@ const Survey = () => {
                   name="projectReceived"
                   value="Large-scale"
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="flex gap-2">
@@ -441,6 +474,7 @@ const Survey = () => {
                   name="projectReceived"
                   value="Others"
                   onChange={handleChange}
+                  required
                 />
               </div>
             </div>
@@ -455,43 +489,27 @@ const Survey = () => {
               name="specProject"
               value={formData.form.specProject}
               onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
-          <div className="flex flex-col flex-1">
-            <p className="text-sm">No. of Units Received</p>
-            <input
-              type="text"
-              className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="noUnitsReceived"
-              value={formData.form.noUnitsReceived}
-              onChange={handleChange}
+              required
             />
           </div>
           <div className="flex flex-col flex-1">
-            <p className="text-sm">Date Received/Implemented</p>
-            {/* <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"/> */}
-            <input
-              type="date"
-              className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
-          <div className="flex flex-col flex-1">
-            <p className="text-sm">Main Source if Income</p>
-            <input
-              type="text"
+            <p className="text-sm">Income Source</p>
+            <select
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="mainIncome"
               value={formData.form.mainIncome}
               onChange={handleChange}
-            />
+              required
+            >
+              <option value="" disabled>
+                Select Income Source
+              </option>
+              <option value="Fishing">Fishing</option>
+              <option value="Agri">Agri</option>
+              <option value="Others">Others</option>
+            </select>
           </div>
-          <div className="flex flex-col flex-1">
+          {/* <div className="flex flex-col flex-1">
             <p className="text-sm">Other Source of Income</p>
             <input
               type="text"
@@ -500,10 +518,36 @@ const Survey = () => {
               value={formData.form.otherIncome}
               onChange={handleChange}
             />
+          </div> */}
+        </div>
+
+        <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
+          <div className="flex flex-col flex-1">
+            <p className="text-sm">No. of Units Received</p>
+            <input
+              type="number"
+              className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              name="noUnitsReceived"
+              value={formData.form.noUnitsReceived}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="flex flex-col flex-1">
+            <p className="text-sm">Date Received/Implemented</p>
+            {/* <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"/> */}
+            <input
+              type="date"
+              name="dateReceived"
+              value={formData.dateReceived}
+              onChange={handleChange}
+              className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
+              required
+            />
           </div>
         </div>
 
-        <p className="text-sm italic ml-2 px-5 mt-2 sm:mt-0">
+        <p className="text-sm italic mt-2 sm:mt-0 text-center">
           Note: Please provide GPS of beneficiary and/or project implemented
         </p>
 
@@ -554,11 +598,11 @@ const Survey = () => {
               value={formData.form.quantityReason}
               onChange={handleChange}
               required={
-                formData.form.quantity == "No"
+                formData.form.quantity == "not sufficient"
                   ? true
                   : (formData.form.quantityReason = "")
               }
-              disabled={formData.form.quantity == "Yes" ? true : false}
+              disabled={formData.form.quantity == "sufficient" ? true : false}
             />
           </div>
         </div>
@@ -626,11 +670,11 @@ const Survey = () => {
               value={formData.form.qualityReason}
               onChange={handleChange}
               required={
-                formData.form.quality == "No"
+                formData.form.quality == "has defects"
                   ? true
                   : (formData.form.qualityReason = "")
               }
-              disabled={formData.form.quality == "Yes" ? true : false}
+              disabled={formData.form.quality == "no defects" ? true : false}
             />
           </div>
         </div>

@@ -19,9 +19,13 @@ const surveySchema = new Schema({
   projectReceived: { type: String, required: true },
   specProject: { type: String, required: true },
   noUnitsReceived: { type: Number, required: true },
-  dateReceived: { type: String, required: true },
+  dateReceived: { type: Date, required: true },
   mainIncome: { type: String, required: true },
-  otherIncome: { type: String, required: true },
+//   otherIncome: { type: String, required: true },
+
+
+
+
   quantity: { type: String, required: true },
   quantityReason: { type: String },
   quantityRating: { type: Number, min: 1, max: 5, required: true },

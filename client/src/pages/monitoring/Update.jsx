@@ -16,7 +16,7 @@ const Update = () => {
 
         const fetchData = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/survey/${id}`)
+                const res = await axios.get(`https://bfar-server.onrender.com/survey/${id}`)
                 setData(res.data)
             }
             catch (err) {

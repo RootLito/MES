@@ -84,7 +84,6 @@ const Dashboard = () => {
   const [chartData, setChartData] = useState(null);
 
 useEffect(() => {
-  // Reset donut chart on route change
   setChartData(null);
 
   setTimeout(() => {
@@ -96,9 +95,15 @@ useEffect(() => {
           animations: {
             enabled: true,
             easing: "easeinout",
-            speed: 2000, 
-            animateGradually: { enabled: true, delay: 200 },
-            dynamicAnimation: { enabled: true, speed: 1000 },
+            speed: 1500, 
+            animateGradually: {
+              enabled: true,
+              delay: 200,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 1000, 
+            },
           },
         },
         labels: data.map((item) => item.name),

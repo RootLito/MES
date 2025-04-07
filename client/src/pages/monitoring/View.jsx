@@ -12,7 +12,7 @@ const View = () => {
   useEffect(() => {
     const fetchSurvey = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/survey/${id}`);
+        const response = await axios.get(`https://bfar-server.onrender.com/survey/${id}`);
         setSurvey(response.data);
       } catch (err) {
         console.log("Error fetching survey data:", err);
