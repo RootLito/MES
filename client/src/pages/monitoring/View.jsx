@@ -1,13 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { MdKeyboardBackspace } from "react-icons/md";
+import { useReactToPrint } from "react-to-print";
 import { format } from "date-fns";
 
 const View = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [survey, setSurvey] = useState(null);
+  const contentRef = useRef(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
 
   useEffect(() => {
     const fetchSurvey = async () => {
@@ -32,7 +35,7 @@ const View = () => {
 
   return (
     <div className="p-10">
-      <div className="w-full mx-auto p-10 flex flex-col relative bg-base-100 rounded-md">
+      <div className="w-full mx-auto p-5 flex flex-col relative bg-white rounded-md">
         <MdKeyboardBackspace
           className="text-2xl cursor-pointer text-red-600"
           onClick={() => navigate("/lists/")}
@@ -42,18 +45,36 @@ const View = () => {
         </p>
 
         <div className="max-w-[900px] mx-auto flex  mt-12 justify-end gap-2 py-2">
-          <button className="btn btn-error text-white">Export PDF</button>
-          <button className="btn btn-success text-white">Print</button>
+          <button
+            className="btn btn-success text-white w-100"
+            onClick={() => reactToPrintFn()}
+          >
+            Print and Export
+          </button>
         </div>
 
-        
-        <form className="flex flex-col">
-          <div className="overflow-x-auto rounded-box bg-base-100 pb-24">
-            <h2 className="mt-10 mb-5 font-black bg-blue-950 block text-white p-2">
-              BENEFICIARY INFORMATION
+        <form ref={contentRef} className="flex flex-col p-5" id="form">
+          <div className="head text-center">
+            <h2 className="text-blue-950 font-black">
+              BUREAU OF FISHERIES AND AQUATIC RESOURCES XI
             </h2>
-            <table className="table border-0">
+            <p className="text-blue-950 font-semibold text-sm">
+              Fiel Monitoring and Evaluation Form
+            </p>
+            <p className="text-xs">
+              <i>(for beneficiaries)</i>
+            </p>
+          </div>
+          <div className="overflow-x-auto rounded-box bg-base-100">
+            <table className="table table-xs mt-6">
               <tbody>
+                <tr >
+                  <td colSpan={4}>
+                  <h2 className="font-black bg-blue-950 block text-white p-2">
+                    BENEFICIARY INFORMATION
+                  </h2>
+                  </td>
+                </tr>
                 <tr>
                   <td>
                     Name of Respondent: <b>{survey.name}</b>
@@ -131,12 +152,13 @@ const View = () => {
               </tbody>
             </table>
 
-            <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
-              EFFICIENCY OF THE PROJECT
-            </h2>
-
-            <table className="table">
+            <table className="table table-xs">
               <tbody>
+                <tr>
+                  <h2 className="font-black bg-blue-950 block text-white p-2">
+                    EFFICIENCY OF THE PROJECT
+                  </h2>
+                </tr>
                 <tr>
                   <td>
                     <b>1. Quantity and quality of goods/project received</b>
@@ -204,9 +226,11 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10 mb-5 font-black bg-blue-950 block text-white p-2">
-                  RELEVANCE OF THE PROJECT
-                </h2>
+                <tr>
+                  <span className="font-black bg-blue-950 block text-white p-2">
+                    RELEVANCE OF THE PROJECT
+                  </span>
+                </tr>
 
                 <tr>
                   <td>
@@ -251,9 +275,11 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
-                  COHERENCE OF THE PROJECT
-                </h2>
+                <tr>
+                  <h2 className="font-black bg-blue-950 block text-white p-2">
+                    COHERENCE OF THE PROJECT
+                  </h2>
+                </tr>
 
                 <tr>
                   <td>
@@ -293,9 +319,11 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
-                  EFFECTIVENESS OF THE PROJECT
-                </h2>
+                <tr>
+                  <h2 className="font-black bg-blue-950 block text-white p-2">
+                    EFFECTIVENESS OF THE PROJECT
+                  </h2>
+                </tr>
 
                 <tr>
                   <td>
@@ -351,9 +379,11 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
-                  IMPACT OF THE PROJECT
-                </h2>
+                <tr>
+                  <h2 className="font-black bg-blue-950 block text-white p-2">
+                    IMPACT OF THE PROJECT
+                  </h2>
+                </tr>
 
                 <tr>
                   <td>
@@ -472,9 +502,11 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
-                  SUSTAINABILITY OF THE PROJECT
-                </h2>
+                <tr>
+                  <h2 className="font-black bg-blue-950 block text-white p-2">
+                    SUSTAINABILITY OF THE PROJECT
+                  </h2>
+                </tr>
 
                 <tr>
                   <td>
@@ -525,9 +557,11 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
-                  NEEDS ASSESSMENT
-                </h2>
+                <tr>
+                  <h2 className="font-black bg-blue-950 block text-white p-2">
+                    NEEDS ASSESSMENT
+                  </h2>
+                </tr>
 
                 <tr>
                   <td>
