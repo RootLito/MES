@@ -1,15 +1,9 @@
 import { React, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MdCheckCircle } from "react-icons/md";
-
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const Survey = () => {
-  const navigate = useNavigate();
-  const [startDate, setStartDate] = useState(new Date());
-
   const [formData, setFormData] = useState({
     form: {
       name: "",
@@ -25,11 +19,14 @@ const Survey = () => {
       municipality: "",
       baranggay: "",
       projectReceived: "",
+      scale: "",
       specProject: "",
       noUnitsReceived: "",
       dateReceived: "",
       mainIncome: "",
       otherIncome: "",
+      lat: "",
+      lon: "",
 
       quantity: "",
       quantityReason: "",
@@ -42,6 +39,7 @@ const Survey = () => {
       q2Reason: "",
       timelinessRating: "",
       uponRequest: "",
+      duration: "",
 
       q3: "",
       q3Reason: "",
@@ -92,25 +90,56 @@ const Survey = () => {
     },
   });
 
+  const [loading, setLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const [provinces, setProvinces] = useState([]);
+  const [cities, setCities] = useState([]);
   const [municipalities, setMunicipalities] = useState([]);
   const [barangays, setBarangays] = useState([]);
+  const [areaType, setAreaType] = useState();
 
-  // Fetch provinces filtered by regionCode 110000000
+  const capture = [
+    "Hook & Line Gears",
+    "Net Gears",
+    "Motorized Boat",
+    "Shallow-Water Payao",
+    "Fry Dozer",
+  ];
+
+  const aquaculture = [
+    "Freshwater Tilapia Fingerlings",
+    "Saline Tilapia Fingerlings",
+    "Milkfish Fingerlings",
+    "Cages for Livelihood",
+    "Hito Fingerlings",
+    "Other Fingerlings",
+    "Tilapia Fingerlings for Broodstock Development",
+    "Tilapia Broodstock",
+    "Milkfish Broodstock",
+  ];
+
+  const postHarvest = [
+    "Fish Drying Set",
+    "Fish Deboning Set",
+    "Freezing Equipment",
+  ];
+
+  const technologyDemonstration = ["Specify"];
+
+  //   FETCH PROVINCES ----------------------
   useEffect(() => {
-    fetch("https://psgc.gitlab.io/api/provinces")
-      .then((res) => res.json())
-      .then((data) => {
-        const filteredProvinces = data.filter(
-          (prov) => prov.regionCode === "110000000"
-        );
-        setProvinces(filteredProvinces);
+    axios
+      .get("https://psgc.cloud/api/regions/1100000000/provinces")
+      .then((res) => {
+        setProvinces(res.data);
       })
-      .catch((err) => console.error("Error fetching provinces:", err));
+      .catch((err) => {
+        console.error("Error fetching provinces:", err);
+      });
   }, []);
 
-  // Handle province selection and fetch municipalities
-  const handleProvinceChange = (e) => {
+  //   FETCH CITY/MUNICIPALITY ----------------------
+  const handleProvinceChange = async (e) => {
     const selectedProvince = e.target.value;
     setFormData((prev) => ({
       ...prev,
@@ -122,33 +151,64 @@ const Survey = () => {
       },
     }));
 
-    fetch(
-      `https://psgc.gitlab.io/api/provinces/${selectedProvince}/municipalities`
-    )
-      .then((res) => res.json())
-      .then((data) => setMunicipalities(data))
-      .catch((err) => console.error("Error fetching municipalities:", err));
+    try {
+      const [munRes, cityRes] = await Promise.all([
+        axios.get(
+          `https://psgc.cloud/api/provinces/${selectedProvince}/municipalities`
+        ),
+        axios.get(
+          `https://psgc.cloud/api/provinces/${selectedProvince}/cities`
+        ),
+      ]);
+
+      setMunicipalities(munRes.data);
+      setCities(cityRes.data);
+    } catch (err) {
+      console.error("Error fetching municipalities and cities:", err);
+    }
   };
 
-  // Handle municipality selection and fetch barangays
-  const handleMunicipalityChange = (e) => {
-    const selectedMunicipality = e.target.value;
+  //   FETCH BARANGGAY ----------------------
+  const handleMunicipalityChange = async (e) => {
+    const selectedArea = e.target.value;
+
+    const isCity = cities.some((city) => city.code === selectedArea);
+    const isMunicipality = municipalities.some(
+      (mun) => mun.code === selectedArea
+    );
+    if (isCity) {
+      setAreaType("City");
+    } else if (isMunicipality) {
+      setAreaType("Municipality");
+    } else {
+      setAreaType(undefined);
+    }
     setFormData((prev) => ({
       ...prev,
-      form: { ...prev.form, municipality: selectedMunicipality, baranggay: "" },
+      form: {
+        ...prev.form,
+        municipality: selectedArea,
+        barangay: "",
+      },
     }));
-
-    fetch(
-      `https://psgc.gitlab.io/api/municipalities/${selectedMunicipality}/barangays`
-    )
-      .then((res) => res.json())
-      .then((data) => setBarangays(data))
-      .catch((err) => console.error("Error fetching barangays:", err));
+    let type = isCity ? "City" : isMunicipality ? "Municipality" : null;
+    try {
+      let url = "";
+      if (type === "Municipality") {
+        url = `https://psgc.cloud/api/municipalities/${selectedArea}/barangays`;
+      } else if (type === "City") {
+        url = `https://psgc.cloud/api/cities/${selectedArea}/barangays`;
+      }
+      if (url) {
+        const response = await axios.get(url);
+        setBarangays(response.data);
+      }
+    } catch (err) {
+      console.error("Error fetching barangays:", err);
+    }
   };
 
-  const [loading, setLoading] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-
+  // INPUT -----------------------------------
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({
@@ -159,13 +219,14 @@ const Survey = () => {
     }));
   };
 
+  //   SUBMIT FORM ----------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       const res = await axios.post(
-        "https://bfar-server.onrender.com/survey/add",
+        "http://localhost:5000/survey/add",
         formData.form
       );
       console.log("Response:", res.data);
@@ -183,13 +244,9 @@ const Survey = () => {
     }
   };
 
-  const onClick = (link) => {
-    navigate(link);
-  };
-
   return (
-    <div className="max-w-[900px] mx-auto p-5 flex flex-col relative bg-white rounded-md">
-      <p className="text-2xl font-bold text-center">
+    <div className="p-5 flex flex-col relative bg-white rounded-md">
+      <p className="text-2xl font-bold text-center mt-2 text-gray-700">
         Field Monitoring and Evaluation Form
       </p>
       {showToast && (
@@ -255,7 +312,6 @@ const Survey = () => {
               </option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              {/* <option value="Other">Other</option> */}
             </select>
           </div>
           <div className="flex flex-col sm:w-[150px]">
@@ -335,7 +391,6 @@ const Survey = () => {
         </div>
 
         <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
-          {/* Province Dropdown */}
           <div className="flex flex-col flex-1">
             <p className="text-sm">Province</p>
             <select
@@ -346,7 +401,7 @@ const Survey = () => {
               required
             >
               <option value="" disabled>
-                Select Province
+                - - Select - -
               </option>
               {provinces.map((prov) => (
                 <option key={prov.code} value={prov.code}>
@@ -356,9 +411,8 @@ const Survey = () => {
             </select>
           </div>
 
-          {/* Municipality Dropdown */}
           <div className="flex flex-col flex-1">
-            <p className="text-sm">Municipality</p>
+            <p className="text-sm">Municipality / City</p>
             <select
               name="municipality"
               value={formData.form.municipality}
@@ -366,20 +420,36 @@ const Survey = () => {
               disabled={!formData.form.province}
               required
               className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none 
-        ${!formData.form.province ? "bg-gray-200 cursor-not-allowed" : ""}`}
+      ${!formData.form.province ? "bg-gray-200 cursor-not-allowed" : ""}`}
             >
               <option value="" disabled>
-                Select Municipality
+                - - Select - -
               </option>
-              {municipalities.map((mun) => (
-                <option key={mun.code} value={mun.code}>
-                  {mun.name}
-                </option>
-              ))}
+
+              {cities.length > 0 && (
+                <>
+                  <option disabled>--- Cities ---</option>
+                  {cities.map((city) => (
+                    <option key={city.code} value={city.code}>
+                      {city.name}
+                    </option>
+                  ))}
+                </>
+              )}
+
+              {municipalities.length > 0 && (
+                <>
+                  <option disabled>--- Municipalities ---</option>
+                  {municipalities.map((mun) => (
+                    <option key={mun.code} value={mun.code}>
+                      {mun.name}
+                    </option>
+                  ))}
+                </>
+              )}
             </select>
           </div>
 
-          {/* Barangay Dropdown */}
           <div className="flex flex-col flex-1">
             <p className="text-sm">Barangay</p>
             <select
@@ -392,10 +462,10 @@ const Survey = () => {
         ${!formData.form.municipality ? "bg-gray-200 cursor-not-allowed" : ""}`}
             >
               <option value="" disabled>
-                Select Barangay
+                - - Select - -
               </option>
               {barangays.map((brgy) => (
-                <option key={brgy.code} value={brgy.code}>
+                <option key={brgy.code} value={brgy.name}>
                   {brgy.name}
                 </option>
               ))}
@@ -408,8 +478,11 @@ const Survey = () => {
             <p className="text-sm">Project Received</p>
             <div className="flex flex-col gap-2 sm:flex-row sm:gap-5 ">
               <div className="flex gap-2 mt-2 sm:mt-0">
-                <p>Capture</p>
+                <label htmlFor="capture" className="cursor-pointer">
+                  Capture
+                </label>
                 <input
+                  id="capture"
                   type="radio"
                   name="projectReceived"
                   value="Capture"
@@ -418,8 +491,11 @@ const Survey = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <p>Aquaculture</p>
+                <label htmlFor="aquaculture" className="cursor-pointer">
+                  Aquaculture
+                </label>
                 <input
+                  id="aquaculture"
                   type="radio"
                   name="projectReceived"
                   value="Aquaculture"
@@ -428,8 +504,11 @@ const Survey = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <p>Post-harvest</p>
+                <label htmlFor="postHarvest" className="cursor-pointer">
+                  Post-harvest
+                </label>
                 <input
+                  id="postHarvest"
                   type="radio"
                   name="projectReceived"
                   value="Post-harvest"
@@ -438,38 +517,11 @@ const Survey = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <p>Small-scale</p>
+                <label htmlFor="others" className="cursor-pointer">
+                  Others
+                </label>
                 <input
-                  type="radio"
-                  name="projectReceived"
-                  value="Small-scale"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="flex gap-2">
-                <p>Medium-scale</p>
-                <input
-                  type="radio"
-                  name="projectReceived"
-                  value="Medium-scale"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="flex gap-2">
-                <p>Large-scale</p>
-                <input
-                  type="radio"
-                  name="projectReceived"
-                  value="Large-scale"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="flex gap-2">
-                <p>Others</p>
-                <input
+                  id="others"
                   type="radio"
                   name="projectReceived"
                   value="Others"
@@ -481,17 +533,75 @@ const Survey = () => {
           </div>
         </div>
         <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
+          {formData.form.projectReceived === "Aquaculture" && (
+            <div className="flex flex-col flex-1">
+              <p className="text-sm">Scale</p>
+
+              <select
+                className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none`}
+                name="scale"
+                value={formData.form.scale}
+                onChange={handleChange}
+                required
+                disabled={formData.form.projectReceived !== "Aquaculture"}
+              >
+                <option value="" disabled>
+                  - - Select - -
+                </option>
+                <option value="Small-scale">Small-scale</option>
+                <option value="Medium-scale">Medium-scale</option>
+                <option value="Large-scale">Large-scale</option>
+              </select>
+            </div>
+          )}
+
+          {/* SPECIFIC RPOJECT==================================== */}
           <div className="flex flex-col flex-1">
             <p className="text-sm">Specific Project</p>
-            <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="specProject"
-              value={formData.form.specProject}
-              onChange={handleChange}
-              required
-            />
+            {formData.form.projectReceived === "Others" ? (
+              <input
+                type="text"
+                name="specProject"
+                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                placeholder="Please specify"
+              />
+            ) : (
+              <select
+                className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none`}
+                name="specProject"
+                value={formData.form.specProject}
+                onChange={handleChange}
+              >
+                <option value="" disabled>
+                  - - Select - -
+                </option>
+
+                {formData.form.projectReceived === "Capture" &&
+                  capture.map((item, index) => (
+                    <option key={index} value={item}>
+                      {item}
+                    </option>
+                  ))}
+
+                {formData.form.projectReceived === "Aquaculture" &&
+                  aquaculture.map((item, index) => (
+                    <option key={index} value={item}>
+                      {item}
+                    </option>
+                  ))}
+
+                {formData.form.projectReceived === "Post-harvest" &&
+                  postHarvest.map((item, index) => (
+                    <option key={index} value={item}>
+                      {item}
+                    </option>
+                  ))}
+              </select>
+            )}
           </div>
+        </div>
+
+        <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
             <p className="text-sm">Income Source</p>
             <select
@@ -502,23 +612,26 @@ const Survey = () => {
               required
             >
               <option value="" disabled>
-                Select Income Source
+                - - Select - -
               </option>
               <option value="Fishing">Fishing</option>
               <option value="Agri">Agri</option>
               <option value="Others">Others</option>
             </select>
           </div>
-          {/* <div className="flex flex-col flex-1">
-            <p className="text-sm">Other Source of Income</p>
+          <div className="flex flex-col flex-1">
+            <p className="text-sm">If others, please specify</p>
             <input
+              name="otherIncome"
               type="text"
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="otherIncome"
+              placeholder="Please specify"
               value={formData.form.otherIncome}
               onChange={handleChange}
+              required={formData.form.mainIncome === "Others"} 
+              disabled={formData.form.mainIncome !== "Others"} 
             />
-          </div> */}
+          </div>
         </div>
 
         <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
@@ -535,13 +648,36 @@ const Survey = () => {
           </div>
           <div className="flex flex-col flex-1">
             <p className="text-sm">Date Received/Implemented</p>
-            {/* <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"/> */}
             <input
               type="date"
               name="dateReceived"
               value={formData.dateReceived}
               onChange={handleChange}
               className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
+              required
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
+          <div className="flex flex-col flex-1">
+            <p className="text-sm">Latitude</p>
+            <input
+              name="lat"
+              type="number"
+              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              value={formData.form.lat}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="flex flex-col flex-1">
+            <p className="text-sm">Longitude</p>
+            <input
+              name="lon"
+              type="number"
+              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              value={formData.form.lon}
+              onChange={handleChange}
               required
             />
           </div>
@@ -792,7 +928,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="uponRequest"
-                value="Yes"
+                value="provided upon request"
                 onChange={handleChange}
                 required
               />
@@ -802,17 +938,24 @@ const Survey = () => {
               <input
                 type="radio"
                 name="uponRequest"
-                value="No"
+                value="not provided upon request"
                 onChange={handleChange}
                 required
               />
               No
             </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
+          <div className="flex flex-col flex-1">
+            <p className="text-sm sm:indent-5">Duration</p>
+          </div>
+          <div className="flex flex-col flex-1 gap-2">
             <div className="flex gap-2 text-sm">
               <input
                 type="radio"
-                name="uponRequest"
-                value="provided upon request (<6 months)"
+                name="duration"
+                value="(<6 months)"
                 onChange={handleChange}
                 required
               />
@@ -821,8 +964,8 @@ const Survey = () => {
             <div className="flex gap-2 text-sm">
               <input
                 type="radio"
-                name="uponRequest"
-                value="not provided upon request (<1 yeear)"
+                name="duration"
+                value="(<1 yeear)"
                 onChange={handleChange}
                 required
               />
@@ -831,8 +974,8 @@ const Survey = () => {
             <div className="flex gap-2 text-sm">
               <input
                 type="radio"
-                name="uponRequest"
-                value="> 1 Year"
+                name="duration"
+                value="(> 1 Year)"
                 onChange={handleChange}
                 required
               />
@@ -856,7 +999,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q3"
-                value="Yes"
+                value="addressed the need"
                 onChange={handleChange}
                 required
               />
@@ -866,7 +1009,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q3"
-                value="No"
+                value="did not addressed the need"
                 onChange={handleChange}
                 required
               />
@@ -880,9 +1023,11 @@ const Survey = () => {
               value={formData.form.q3Reason}
               onChange={handleChange}
               required={
-                formData.form.q3 == "No" ? true : (formData.form.q3Reason = "")
+                formData.form.q3 == "did not addressed the need"
+                  ? true
+                  : (formData.form.q3Reason = "")
               }
-              disabled={formData.form.q3 == "Yes" ? true : false}
+              disabled={formData.form.q3 == "addressed the need" ? true : false}
             />
           </div>
         </div>
@@ -947,7 +1092,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q4"
-                value="Yes"
+                value="suitable for the area"
                 onChange={handleChange}
                 required
               />
@@ -957,7 +1102,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q4"
-                value="No"
+                value="not suitable for the area"
                 onChange={handleChange}
                 required
               />
@@ -971,9 +1116,13 @@ const Survey = () => {
               value={formData.form.q4Reason}
               onChange={handleChange}
               required={
-                formData.form.q4 == "No" ? true : (formData.form.q4Reason = "")
+                formData.form.q4 == "not suitable for the area"
+                  ? true
+                  : (formData.form.q4Reason = "")
               }
-              disabled={formData.form.q4 == "Yes" ? true : false}
+              disabled={
+                formData.form.q4 == "suitable for the area" ? true : false
+              }
             />
           </div>
         </div>
@@ -996,7 +1145,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q5"
-                value="Yes"
+                value="well-aware of the type of project given"
                 onChange={handleChange}
                 required
               />
@@ -1006,7 +1155,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q5"
-                value="No"
+                value="not aware of the type of project given"
                 onChange={handleChange}
                 required
               />
@@ -1020,9 +1169,15 @@ const Survey = () => {
               value={formData.form.q5Reason}
               onChange={handleChange}
               required={
-                formData.form.q5 == "No" ? true : (formData.form.q5Reason = "")
+                formData.form.q5 == "not aware of the type of project given"
+                  ? true
+                  : (formData.form.q5Reason = "")
               }
-              disabled={formData.form.q5 == "Yes" ? true : false}
+              disabled={
+                formData.form.q5 == "well-aware of the type of project given"
+                  ? true
+                  : false
+              }
             />
           </div>
         </div>
@@ -1078,7 +1233,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q6"
-                value="No"
+                value="none"
                 onChange={handleChange}
                 required
               />
@@ -1122,7 +1277,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q7Satisfied"
-                value="Yes"
+                value="satisfied by the project"
                 onChange={handleChange}
                 required
               />
@@ -1132,7 +1287,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q7Satisfied"
-                value="No"
+                value="not satisfied by the project"
                 onChange={handleChange}
                 required
               />
@@ -1146,11 +1301,15 @@ const Survey = () => {
               value={formData.form.q7_1}
               onChange={handleChange}
               required={
-                formData.form.q7Satisfied == "No"
+                formData.form.q7Satisfied == "not satisfied by the project"
                   ? true
                   : (formData.form.q7_1 = "")
               }
-              disabled={formData.form.q7Satisfied == "Yes" ? true : false}
+              disabled={
+                formData.form.q7Satisfied == "satisfied by the project"
+                  ? true
+                  : false
+              }
             />
           </div>
         </div>
@@ -1250,7 +1409,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q8"
-                value="No"
+                value="none"
                 onChange={handleChange}
                 required
               />
@@ -1293,7 +1452,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q9_1"
-                value="Yes"
+                value="yes"
                 onChange={handleChange}
                 required
               />
@@ -1303,7 +1462,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q9_1"
-                value="No"
+                value="no"
                 onChange={handleChange}
                 required
               />
@@ -1327,11 +1486,11 @@ const Survey = () => {
               value={formData.form.q9_1Spec}
               onChange={handleChange}
               required={
-                formData.form.q9_1 == "Yes"
+                formData.form.q9_1 == "yes" || "no"
                   ? true
-                  : (formData.form.q9_1Spec = "")
+                  : formData.form.q9_1Spec == "N/A"
               }
-              disabled={formData.form.q9_1 == "Yes" ? false : true}
+              disabled={formData.form.q9_1 == "N/A" ? true : false}
             />
           </div>
         </div>
@@ -1348,7 +1507,7 @@ const Survey = () => {
               name="q9_2"
               value={formData.form.q9_2}
               onChange={handleChange}
-              required
+              //   required
             />
           </div>
         </div>
@@ -1365,7 +1524,7 @@ const Survey = () => {
               name="q9_3"
               value={formData.form.q9_3}
               onChange={handleChange}
-              required
+              //   required
             />
           </div>
         </div>
@@ -1399,7 +1558,7 @@ const Survey = () => {
               name="q9_5"
               value={formData.form.q9_5}
               onChange={handleChange}
-              required
+              //   required
             />
           </div>
         </div>
@@ -1416,7 +1575,7 @@ const Survey = () => {
               name="q9_6"
               value={formData.form.q9_6}
               onChange={handleChange}
-              required
+              //   required
             />
           </div>
         </div>
@@ -1464,7 +1623,7 @@ const Survey = () => {
               name="q9_8"
               value={formData.form.q9_8}
               onChange={handleChange}
-              required
+              //   required
             />
           </div>
         </div>
@@ -1482,7 +1641,7 @@ const Survey = () => {
               name="q9_9"
               value={formData.form.q9_9}
               onChange={handleChange}
-              required
+              //   required
             />
           </div>
         </div>
@@ -1498,7 +1657,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q9_10"
-                value="Yes"
+                value="yes"
                 onChange={handleChange}
                 required
               />
@@ -1508,7 +1667,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q9_10"
-                value="No"
+                value="no"
                 onChange={handleChange}
                 required
               />
@@ -1517,42 +1676,44 @@ const Survey = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
-          <div className="flex-1"></div>
+        {formData.form.q9_10 == "yes" && (
+          <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
+            <div className="flex-1"></div>
 
-          <div className="flex flex-row flex-1 gap-6">
-            <div className="flex gap-2 text-sm items-center">
-              <input
-                type="radio"
-                name="q9_11"
-                value="Consumption"
-                onChange={handleChange}
-                required
-              />
-              Consumption
-            </div>
-            <div className="flex gap-2 text-sm items-center">
-              <input
-                type="radio"
-                name="q9_11"
-                value="Education"
-                onChange={handleChange}
-                required
-              />
-              Education
-            </div>
-            <div className="flex gap-2 text-sm items-center">
-              <input
-                type="radio"
-                name="q9_11"
-                value="Other HH needs"
-                onChange={handleChange}
-                required
-              />
-              Other HH needs
+            <div className="flex flex-row flex-1 gap-6">
+              <div className="flex gap-2 text-sm items-center">
+                <input
+                  type="radio"
+                  name="q9_11"
+                  value="Consumption"
+                  onChange={handleChange}
+                  required
+                />
+                Consumption
+              </div>
+              <div className="flex gap-2 text-sm items-center">
+                <input
+                  type="radio"
+                  name="q9_11"
+                  value="Education"
+                  onChange={handleChange}
+                  required
+                />
+                Education
+              </div>
+              <div className="flex gap-2 text-sm items-center">
+                <input
+                  type="radio"
+                  name="q9_11"
+                  value="Other HH needs"
+                  onChange={handleChange}
+                  required
+                />
+                Other HH needs
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
@@ -1565,7 +1726,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q9_12"
-                value="Yes"
+                value="yes"
                 onChange={handleChange}
                 required
               />
@@ -1575,7 +1736,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q9_12"
-                value="No"
+                value="N/A"
                 onChange={handleChange}
                 required
               />
@@ -1583,40 +1744,53 @@ const Survey = () => {
             </div>
           </div>
         </div>
-
-        <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
-          <div className="flex-1"></div>
-          <div className="flex flex-col flex-1 gap-2">
-            <div className="flex gap-2 text-sm">
-              <input
-                type="radio"
-                name="q9_13"
-                value="Improved Skills/Knowledge"
-                onChange={handleChange}
-                required
-              />
-              Improved Skills/Knowledge
+        {formData.form.q9_12 == "yes" && (
+          <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
+            <div className="flex-1"></div>
+            <div className="flex flex-col flex-1 gap-2">
+              <div className="flex gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="q9_13"
+                  value="Improved Skills/Knowledge"
+                  onChange={handleChange}
+                  required
+                />
+                Improved Skills/Knowledge
+              </div>
+              <div className="flex gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="q9_13"
+                  value="From Association to Coop"
+                  onChange={handleChange}
+                  required
+                />
+                From Association to Coop
+              </div>
+              <div className="flex gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="q9_13"
+                  value="others"
+                  onChange={handleChange}
+                  required
+                />
+                Others
+              </div>
+              {formData.form.q9_13 == "others" && (
+                <input
+                  type="text"
+                  className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                  placeholder="Others (please specify)"
+                  name="q9_13other"
+                  value={formData.form.q9_13other}
+                  onChange={handleChange}
+                />
+              )}
             </div>
-            <div className="flex gap-2 text-sm">
-              <input
-                type="radio"
-                name="q9_13"
-                value="From Association to Coop"
-                onChange={handleChange}
-                required
-              />
-              From Association to Coop
-            </div>
-            <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="Others (please specify)"
-              name="q9_13other"
-              value={formData.form.q9_13other}
-              onChange={handleChange}
-            />
           </div>
-        </div>
+        )}
 
         <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
@@ -1629,7 +1803,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q9_14"
-                value="Yes"
+                value="yes"
                 onChange={handleChange}
                 required
               />
@@ -1639,7 +1813,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q9_14"
-                value="No"
+                value="none"
                 onChange={handleChange}
                 required
               />
@@ -1655,15 +1829,17 @@ const Survey = () => {
               />
               N/A
             </div>
-            <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="Please specify"
-              name="q9_12Spec"
-              value={formData.form.q9_12Spec}
-              onChange={handleChange}
-              required
-            />
+            {formData.form.q9_14 == "yes" && (
+              <input
+                type="text"
+                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                placeholder="Please specify"
+                name="q9_12Spec"
+                value={formData.form.q9_12Spec}
+                onChange={handleChange}
+                required
+              />
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
@@ -1709,7 +1885,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q10"
-                value="Yes"
+                value="fully utilized"
                 onChange={handleChange}
                 required
               />
@@ -1737,7 +1913,7 @@ const Survey = () => {
                   ? true
                   : (formData.form.q10Reason = "")
               }
-              disabled={formData.form.q10 == "Yes" ? true : false}
+              disabled={formData.form.q10 == "fully utilized" ? true : false}
             />
           </div>
         </div>
@@ -1823,7 +1999,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q11"
-                value="Yes"
+                value="yes"
                 onChange={handleChange}
                 required
               />
@@ -1833,7 +2009,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q11"
-                value="No"
+                value="N/A"
                 onChange={handleChange}
                 required
               />
@@ -1842,43 +2018,46 @@ const Survey = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
-          <div className="flex flex-col flex-1">
-            <p className="text-sm sm:indent-5 flex-1">Please specify</p>
+        {formData.form.q11 == "yes" && (
+          <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
+            <div className="flex flex-col flex-1">
+              <p className="text-sm sm:indent-5 flex-1">Please specify</p>
+            </div>
+            <div className="flex flex-col flex-1 gap-2">
+              <div className="flex gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="q11_1"
+                  value="Vending"
+                  onChange={handleChange}
+                  required={formData.form.q11 == "Yes" ? true : false}
+                />
+                Vending
+              </div>
+              <div className="flex gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="q11_1"
+                  value="Local Market"
+                  onChange={handleChange}
+                  required={formData.form.q11 == "Yes" ? true : false}
+                />
+                Local Market
+              </div>
+              <div className="flex gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="q11_1"
+                  value="Trader/Consignee"
+                  onChange={handleChange}
+                  required={formData.form.q11 == "Yes" ? true : false}
+                />
+                Trader/Consignee
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col flex-1 gap-2">
-            <div className="flex gap-2 text-sm">
-              <input
-                type="radio"
-                name="q11_1"
-                value="Vending"
-                onChange={handleChange}
-                required={formData.form.q11 == "Yes" ? true : false}
-              />
-              Vending
-            </div>
-            <div className="flex gap-2 text-sm">
-              <input
-                type="radio"
-                name="q11_1"
-                value="Local Market"
-                onChange={handleChange}
-                required={formData.form.q11 == "Yes" ? true : false}
-              />
-              Local Market
-            </div>
-            <div className="flex gap-2 text-sm">
-              <input
-                type="radio"
-                name="q11_1"
-                value="Trader/Consignee"
-                onChange={handleChange}
-                required={formData.form.q11 == "Yes" ? true : false}
-              />
-              Trader/Consignee
-            </div>
-          </div>
-        </div>
+        )}
+
         {/* SUSTAINABILITY OF THE PROJECT================================================================= */}
         <h1 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 mt-5 bg-blue-950 p-2">
           NEEDS ASSESSMENT

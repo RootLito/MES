@@ -216,10 +216,10 @@ const List = () => {
                   <td className="flex gap-3 text-xl">
                     <MdVisibility
                       className="text-green-600 cursor-pointer"
-                      onClick={() => navigate(`/monitoring/view/${survey._id}`)} />
+                      onClick={() => navigate(`/lists/view/${survey._id}`)} />
                     <MdEditDocument
                       className="text-primary cursor-pointer"
-                      onClick={() => navigate(`/monitoring/update/${survey._id}`)}
+                      onClick={() => navigate(`/lists/update/${survey._id}`)}
                     />
                     <MdDeleteForever
                       className="text-error cursor-pointer"

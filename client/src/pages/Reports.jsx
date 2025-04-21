@@ -16,10 +16,12 @@ const Reports = () => {
   const contentRef = useRef(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
 
+  const tableRef = useRef();
+
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const response = await axios.get("https://bfar-server.onrender.com/survey");
+        const response = await axios.get("http://localhost:5000/survey");
         setSurveys(response.data);
         setTotalRes(response.data.length);
       } catch (err) {
@@ -53,62 +55,90 @@ const Reports = () => {
     );
   }
 
-  const exportToExcel = async () => {
+  const exportToExcel = async (surveys) => {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Surveys");
+    const worksheet = workbook.addWorksheet("Survey Data");
 
-    // Add headers
+    // Set row 1 directly to avoid being pushed
+    worksheet.getRow(1).values = [
+      "No.",
+      "Location",
+      "",
+      "",
+      "Project Received",
+      "Specific Project",
+      "No. of Units Received",
+      "Efficiency of the Project",
+      "",
+      "",
+      "Relevance of the Project",
+      "",
+      "Coherence of the Project",
+      "",
+      "Effectiveness of the Project",
+      "",
+      "Impact of the Project",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "Sustainability of the Project",
+      "",
+      "Needs Assessment",
+      "Evaluator's Note",
+    ];
+
+    // Merge top headers (same as your original)
     worksheet.mergeCells("A1:A2");
-    worksheet.getCell("A1").value = "No.";
     worksheet.mergeCells("B1:D1");
-    worksheet.getCell("B1").value = "Location";
     worksheet.mergeCells("E1:E2");
-    worksheet.getCell("E1").value = "Project Received";
     worksheet.mergeCells("F1:F2");
-    worksheet.getCell("F1").value = "Specific Project";
     worksheet.mergeCells("G1:G2");
-    worksheet.getCell("G1").value = "No. of Units Received";
     worksheet.mergeCells("H1:J1");
-    worksheet.getCell("H1").value = "Efficiency of the Project";
     worksheet.mergeCells("K1:L1");
-    worksheet.getCell("K1").value = "Relevance of the Project";
     worksheet.mergeCells("M1:N1");
-    worksheet.getCell("M1").value = "Coherence of the Project";
     worksheet.mergeCells("O1:P1");
-    worksheet.getCell("O1").value = "Effectiveness of the Project";
     worksheet.mergeCells("Q1:W1");
-    worksheet.getCell("Q1").value = "Impact of the Project";
     worksheet.mergeCells("X1:Y1");
-    worksheet.getCell("X1").value = "Sustainability of the Project";
     worksheet.mergeCells("Z1:Z2");
-    worksheet.getCell("Z1").value = "Needs Assessment";
     worksheet.mergeCells("AA1:AA2");
-    worksheet.getCell("AA1").value = "Evaluator's Note";
 
-    worksheet.getCell("B2").value = "Province/City";
-    worksheet.getCell("C2").value = "Municipality/District";
-    worksheet.getCell("D2").value = "Baranggay";
-    worksheet.getCell("H2").value = "Remarks on Sufficiency";
-    worksheet.getCell("I2").value = "Remarks on Quality";
-    worksheet.getCell("J2").value = "Remarks on Timeliness";
-    worksheet.getCell("K2").value = "Remarks on Relevance";
-    worksheet.getCell("L2").value = "Remarks on Sustainability";
-    worksheet.getCell("M2").value = "Remarks on Coherance";
-    worksheet.getCell("N2").value = "Remarks on Project Duplication";
-    worksheet.getCell("O2").value = "Remarks on Satisfaction";
-    worksheet.getCell("P2").value = "Problems Encountered during Project Implementation";
-    worksheet.getCell("Q2").value = "Catch/Yield in Kgs";
-    worksheet.getCell("R2").value = "Remarks on Contribution to Production";
-    worksheet.getCell("S2").value = "Species Caught (Capture Only)";
-    worksheet.getCell("T2").value = "Income in Php";
-    worksheet.getCell("U2").value = "Improvement in Family/Household";
-    worksheet.getCell("V2").value = "Improvement in Association";
-    worksheet.getCell("W2").value = "Improvement in Community";
-    worksheet.getCell("X2").value = "Remarks on Sustainability";
-    worksheet.getCell("Y2").value = "Availability of Market";
+    // Set row 2 (subheaders)
+    worksheet.getRow(2).values = [
+      "", // for No.
+      "Municipality/District",
+      "Baranggay",
+      "Province/City",
+      "",
+      "",
+      "",
+      "Remarks on Sufficiency",
+      "Remarks on Quality",
+      "Remarks on Timeliness",
+      "Remarks on Relevance",
+      "Remarks on Sustainability",
+      "Remarks on Coherance",
+      "Remarks on Project Duplication",
+      "Remarks on Satisfaction",
+      "Problems Encountered",
+      "Catch/Yield in Kgs",
+      "Contribution to Production",
+      "Species Caught",
+      "Income in Php",
+      "Improvement in Family",
+      "Improvement in Association",
+      "Improvement in Community",
+      "Remarks on Sustainability",
+      "Availability of Market",
+      "",
+      "",
+    ];
 
+    // Populate rows
     surveys.forEach((survey, index) => {
-      const row = worksheet.addRow([
+      worksheet.addRow([
         index + 1,
         survey.province,
         survey.municipality,
@@ -116,27 +146,48 @@ const Reports = () => {
         survey.projectReceived,
         survey.specProject,
         survey.noUnitsReceived,
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
-        survey.specProject, // Replace with actual data
+        survey.quantity,
+        survey.quality,
+        survey.uponRequest,
+        survey.q3,
+        survey.q4,
+        survey.q5,
+        survey.q6 === "Yes" ? survey.q6Reason : survey.q6,
+        survey.q7Satisfied,
+        survey.q8 === "none" ? survey.q8 : survey.q8Reason,
+        survey.q9_3,
+        survey.q9_4,
+        survey.q9_1 !== "N/A" ? survey.q9_1Spec : survey.q9_1,
+        "", // q9_9 not included
+        survey.q9_10 === "yes" ? survey.q9_11 : survey.q9_10,
+        survey.q9_12 === "yes"
+          ? survey.q9_13 === "others"
+            ? survey.q9_13other
+            : survey.q9_13
+          : survey.q9_12,
+        survey.q9_14 === "yes" ? survey.q9_12Spec : survey.q9_14,
+        survey.q10 === "No" ? survey.q10Reason : survey.q10,
+        survey.q11 === "yes" ? survey.q11_1 : survey.q11,
         survey.q12,
         survey.note,
       ]);
     });
 
+    // Format header rows
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(2).font = { bold: true };
+    worksheet.columns.forEach((col) => {
+      col.width = 20;
+      col.alignment = {
+        vertical: "middle",
+        horizontal: "center",
+        wrapText: true,
+      };
+    });
+
     const buffer = await workbook.xlsx.writeBuffer();
-    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "MONITORING & EVALUATION DATA.xlsx");
+    const blob = new Blob([buffer], { type: "application/octet-stream" });
+    saveAs(blob, "survey_data.xlsx");
   };
 
   return (
@@ -160,7 +211,7 @@ const Reports = () => {
           <div className="flex gap-2">
             <button
               className="btn btn-success w-32 text-green-50"
-              onClick={exportToExcel}
+              onClick={() => exportToExcel(surveys)}
             >
               <MdFileOpen /> Export
             </button>
@@ -174,7 +225,7 @@ const Reports = () => {
           ref={contentRef}
           className="overflow-x-auto border border-base-content/5 bg-base-100 text-xs"
         >
-          <table className="table table-zebra text-sm">
+          <table ref={tableRef} className="table table-zebra text-sm">
             <thead>
               <tr className="bg-blue-950 text-white">
                 <th className="py-2 whitespace-nowrap" rowSpan="2">
@@ -303,59 +354,49 @@ const Reports = () => {
                   <td className="py-2 whitespace-nowrap">
                     {survey.noUnitsReceived}
                   </td>
+                  <td className="py-2 whitespace-nowrap">{survey.quantity}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.quality}</td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
+                    {survey.uponRequest}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">{survey.q3}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.q4}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.q5}</td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.q6 === "Yes" ? survey.q6Reason : survey.q6}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
+                    {survey.q7Satisfied}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
+                    {survey.q8 === "none" ? survey.q8 : survey.q8Reason}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">{survey.q9_3}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.q9_4}</td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.q9_1 !== "N/A" ? survey.q9_1Spec : survey.q9_1}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
+                    {/* {survey.q9_9} */}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
+                    {survey.q9_10 == "yes" ? survey.q9_11 : survey.q9_10}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
+                    {survey.q9_12 === "yes"
+                      ? survey.q9_13 === "others"
+                        ? survey.q9_13other
+                        : survey.q9_13
+                      : survey.q9_12}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
+                    {survey.q9_14 == "yes" ? survey.q9_12Spec : survey.q9_14}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
+                    {survey.q10 === "No" ? survey.q10Reason : survey.q10}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
+                    {survey.q11 == "yes" ? survey.q11_1 : survey.q11}
                   </td>
                   <td className="py-2 whitespace-nowrap">{survey.q12}</td>
                   <td className="py-2 whitespace-nowrap">{survey.note}</td>

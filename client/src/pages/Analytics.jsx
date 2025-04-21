@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Bar, BarChart, Tooltip, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from "recharts";
 import axios from "axios";
 
 const Analytics = () => {
-
   const [formData, setFormData] = useState([]);
   const [ratings, setRatings] = useState({
     quantityRating: [0, 0, 0, 0, 0],
@@ -18,15 +16,15 @@ const Analytics = () => {
   });
 
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await axios.get("https://bfar-server.onrender.com/survey/");
+    const fetchData = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/survey/");
         setFormData(res.data);
-      };
-      fetchData();
-    } catch (err) {
-      console.log(err);
-    }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -64,20 +62,46 @@ const Analytics = () => {
     }));
   };
 
+  const customBar = (props) => {
+    const { x, y, width, height, fill, stroke, strokeWidth } = props;
+    return (
+      <g>
+        {/* Create a 3D-like shadow */}
+        <rect
+          x={x + 5}
+          y={y + 5}
+          width={width}
+          height={height}
+          fill="rgba(0, 0, 0, 0.3)" // Shadow color
+          stroke="none"
+        />
+        {/* Main bar */}
+        <rect
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+        />
+      </g>
+    );
+  };
+
   return (
     <div className="flex-1 grid grid-cols-2 grid-rows-4 p-10 gap-10">
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Quantity</h2>
-
           <div className="h-full w-full mt-5">
-            <ResponsiveContainer width="100%" height="100%" >
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.quantityRating)}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="rating"/>
+                <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} />
+                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -87,7 +111,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Quality</h2>
-
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.qualityRating)}>
@@ -95,7 +118,7 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} />
+                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -105,7 +128,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Timeliness</h2>
-
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.timelinessRating)}>
@@ -113,7 +135,7 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} />
+                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -123,7 +145,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Relevance</h2>
-
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.relevanceRating)}>
@@ -131,7 +152,7 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} />
+                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -141,7 +162,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Coherence</h2>
-
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.coherenceRating)}>
@@ -149,7 +169,7 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} />
+                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -159,7 +179,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Satisfaction</h2>
-
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.satisfactionRating)}>
@@ -167,7 +186,7 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} />
+                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -177,7 +196,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Impact</h2>
-
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.impactRating)}>
@@ -185,7 +203,7 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} />
+                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -195,7 +213,6 @@ const Analytics = () => {
       <div className="card bg-base-100 h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Sustainability</h2>
-
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.sustainabilityRating)}>
@@ -203,7 +220,7 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} />
+                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
               </BarChart>
             </ResponsiveContainer>
           </div>

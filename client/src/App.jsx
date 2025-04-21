@@ -8,7 +8,9 @@ import Sidebar from "./components/Sidebar";
 import Nav from "./components/Nav";
 import Dashboard from "./pages/Dashboard";
 import Monitoring from "./pages/Monitoring";
+import Lists from "./pages/Lists";
 import View from "./pages/monitoring/View";
+
 
 function App() {
   return (
@@ -22,9 +24,9 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/monitoring" element={<Monitoring />} />
-                <Route path="/monitoring/list" element={<List />} />
-                <Route path="/monitoring/view/:id" element={<View />} />
-                <Route path="/monitoring/update/:id" element={<Update />} />
+                <Route path="/lists" element={<Lists />} />
+                <Route path="/lists/view/:id" element={<View />} />
+                <Route path="/lists/update/:id" element={<Update />} />
                 <Route path="/analytics" element={<Analytics key="analytics-page" />} />
                 <Route path="/reports" element={<Reports />} />
               </Routes>

@@ -150,7 +150,7 @@ const Update = () => {
 
     return (
         <div className="p-10">
-            <div className="w-full mx-auto p-5 flex flex-col relative bg-white rounded-md shadow-sm">
+            <div className="w-full mx-auto p-10 flex flex-col relative bg-white rounded-md shadow-sm">
 
                 {loading && (
                     <div className="toast toast-top toast-center">
@@ -171,16 +171,16 @@ const Update = () => {
 
 
 
-                <div className="absolute left-5 top-8 flex gap-5 items-center">
+                <div className="absolute left-10 top-10 flex gap-5 items-center">
                     <MdKeyboardBackspace
                         className="text-2xl cursor-pointer text-red-600"
-                        onClick={() => navigate("/monitoring/")}
+                        onClick={() => navigate("/lists/")}
                     />
                     <p className="text-2xl font-bold">Update Form</p>
                 </div>
 
-                <form className="flex flex-col mt-24" onSubmit={handleSubmit}>
-                    <h2 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 bg-blue-900 p-2">
+                <form className="flex flex-col mt-18" onSubmit={handleSubmit}>
+                    <h2 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 bg-blue-950 p-2">
                         BENEFICIARY INFORMATION
                     </h2>
 

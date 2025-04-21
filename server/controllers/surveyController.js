@@ -48,40 +48,66 @@ const createSurvey = async (req, res) => {
             province,
             municipality,
             baranggay,
+
             projectReceived,
+            scale,
             specProject,
-            noUnitsReceived,
-            dateReceived,
+            otherProject,
+
             mainIncome,
             otherIncome,
+            noUnitsReceived,
+            dateReceived,
+
+            lat,
+            lon,
+            
             quantity,
             quantityReason,
             quantityRating,
             quality,
             qualityReason,
             qualityRating,
+
+
+
             q2,
             q2Reason,
             timelinessRating,
             uponRequest,
+            duration,
+
+
             q3,
             q3Reason,
             challenges,
             relevanceRating,
+
+
             q4,
             q4Reason,
+
+
             q5,
             q5Reason,
             coherenceRating,
+
+
             q6,
             q6Reason,
+
+
             q7Satisfied,
             q7_1,
             satisfactionRating,
             q7_2,
             q7_2Reason,
+
+
             q8,
             q8Reason,
+
+
             q9_1,
             q9_1Spec,
             q9_2,
@@ -93,12 +119,17 @@ const createSurvey = async (req, res) => {
             q9_8,
             q9_9,
             q9_10,
-            q10_e,
             q9_11,
             q9_11other,
             q9_12,
             q9_12Spec,
+            q9_13, 
+            q9_13other, 
+            q9_14,
             impactRating,
+
+
+            q10_e,
             q10,
             q10Reason,
             q10_1,
@@ -122,40 +153,66 @@ const createSurvey = async (req, res) => {
             province,
             municipality,
             baranggay,
+
             projectReceived,
+            scale,
             specProject,
-            noUnitsReceived,
-            dateReceived,
+            otherProject,
+
             mainIncome,
             otherIncome,
+            noUnitsReceived,
+            dateReceived,
+
+            lat,
+            lon,
+            
             quantity,
             quantityReason,
             quantityRating,
             quality,
             qualityReason,
             qualityRating,
+
+
+
             q2,
             q2Reason,
             timelinessRating,
             uponRequest,
+            duration,
+
+
             q3,
             q3Reason,
             challenges,
             relevanceRating,
+
+
             q4,
             q4Reason,
+
+
             q5,
             q5Reason,
             coherenceRating,
+
+
             q6,
             q6Reason,
+
+
             q7Satisfied,
             q7_1,
             satisfactionRating,
             q7_2,
             q7_2Reason,
+
+
             q8,
             q8Reason,
+
+
             q9_1,
             q9_1Spec,
             q9_2,
@@ -167,12 +224,17 @@ const createSurvey = async (req, res) => {
             q9_8,
             q9_9,
             q9_10,
-            q10_e,
             q9_11,
             q9_11other,
             q9_12,
             q9_12Spec,
+            q9_13, 
+            q9_13other, 
+            q9_14,
             impactRating,
+
+
+            q10_e,
             q10,
             q10Reason,
             q10_1,
@@ -207,40 +269,66 @@ const updateSurvey = async (req, res) => {
             province,
             municipality,
             baranggay,
+
             projectReceived,
+            scale,
             specProject,
-            noUnitsReceived,
-            dateReceived,
+            otherProject,
+
             mainIncome,
             otherIncome,
+            noUnitsReceived,
+            dateReceived,
+
+            lat,
+            lon,
+            
             quantity,
             quantityReason,
             quantityRating,
             quality,
             qualityReason,
             qualityRating,
+
+
+
             q2,
             q2Reason,
             timelinessRating,
             uponRequest,
+            duration,
+
+
             q3,
             q3Reason,
             challenges,
             relevanceRating,
+
+
             q4,
             q4Reason,
+
+
             q5,
             q5Reason,
             coherenceRating,
+
+
             q6,
             q6Reason,
+
+
             q7Satisfied,
             q7_1,
             satisfactionRating,
             q7_2,
             q7_2Reason,
+
+
             q8,
             q8Reason,
+
+
             q9_1,
             q9_1Spec,
             q9_2,
@@ -252,12 +340,17 @@ const updateSurvey = async (req, res) => {
             q9_8,
             q9_9,
             q9_10,
-            q10_e,
             q9_11,
             q9_11other,
             q9_12,
             q9_12Spec,
+            q9_13, 
+            q9_13other, 
+            q9_14,
             impactRating,
+
+
+            q10_e,
             q10,
             q10Reason,
             q10_1,

@@ -12,7 +12,7 @@ const View = () => {
   useEffect(() => {
     const fetchSurvey = async () => {
       try {
-        const response = await axios.get(`https://bfar-server.onrender.com/survey/${id}`);
+        const response = await axios.get(`http://localhost:5000/survey/${id}`);
         setSurvey(response.data);
       } catch (err) {
         console.log("Error fetching survey data:", err);
@@ -32,16 +32,16 @@ const View = () => {
 
   return (
     <div className="p-10">
-      <div className="w-full mx-auto p-5 flex flex-col relative bg-base-100 rounded-md">
+      <div className="w-full mx-auto p-10 flex flex-col relative bg-base-100 rounded-md">
         <MdKeyboardBackspace
           className="text-2xl cursor-pointer text-red-600"
-          onClick={() => navigate("/monitoring/")}
+          onClick={() => navigate("/lists/")}
         />
         <p className="text-2xl font-bold text-center mt-6">
           Field Monitoring and Evaluation Form
         </p>
 
-        <div className="w-full flex  mt-12 justify-end gap-2 py-2">
+        <div className="max-w-[900px] mx-auto flex  mt-12 justify-end gap-2 py-2">
           <button className="btn btn-error text-white">Export PDF</button>
           <button className="btn btn-success text-white">Print</button>
         </div>
@@ -49,7 +49,7 @@ const View = () => {
         
         <form className="flex flex-col">
           <div className="overflow-x-auto rounded-box bg-base-100 pb-24">
-            <h2 className="mt-10 mb-5 ml-4 font-black bg-blue-950 block text-white p-2">
+            <h2 className="mt-10 mb-5 font-black bg-blue-950 block text-white p-2">
               BENEFICIARY INFORMATION
             </h2>
             <table className="table border-0">
@@ -131,7 +131,7 @@ const View = () => {
               </tbody>
             </table>
 
-            <h2 className="mt-10  mb-5 ml-4 font-black bg-blue-950 block text-white p-2">
+            <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
               EFFICIENCY OF THE PROJECT
             </h2>
 
@@ -204,7 +204,7 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10 mb-5 ml-4 font-black bg-blue-950 block text-white p-2">
+                <h2 className="mt-10 mb-5 font-black bg-blue-950 block text-white p-2">
                   RELEVANCE OF THE PROJECT
                 </h2>
 
@@ -251,7 +251,7 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10  mb-5 ml-4 font-black bg-blue-950 block text-white p-2">
+                <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
                   COHERENCE OF THE PROJECT
                 </h2>
 
@@ -293,7 +293,7 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10  mb-5 ml-4 font-black bg-blue-950 block text-white p-2">
+                <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
                   EFFECTIVENESS OF THE PROJECT
                 </h2>
 
@@ -351,7 +351,7 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10  mb-5 ml-4 font-black bg-blue-950 block text-white p-2">
+                <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
                   IMPACT OF THE PROJECT
                 </h2>
 
@@ -472,7 +472,7 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10  mb-5 ml-4 font-black bg-blue-950 block text-white p-2">
+                <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
                   SUSTAINABILITY OF THE PROJECT
                 </h2>
 
@@ -525,7 +525,7 @@ const View = () => {
                   </td>
                 </tr>
 
-                <h2 className="mt-10  mb-5 ml-4 font-black bg-blue-950 block text-white p-2">
+                <h2 className="mt-10  mb-5 font-black bg-blue-950 block text-white p-2">
                   NEEDS ASSESSMENT
                 </h2>
 

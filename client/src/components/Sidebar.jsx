@@ -6,6 +6,7 @@ import {
   MdAssessment,
   MdInsertDriveFile,
   MdFolder,
+  MdDriveFileRenameOutline
 } from "react-icons/md";
 
 const Sidebar = () => {
@@ -36,8 +37,25 @@ const Sidebar = () => {
                 : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
             }
           >
-            <MdInsertDriveFile className="ml-5" size={18}/> Monitoring
+            <MdDriveFileRenameOutline className="ml-5" size={18}/> Monitoring
           </NavLink>
+
+
+
+          <NavLink
+            to="/lists"
+            className={({ isActive }) =>
+              isActive
+                ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
+            }
+          >
+            <MdInsertDriveFile className="ml-5" size={18}/> Form Lists
+          </NavLink>
+
+
+
+
           <NavLink
             to="/analytics"
             className={({ isActive }) =>

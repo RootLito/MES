@@ -24,7 +24,7 @@ const Dashboard = () => {
 
   const fetchSurveys = async () => {
     try {
-      const response = await axios.get("https://bfar-server.onrender.com/survey");
+      const response = await axios.get("http://localhost:5000/survey");
       const surveys = response.data;
       setTotalRes(surveys.length);
 
@@ -242,6 +242,31 @@ useEffect(() => {
           <div className="flex gap-2 items-center">
             <FaCoins size={22} className="text-blue-950" />
             <p className="font-black text-xl text-blue-950"> Income Source</p>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            {barData ? (
+              <div className="flex-1 h-full">
+                <ReactApexChart
+                  key={JSON.stringify(barData)}
+                  options={barData.options}
+                  series={barData.series}
+                  type="bar"
+                  width="100%"
+                  height="100%"
+                />
+              </div>
+            ) : (
+              <span class="loading loading-spinner loading-xl"></span>
+            )}
+          </div>
+        </div>
+
+
+
+        <div className="h-1/2 bg-white rounded-box shadow-sm p-6 flex flex-col">
+          <div className="flex gap-2 items-center">
+            <FaCoins size={22} className="text-blue-950" />
+            <p className="font-black text-xl text-blue-950">Other Income Source</p>
           </div>
           <div className="flex-1 flex items-center justify-center">
             {barData ? (
