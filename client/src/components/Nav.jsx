@@ -11,10 +11,10 @@ const Nav = () => {
 
   return (
     <div className="navbar bg-white sticky top-0 z-1 border-b-1 border-gray-100 px-10 justify-between">
-      <h2 className="font-black text-gray-600">BFAR XI</h2>
+      <h2 className="font-black text-blue-950">Bureau of Fisheries and Aquatic Resources XI</h2>
 
       <div className="">
-        <div className="dropdown dropdown-end">
+        {/* <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
             <div className="indicator text-gray-600">
               <MdOutlineNotificationsNone size={24} />
@@ -46,7 +46,7 @@ const Nav = () => {
               <span className="text-sm text-center text-error">Under Development</span>
             </div>
           </div>
-        </div>
+        </div> */}
 
 
 
@@ -64,7 +64,7 @@ const Nav = () => {
               />
             </div>
           </div>
-          <ul
+          {/* <ul
             tabIndex={0}
             className="menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 w-42 p-2 shadow"
           >
@@ -79,7 +79,7 @@ const Nav = () => {
             <li>
               <a className="bg-error text-white">Logout</a>
             </li>
-          </ul>
+          </ul> */}
         </div>
       </div>
     </div>

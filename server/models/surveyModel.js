@@ -4,88 +4,92 @@ const Schema = mongoose.Schema
 
 
 const surveySchema = new Schema({
-  name: { type: String, required: true },
-  civilStatus: { type: String, required: true },
-  sex: { type: String, required: true },
-  age: { type: Number, required: true },
-  hhMember: { type: String, required: true },
-  fishR: { type: String, required: true },
-  boatR: { type: String, required: true },
-  nameAssoc: { type: String, required: true },
-  totalMember: { type: Number, required: true },
-  province: { type: String, required: true },
-  municipality: { type: String, required: true },
-  baranggay: { type: String, required: true },
+  name: { type: String },
+  civilStatus: { type: String },
+  sex: { type: String },
+  age: { type: Number },
+  hhMember: { type: String },
 
-  projectReceived: { type: String, required: true },
+  fishR: { type: String },
+  boatR: { type: String },
+
+  nameAssoc: { type: String},
+  totalMember: { type: Number},
+
+  province: { type: String },
+  municipality: { type: String },
+  baranggay: { type: String },
+
+  projectReceived: { type: String },
   scale: {type: String},
   specProject: { type: String},
   otherProject: { type: String},
 
   
-  mainIncome: { type: String, required: true },
+  mainIncome: { type: String },
   otherIncome: { type: String },
-  noUnitsReceived: { type: Number, required: true },
-  dateReceived: { type: Date, required: true },
+  noUnitsReceived: { type: Number },
+  dateReceived: { type: Date },
 
-  lat: { type: Number, required: true},
-  lon: { type: Number, required: true},
+  lat: { type: Number},
+  lon: { type: Number},
 
 
 
-  quantity: { type: String, required: true },
+  quantity: { type: String },
   quantityReason: { type: String },
   quantityRating: { type: Number, min: 1, max: 5, required: true },
-  quality: { type: String, required: true },
+  quality: { type: String },
   qualityReason: { type: String },
   qualityRating: { type: Number, min: 1, max: 5, required: true },
 
 
 
 
-  q2: { type: String, required: true },
+  q2: { type: String },
   q2Reason: { type: String },
-  timelinessRating: { type: Number, min: 1, max: 5, required: true },
-  uponRequest: { type: String, required: true },
-  duration: {type: String, required: true},
+  timelinessRating: { type: Number, min: 1, max: 5 },
+  uponRequest: { type: String },
+  duration: {type: String},
 
 
 
 
-  q3: { type: String, required: true },
+  q3: { type: String },
   q3Reason: { type: String },
-  challenges: { type: String, required: true },
+  challenges: { type: String },
   relevanceRating: { type: Number, min: 1, max: 5, required: true },
-  q4: { type: String, required: true },
+
+  q4: { type: String },
   q4Reason: { type: String },
-  q5: { type: String, required: true },
+  q5: { type: String },
   q5Reason: { type: String },
   coherenceRating: { type: Number, min: 1, max: 5, required: true },
-  q6: { type: String, required: true },
+  q6: { type: String },
   q6Reason: { type: String },
-  q7Satisfied: { type: String, required: true },
+  q7Satisfied: { type: String },
   q7_1: { type: String},
   q7_1Reason: { type: String },
   satisfactionRating: { type: Number, min: 1, max: 5, required: true },
-  q7_2: { type: String, required: true },
+  q7_2: { type: String },
   q7_2Reason: { type: String },
-  q8: { type: String, required: true },
+  q8: { type: String },
   q8Reason: { type: String },
 
-  q9_1: { type: String, required: true },
+  q9_1: { type: String },
   q9_1Spec: { type: String },
-  q9_2: { type: String, required: true },
-  q9_3: { type: String, required: true },
-  q9_4: { type: String, required: true },
-  q9_5: { type: String, required: true },
-  q9_6: { type: String, required: true },
-  q9_7: { type: String, required: true },
-  q9_8: { type: String, required: true },
-  q9_9: { type: String, required: true },
-  q9_10: { type: String, required: true },
-  q9_11: { type: String, required: true },
+  q9_2: { type: String },
+  q9_3: { type: String },
+  q9_4: { type: String},
+  q9_5: { type: String },
+  q9_6: { type: String},
+  q9_7: { type: String },
+  q9_8: { type: String },
+  q9_9: { type: String },
+  q9_10: { type: String },
+  q9_11: { type: String },
   q9_11other: { type: String },
-  q9_12: { type: String, required: true },
+  q9_12: { type: String },
   q9_12Spec: { type: String },
   q9_13: { type: String},
   q9_13other: { type: String },
@@ -94,16 +98,17 @@ const surveySchema = new Schema({
   impactRating: { type: Number, min: 1, max: 5, required: true },
 
   q10_e: { type: String },
-  q10: { type: String, required: true },
+  q10: { type: String },
   q10Reason: { type: String },
-  q10_1: { type: String, required: true },
+  q10_1: { type: String },
   sustainabilityRating: { type: Number, min: 1, max: 5, required: true },
 
 
-  q11: { type: String, required: true },
-  q11_1: { type: String, required: true },
-  q12: { type: String, required: true },
-  note: { type: String, required: true }
+  q11: { type: String },
+  q11_1: { type: String },
+  q11_1spec: { type: String},
+  q12: { type: String },
+  note: { type: String }
 },
 { timestamps: true });
 

@@ -68,18 +68,18 @@ const View = () => {
           <div className="overflow-x-auto rounded-box bg-base-100">
             <table className="table table-xs mt-6">
               <tbody>
-                <tr >
-                  <td colSpan={4}>
-                  <h2 className="font-black bg-blue-950 block text-white p-2">
-                    BENEFICIARY INFORMATION
-                  </h2>
+                <tr>
+                  <td colSpan={4} className="border-none">
+                    <span className="font-black bg-blue-950 block text-white p-2">
+                      BENEFICIARY INFORMATION
+                    </span>
                   </td>
                 </tr>
                 <tr>
-                  <td>
+                  <td className="!border-none">
                     Name of Respondent: <b>{survey.name}</b>
                   </td>
-                  <td>
+                  <td className="border-none">
                     Civil Status: <b>{survey.civilStatus}</b>
                   </td>
                   <td>
@@ -152,12 +152,14 @@ const View = () => {
               </tbody>
             </table>
 
-            <table className="table table-xs">
+            <table className="table table-xs ">
               <tbody>
                 <tr>
-                  <h2 className="font-black bg-blue-950 block text-white p-2">
-                    EFFICIENCY OF THE PROJECT
-                  </h2>
+                  <td>
+                    <h2 className="font-black bg-blue-950 block text-white p-2">
+                      EFFICIENCY OF THE PROJECT
+                    </h2>
+                  </td>
                 </tr>
                 <tr>
                   <td>
@@ -227,9 +229,11 @@ const View = () => {
                 </tr>
 
                 <tr>
-                  <span className="font-black bg-blue-950 block text-white p-2">
-                    RELEVANCE OF THE PROJECT
-                  </span>
+                  <td>
+                    <span className="font-black bg-blue-950 block text-white p-2">
+                      RELEVANCE OF THE PROJECT
+                    </span>
+                  </td>
                 </tr>
 
                 <tr>
@@ -276,9 +280,11 @@ const View = () => {
                 </tr>
 
                 <tr>
-                  <h2 className="font-black bg-blue-950 block text-white p-2">
-                    COHERENCE OF THE PROJECT
-                  </h2>
+                  <td>
+                    <h2 className="font-black bg-blue-950 block text-white p-2">
+                      COHERENCE OF THE PROJECT
+                    </h2>
+                  </td>
                 </tr>
 
                 <tr>
@@ -320,9 +326,11 @@ const View = () => {
                 </tr>
 
                 <tr>
-                  <h2 className="font-black bg-blue-950 block text-white p-2">
-                    EFFECTIVENESS OF THE PROJECT
-                  </h2>
+                  <td>
+                    <h2 className="font-black bg-blue-950 block text-white p-2">
+                      EFFECTIVENESS OF THE PROJECT
+                    </h2>
+                  </td>
                 </tr>
 
                 <tr>
@@ -380,9 +388,11 @@ const View = () => {
                 </tr>
 
                 <tr>
-                  <h2 className="font-black bg-blue-950 block text-white p-2">
-                    IMPACT OF THE PROJECT
-                  </h2>
+                  <td>
+                    <h2 className="font-black bg-blue-950 block text-white p-2">
+                      IMPACT OF THE PROJECT
+                    </h2>
+                  </td>
                 </tr>
 
                 <tr>
@@ -503,9 +513,11 @@ const View = () => {
                 </tr>
 
                 <tr>
-                  <h2 className="font-black bg-blue-950 block text-white p-2">
-                    SUSTAINABILITY OF THE PROJECT
-                  </h2>
+                  <td>
+                    <h2 className="font-black bg-blue-950 block text-white p-2">
+                      SUSTAINABILITY OF THE PROJECT
+                    </h2>
+                  </td>
                 </tr>
 
                 <tr>
@@ -558,9 +570,11 @@ const View = () => {
                 </tr>
 
                 <tr>
-                  <h2 className="font-black bg-blue-950 block text-white p-2">
-                    NEEDS ASSESSMENT
-                  </h2>
+                  <td>
+                    <h2 className="font-black bg-blue-950 block text-white p-2">
+                      NEEDS ASSESSMENT
+                    </h2>
+                  </td>
                 </tr>
 
                 <tr>
@@ -587,7 +601,9 @@ const View = () => {
                     observations):
                   </td>
                 </tr>
-                <tr className="text-center">{survey.q12}</tr>
+                <tr className="text-center">
+                  <td>{survey.q12}</td>
+                </tr>
               </tbody>
             </table>
           </div>

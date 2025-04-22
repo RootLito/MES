@@ -70,34 +70,29 @@ const Dashboard = () => {
       const counts = Object.values(otherIncomeCounts);
       setIncomeCounts(counts);
 
-      // Calculate the counts for Province
       const provinceCounts = surveys.reduce((acc, survey) => {
         acc[survey.province] = (acc[survey.province] || 0) + 1;
         return acc;
       }, {});
       setProvinceData(provinceCounts);
 
-      // Calculate the counts for Municipality
       const municipalityCounts = surveys.reduce((acc, survey) => {
         acc[survey.municipality] = (acc[survey.municipality] || 0) + 1;
         return acc;
       }, {});
       setMunicipalityData(municipalityCounts);
 
-      // Calculate the counts for Barangay
       const barangayCounts = surveys.reduce((acc, survey) => {
         acc[survey.baranggay] = (acc[survey.baranggay] || 0) + 1;
         return acc;
       }, {});
       setBarangayData(barangayCounts);
 
-      // Calculate male and female count
       const male = surveys.filter((survey) => survey.sex === "Male").length;
       const female = surveys.filter((survey) => survey.sex === "Female").length;
       setMaleCount(male);
       setFemaleCount(female);
 
-      // Categorize age groups for the chart
       const ageGroups = {
         "18-24": 0,
         "25-39": 0,
@@ -206,7 +201,7 @@ const Dashboard = () => {
           },
         },
       });
-    }, 1000);
+    }, 3000);
   }, [fishingCount, agriCount, othersCount, location.pathname]);
 
   //OTHER INCOME BAR CHART
@@ -246,13 +241,13 @@ const Dashboard = () => {
           },
         },
       });
-    }, 1000);
+    }, 3000);
   }, [incomeTypes, incomeCounts, location.pathname]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, 1000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -278,7 +273,7 @@ const Dashboard = () => {
                   />
                 </div>
               ) : (
-                <span class="loading loading-spinner loading-xl"></span>
+                <span className="loading loading-spinner loading-xl"></span>
               )}
             </div>
           </div>
@@ -347,7 +342,7 @@ const Dashboard = () => {
                 />
               </div>
             ) : (
-              <span class="loading loading-spinner loading-xl"></span>
+              <span className="loading loading-spinner loading-xl"></span>
             )}
           </div>
         </div>
@@ -372,7 +367,7 @@ const Dashboard = () => {
                 />
               </div>
             ) : (
-              <span class="loading loading-spinner loading-xl"></span>
+              <span className="loading loading-spinner loading-xl"></span>
             )}
           </div>
         </div>

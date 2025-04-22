@@ -85,6 +85,7 @@ const Survey = () => {
       sustainabilityRating: "",
       q11: "",
       q11_1: "",
+      q11_1spec: "",
       q12: "",
       note: "",
     },
@@ -172,9 +173,9 @@ const Survey = () => {
   const handleMunicipalityChange = async (e) => {
     const selectedArea = e.target.value;
 
-    const isCity = cities.some((city) => city.code === selectedArea);
+    const isCity = cities.some((city) => city.name === selectedArea);
     const isMunicipality = municipalities.some(
-      (mun) => mun.code === selectedArea
+      (mun) => mun.name === selectedArea
     );
     if (isCity) {
       setAreaType("City");
@@ -343,25 +344,56 @@ const Survey = () => {
           </div>
           <div className="flex flex-col flex-1">
             <p className="text-sm">FishR</p>
-            <input
+            {/* <input
               type="text"
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="fishR"
               value={formData.form.fishR}
               onChange={handleChange}
               required
-            />
+            /> */}
+            <select
+              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              name="fishR"
+              value={formData.form.fishR}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>
+                - - Select - -
+              </option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+              <option value="For registration">For registration</option>
+              <option value="For verification">For verification</option>
+            </select>
           </div>
           <div className="flex flex-col flex-1">
             <p className="text-sm">BoatR</p>
-            <input
+            {/* <input
               type="text"
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="boatR"
               value={formData.form.boatR}
               onChange={handleChange}
               required
-            />
+            /> */}
+            <select
+              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              name="boatR"
+              value={formData.form.boatR}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>
+                - - Select - -
+              </option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+              <option value="N/A">N/A</option>
+              <option value="For registration">For registration</option>
+              <option value="For renewal">For renewal</option>
+            </select>
           </div>
         </div>
 
@@ -378,15 +410,19 @@ const Survey = () => {
             />
           </div>
           <div className="flex flex-col">
-            <p className="text-sm">Total No. of Memebers</p>
-            <input
-              type="number"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="totalMember"
-              value={formData.form.totalMember}
-              onChange={handleChange}
-              required
-            />
+            {formData.form.nameAssoc.toUpperCase() !== "N/A" && (
+              <>
+                <p className="text-sm">Total No. of Memebers</p>
+                <input
+                  type="number"
+                  className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                  name="totalMember"
+                  value={formData.form.totalMember}
+                  onChange={handleChange}
+                  required
+                />
+              </>
+            )}
           </div>
         </div>
 
@@ -404,7 +440,7 @@ const Survey = () => {
                 - - Select - -
               </option>
               {provinces.map((prov) => (
-                <option key={prov.code} value={prov.code}>
+                <option key={prov.code} value={prov.name}>
                   {prov.name}
                 </option>
               ))}
@@ -430,7 +466,7 @@ const Survey = () => {
                 <>
                   <option disabled>--- Cities ---</option>
                   {cities.map((city) => (
-                    <option key={city.code} value={city.code}>
+                    <option key={city.code} value={city.name}>
                       {city.name}
                     </option>
                   ))}
@@ -441,7 +477,7 @@ const Survey = () => {
                 <>
                   <option disabled>--- Municipalities ---</option>
                   {municipalities.map((mun) => (
-                    <option key={mun.code} value={mun.code}>
+                    <option key={mun.code} value={mun.name}>
                       {mun.name}
                     </option>
                   ))}
@@ -601,38 +637,7 @@ const Survey = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
-          <div className="flex flex-col flex-1">
-            <p className="text-sm">Income Source</p>
-            <select
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="mainIncome"
-              value={formData.form.mainIncome}
-              onChange={handleChange}
-              required
-            >
-              <option value="" disabled>
-                - - Select - -
-              </option>
-              <option value="Fishing">Fishing</option>
-              <option value="Agri">Agri</option>
-              <option value="Others">Others</option>
-            </select>
-          </div>
-          <div className="flex flex-col flex-1">
-            <p className="text-sm">If others, please specify</p>
-            <input
-              name="otherIncome"
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="Please specify"
-              value={formData.form.otherIncome}
-              onChange={handleChange}
-              required={formData.form.mainIncome === "Others"} 
-              disabled={formData.form.mainIncome !== "Others"} 
-            />
-          </div>
-        </div>
+        
 
         <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
@@ -655,6 +660,39 @@ const Survey = () => {
               onChange={handleChange}
               className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
               required
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
+          <div className="flex flex-col flex-1">
+            <p className="text-sm">Main Source of Income</p>
+            <select
+              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              name="mainIncome"
+              value={formData.form.mainIncome}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>
+                - - Select - -
+              </option>
+              <option value="Fishing">Fishing</option>
+              <option value="Agri">Agri</option>
+              {/* <option value="Others">Others</option> */}
+            </select>
+          </div>
+          <div className="flex flex-col flex-1">
+            <p className="text-sm">Other Source of Income</p>
+            <input
+              name="otherIncome"
+              type="text"
+              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              placeholder="Please specify"
+              value={formData.form.otherIncome}
+              onChange={handleChange}
+            //   required={formData.form.mainIncome === "Others"}
+            //   disabled={formData.form.mainIncome !== "Others"}
             />
           </div>
         </div>
@@ -908,9 +946,7 @@ const Survey = () => {
               <option value="" disabled>
                 - - Rate - -
               </option>
-              <option value="1" selected>
-                ⭐
-              </option>
+              <option value="1">⭐</option>
               <option value="2">⭐⭐</option>
               <option value="3">⭐⭐⭐</option>
               <option value="4">⭐⭐⭐⭐</option>
@@ -1044,7 +1080,6 @@ const Survey = () => {
               name="challenges"
               value={formData.form.challenges}
               onChange={handleChange}
-              required
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
             />
           </div>
@@ -1066,7 +1101,7 @@ const Survey = () => {
               onChange={handleChange}
               required
             >
-              <option value="" selected>
+              <option value="" disabled>
                 - - Rate - -
               </option>
               <option value="1">⭐</option>
@@ -1539,7 +1574,6 @@ const Survey = () => {
               name="q9_4"
               value={formData.form.q9_4}
               onChange={handleChange}
-              required
             />
           </div>
         </div>
@@ -1593,7 +1627,6 @@ const Survey = () => {
                 name="q9_7"
                 value="Yes"
                 onChange={handleChange}
-                required
               />
               Yes
             </div>
@@ -1603,9 +1636,17 @@ const Survey = () => {
                 name="q9_7"
                 value="No"
                 onChange={handleChange}
-                required
               />
               No
+            </div>
+            <div className="flex gap-2 text-sm">
+              <input
+                type="radio"
+                name="q9_7"
+                value="N/A"
+                onChange={handleChange}
+              />
+              N/A
             </div>
           </div>
         </div>
@@ -2015,6 +2056,27 @@ const Survey = () => {
               />
               No
             </div>
+            <div className="flex gap-2 text-sm">
+              <input
+                type="radio"
+                name="q11"
+                value="Others"
+                onChange={handleChange}
+                required
+              />
+              Others
+            </div>
+            {formData.form.q11 == "Others" && (
+                <input
+              type="text"
+              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              name="q11_1spec"
+              placeholder="Please specify"
+              value={formData.form.q11_1spec}
+              onChange={handleChange}
+            />
+            )}
+            
           </div>
         </div>
 
@@ -2081,7 +2143,6 @@ const Survey = () => {
               name="q12"
               value={formData.form.q12}
               onChange={handleChange}
-              required
             />
           </div>
         </div>
@@ -2099,7 +2160,6 @@ const Survey = () => {
             name="note"
             value={formData.form.note}
             onChange={handleChange}
-            required
           />
         </div>
 

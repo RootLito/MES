@@ -357,7 +357,7 @@ const Reports = () => {
                   <td className="py-2 whitespace-nowrap">{survey.quantity}</td>
                   <td className="py-2 whitespace-nowrap">{survey.quality}</td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.uponRequest}
+                    {survey.uponRequest} {survey.duration}
                   </td>
                   <td className="py-2 whitespace-nowrap">{survey.q3}</td>
                   <td className="py-2 whitespace-nowrap">{survey.q4}</td>
