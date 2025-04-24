@@ -159,7 +159,7 @@ const List = () => {
   return (
     <div className="flex-1 mx-auto p-5 flex flex-col relative">
       {deleted && (
-        <div className="toast toast-top toast-center">
+        <div className="toast toast-top toast-center z-999">
           <div className="alert alert-success">
             <span className="text-center text-green-50">
               Form deleted successfully
