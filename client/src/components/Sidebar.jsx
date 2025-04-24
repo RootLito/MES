@@ -6,7 +6,8 @@ import {
   MdAssessment,
   MdInsertDriveFile,
   MdFolder,
-  MdDriveFileRenameOutline
+  MdDriveFileRenameOutline,
+  MdPeopleAlt
 } from "react-icons/md";
 
 const Sidebar = () => {
@@ -78,6 +79,20 @@ const Sidebar = () => {
             <MdFolder className="ml-5" size={18}/>
             Report
           </NavLink>
+
+
+          <NavLink
+            to="/evaluators"
+            className={({ isActive }) =>
+              isActive
+                ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
+            }
+          >
+            <MdPeopleAlt   className="ml-5" size={18}/>
+            Evaluators
+          </NavLink >
+
         </div>
         <button className="btn btn-error text-red-200 hover:text-white mt-auto">
           Logout

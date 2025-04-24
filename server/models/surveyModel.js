@@ -87,7 +87,7 @@ const surveySchema = new Schema({
   q9_8: { type: String },
   q9_9: { type: String },
   q9_10: { type: String },
-  q9_11: { type: String },
+  q9_11: { type: [String], default: [] },
   q9_11other: { type: String },
   q9_12: { type: String },
   q9_12Spec: { type: String },

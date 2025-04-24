@@ -15,7 +15,7 @@ const View = () => {
   useEffect(() => {
     const fetchSurvey = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/survey/${id}`);
+        const response = await axios.get(`https://bfar-server.onrender.com/survey/${id}`);
         setSurvey(response.data);
       } catch (err) {
         console.log("Error fetching survey data:", err);
@@ -471,7 +471,11 @@ const View = () => {
                 <tr>
                   <td className="pl-10">
                     - Any improvement in your family/household?
-                    <b className="ml-5">{survey.q9_10}</b>
+                    <b className="ml-5">
+                      {survey.q9_11.length > 0
+                        ? survey.q9_11.join(", ")
+                        : "No improvements selected"}
+                    </b>
                   </td>
                 </tr>
                 <tr>

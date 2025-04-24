@@ -18,7 +18,7 @@ const Analytics = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/survey/");
+        const res = await axios.get("https://bfar-server.onrender.com/survey/");
         setFormData(res.data);
       } catch (err) {
         console.log(err);
@@ -101,7 +101,7 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
+                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000}  shape={customBar} />
               </BarChart>
             </ResponsiveContainer>
           </div>

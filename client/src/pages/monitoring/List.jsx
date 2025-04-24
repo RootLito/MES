@@ -53,7 +53,7 @@ const List = () => {
 
   const fetchSurveys = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/survey");
+      const response = await axios.get("https://bfar-server.onrender.com/survey");
 
 
       setSurveys(response.data);
@@ -112,7 +112,7 @@ const List = () => {
   const handleDelete = async (id) => {
     try {
       const res = await axios.delete(
-        `http://localhost:5000/survey/delete/${id}`
+        `https://bfar-server.onrender.com/survey/delete/${id}`
       );
       if (!res) {
         return (

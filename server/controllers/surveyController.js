@@ -41,10 +41,13 @@ const createSurvey = async (req, res) => {
             sex,
             age,
             hhMember,
+
             fishR,
             boatR,
+
             nameAssoc,
             totalMember,
+            
             province,
             municipality,
             baranggay,

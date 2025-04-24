@@ -27,20 +27,17 @@ const Survey = () => {
       otherIncome: "",
       lat: "",
       lon: "",
-
       quantity: "",
       quantityReason: "",
       quantityRating: "",
       quality: "",
       qualityReason: "",
       qualityRating: "",
-
       q2: "",
       q2Reason: "",
       timelinessRating: "",
       uponRequest: "",
       duration: "",
-
       q3: "",
       q3Reason: "",
       challenges: "",
@@ -71,7 +68,7 @@ const Survey = () => {
       q9_9: "",
       q9_10: "",
       q10_e: "",
-      q9_11: "",
+      q9_11: [],
       q9_11other: "",
       q9_12: "",
       q9_12Spec: "",
@@ -210,12 +207,25 @@ const Survey = () => {
   };
 
   // INPUT -----------------------------------
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  //   const handleChange = (event) => {
+  //     const { name, value } = event.target;
+  //     setFormData((prevState) => ({
+  //       form: {
+  //         ...prevState.form,
+  //         [name]: value,
+  //       },
+  //     }));
+  //   };
+  const handleChange = ({ target: { name, value, type, checked } }) => {
     setFormData((prevState) => ({
+      ...prevState,
       form: {
         ...prevState.form,
-        [name]: value,
+        [name]: type === "checkbox"
+          ? checked
+            ? [...prevState.form[name], value]  
+            : prevState.form[name].filter(item => item !== value) 
+          : value,  
       },
     }));
   };
@@ -227,10 +237,9 @@ const Survey = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/survey/add",
+        "https://bfar-server.onrender.com/survey/add",
         formData.form
       );
-      console.log("Response:", res.data);
       setShowToast(true);
       setTimeout(() => {
         setShowToast(false);
@@ -344,14 +353,6 @@ const Survey = () => {
           </div>
           <div className="flex flex-col flex-1">
             <p className="text-sm">FishR</p>
-            {/* <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="fishR"
-              value={formData.form.fishR}
-              onChange={handleChange}
-              required
-            /> */}
             <select
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="fishR"
@@ -362,22 +363,14 @@ const Survey = () => {
               <option value="" disabled>
                 - - Select - -
               </option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-              <option value="For registration">For registration</option>
-              <option value="For verification">For verification</option>
+              <option value="Registered">Registered</option>
+              <option value="Registered">LGU Registered</option>
+              <option value="For Registration">For Registration</option>
+              <option value="For Verification">For Verification</option>
             </select>
           </div>
           <div className="flex flex-col flex-1">
             <p className="text-sm">BoatR</p>
-            {/* <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="boatR"
-              value={formData.form.boatR}
-              onChange={handleChange}
-              required
-            /> */}
             <select
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="boatR"
@@ -388,11 +381,10 @@ const Survey = () => {
               <option value="" disabled>
                 - - Select - -
               </option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
+              <option value="Registered">Registered</option>
+              <option value="Registered">LGU Registered</option>
+              <option value="For Registration">For Registration</option>
               <option value="N/A">N/A</option>
-              <option value="For registration">For registration</option>
-              <option value="For renewal">For renewal</option>
             </select>
           </div>
         </div>
@@ -598,7 +590,13 @@ const Survey = () => {
               <input
                 type="text"
                 name="specProject"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                value={formData.form.specProject}
+                onChange={handleChange}
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.specProject || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
                 placeholder="Please specify"
               />
             ) : (
@@ -636,8 +634,6 @@ const Survey = () => {
             )}
           </div>
         </div>
-
-        
 
         <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
@@ -691,8 +687,8 @@ const Survey = () => {
               placeholder="Please specify"
               value={formData.form.otherIncome}
               onChange={handleChange}
-            //   required={formData.form.mainIncome === "Others"}
-            //   disabled={formData.form.mainIncome !== "Others"}
+              //   required={formData.form.mainIncome === "Others"}
+              //   disabled={formData.form.mainIncome !== "Others"}
             />
           </div>
         </div>
@@ -764,20 +760,22 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              name="quantityReason"
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If no, why?"
-              value={formData.form.quantityReason}
-              onChange={handleChange}
-              required={
-                formData.form.quantity == "not sufficient"
-                  ? true
-                  : (formData.form.quantityReason = "")
-              }
-              disabled={formData.form.quantity == "sufficient" ? true : false}
-            />
+
+            {formData.form.quantity === "not sufficient" && (
+              <input
+                name="quantityReason"
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.quantityReason || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If no, why?"
+                value={formData.form.quantityReason}
+                onChange={handleChange}
+                required={formData.form.quantity === "not sufficient"}
+              />
+            )}
           </div>
         </div>
 
@@ -836,20 +834,25 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              name="qualityReason"
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If no, why?"
-              value={formData.form.qualityReason}
-              onChange={handleChange}
-              required={
-                formData.form.quality == "has defects"
-                  ? true
-                  : (formData.form.qualityReason = "")
-              }
-              disabled={formData.form.quality == "no defects" ? true : false}
-            />
+            {formData.form.quality === "has defects" && (
+              <input
+                name="qualityReason"
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.qualityReason || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If no, why?"
+                value={formData.form.qualityReason}
+                onChange={handleChange}
+                required={
+                  formData.form.quality == "has defects"
+                    ? true
+                    : (formData.form.qualityReason = "")
+                }
+              />
+            )}
           </div>
         </div>
 
@@ -912,18 +915,25 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              type="text"
-              name="q2Reason"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If no, why?"
-              value={formData.form.q2Reason}
-              onChange={handleChange}
-              required={
-                formData.form.q2 == "No" ? true : (formData.form.q2Reason = "")
-              }
-              disabled={formData.form.q2 == "Yes" ? true : false}
-            />
+            {formData.form.q2 === "No" && (
+              <input
+                type="text"
+                name="q2Reason"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q2Reason || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If no, why?"
+                value={formData.form.q2Reason}
+                onChange={handleChange}
+                required={
+                  formData.form.q2 == "No"
+                    ? true
+                    : (formData.form.q2Reason = "")
+                }
+              />
+            )}
           </div>
         </div>
 
@@ -1051,20 +1061,25 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              type="text"
-              name="q3Reason"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If no, why?"
-              value={formData.form.q3Reason}
-              onChange={handleChange}
-              required={
-                formData.form.q3 == "did not addressed the need"
-                  ? true
-                  : (formData.form.q3Reason = "")
-              }
-              disabled={formData.form.q3 == "addressed the need" ? true : false}
-            />
+            {formData.form.q3 === "did not addressed the need" && (
+              <input
+                name="q3Reason"
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q3Reason || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If no, why?"
+                value={formData.form.q3Reason}
+                onChange={handleChange}
+                required={
+                  formData.form.q3 == "did not addressed the need"
+                    ? true
+                    : (formData.form.q3Reason = "")
+                }
+              />
+            )}
           </div>
         </div>
 
@@ -1081,6 +1096,7 @@ const Survey = () => {
               value={formData.form.challenges}
               onChange={handleChange}
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              placeholder="Optional"
             />
           </div>
         </div>
@@ -1143,22 +1159,26 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              type="text"
-              name="q4Reason"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If no, why?"
-              value={formData.form.q4Reason}
-              onChange={handleChange}
-              required={
-                formData.form.q4 == "not suitable for the area"
-                  ? true
-                  : (formData.form.q4Reason = "")
-              }
-              disabled={
-                formData.form.q4 == "suitable for the area" ? true : false
-              }
-            />
+
+            {formData.form.q4 === "not suitable for the area" && (
+              <input
+                type="text"
+                name="q4Reason"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q4Reason || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If no, why?"
+                value={formData.form.q4Reason}
+                onChange={handleChange}
+                required={
+                  formData.form.q4 == "not suitable for the area"
+                    ? true
+                    : (formData.form.q4Reason = "")
+                }
+              />
+            )}
           </div>
         </div>
 
@@ -1196,24 +1216,21 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              name="q5Reason"
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If no, why?"
-              value={formData.form.q5Reason}
-              onChange={handleChange}
-              required={
-                formData.form.q5 == "not aware of the type of project given"
-                  ? true
-                  : (formData.form.q5Reason = "")
-              }
-              disabled={
-                formData.form.q5 == "well-aware of the type of project given"
-                  ? true
-                  : false
-              }
-            />
+
+            {formData.form.q5 === "not aware of the type of project given" && (
+              <input
+                name="q5Reason"
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q5Reason || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If no, why?"
+                value={formData.form.q5Reason}
+                onChange={handleChange}
+              />
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
@@ -1274,18 +1291,26 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              name="q6Reason"
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If Yes, pls specify project from other NGA/NGO"
-              value={formData.form.q6Reason}
-              onChange={handleChange}
-              required={
-                formData.form.q6 == "Yes" ? true : (formData.form.q6Reason = "")
-              }
-              disabled={formData.form.q6 == "Yes" ? false : true}
-            />
+
+            {formData.form.q6 === "Yes" && (
+              <input
+                name="q6Reason"
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q6Reason || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If Yes, pls specify project from other NGA/NGO"
+                value={formData.form.q6Reason}
+                onChange={handleChange}
+                required={
+                  formData.form.q6 == "Yes"
+                    ? true
+                    : (formData.form.q6Reason = "")
+                }
+              />
+            )}
           </div>
         </div>
 
@@ -1328,24 +1353,26 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              name="q7_1"
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If no, why?"
-              value={formData.form.q7_1}
-              onChange={handleChange}
-              required={
-                formData.form.q7Satisfied == "not satisfied by the project"
-                  ? true
-                  : (formData.form.q7_1 = "")
-              }
-              disabled={
-                formData.form.q7Satisfied == "satisfied by the project"
-                  ? true
-                  : false
-              }
-            />
+
+            {formData.form.q7Satisfied === "not satisfied by the project" && (
+              <input
+                name="q7_1"
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q7_1 || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If no, why?"
+                value={formData.form.q7_1}
+                onChange={handleChange}
+                required={
+                  formData.form.q7Satisfied == "not satisfied by the project"
+                    ? true
+                    : (formData.form.q7_1 = "")
+                }
+              />
+            )}
           </div>
         </div>
 
@@ -1404,20 +1431,26 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              name="q7_2Reason"
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If No, please specify"
-              value={formData.form.q7_2Reason}
-              onChange={handleChange}
-              required={
-                formData.form.q7_2 == "No"
-                  ? true
-                  : (formData.form.q7_2Reason = "")
-              }
-              disabled={formData.form.q7_2 == "Yes" ? true : false}
-            />
+
+            {formData.form.q7_2 === "No" && (
+              <input
+                name="q7_2Reason"
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q7_2Reason || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If No, please specify"
+                value={formData.form.q7_2Reason}
+                onChange={handleChange}
+                required={
+                  formData.form.q7_2 == "No"
+                    ? true
+                    : (formData.form.q7_2Reason = "")
+                }
+              />
+            )}
           </div>
         </div>
 
@@ -1450,18 +1483,26 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              name="q8Reason"
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If yes, please specify"
-              value={formData.form.q8Reason}
-              onChange={handleChange}
-              required={
-                formData.form.q8 == "Yes" ? true : (formData.form.q8Reason = "")
-              }
-              disabled={formData.form.q8 == "Yes" ? false : true}
-            />
+            {formData.form.q8 === "Yes" && (
+              <input
+                name="q8Reason"
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q8Reason || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If yes, please specify"
+                value={formData.form.q8Reason}
+                onChange={handleChange}
+                required={
+                  formData.form.q8 == "Yes"
+                    ? true
+                    : (formData.form.q8Reason = "")
+                }
+                disabled={formData.form.q8 == "Yes" ? false : true}
+              />
+            )}
           </div>
         </div>
 
@@ -1487,7 +1528,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q9_1"
-                value="yes"
+                value="Yes"
                 onChange={handleChange}
                 required
               />
@@ -1497,7 +1538,7 @@ const Survey = () => {
               <input
                 type="radio"
                 name="q9_1"
-                value="no"
+                value="No"
                 onChange={handleChange}
                 required
               />
@@ -1513,20 +1554,26 @@ const Survey = () => {
               />
               N/A
             </div>
-            <input
-              name="q9_1Spec"
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="Species"
-              value={formData.form.q9_1Spec}
-              onChange={handleChange}
-              required={
-                formData.form.q9_1 == "yes" || "no"
-                  ? true
-                  : formData.form.q9_1Spec == "N/A"
-              }
-              disabled={formData.form.q9_1 == "N/A" ? true : false}
-            />
+
+            {(formData.form.q9_1 === "Yes" || formData.form.q9_1 === "No") && (
+              <input
+                name="q9_1Spec"
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q9_1Spec || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="Species"
+                value={formData.form.q9_1Spec}
+                onChange={handleChange}
+                required={
+                  formData.form.q9_1 == "yes" || "no"
+                    ? true
+                    : formData.form.q9_1Spec == "N/A"
+                }
+              />
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
@@ -1537,12 +1584,11 @@ const Survey = () => {
           </div>
           <div className="flex flex-col flex-1 gap-2">
             <input
-              type="text"
+              type="number"
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="q9_2"
               value={formData.form.q9_2}
               onChange={handleChange}
-              //   required
             />
           </div>
         </div>
@@ -1554,12 +1600,11 @@ const Survey = () => {
           </div>
           <div className="flex flex-col flex-1 gap-2">
             <input
-              type="text"
+              type="number"
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="q9_3"
               value={formData.form.q9_3}
               onChange={handleChange}
-              //   required
             />
           </div>
         </div>
@@ -1592,7 +1637,6 @@ const Survey = () => {
               name="q9_5"
               value={formData.form.q9_5}
               onChange={handleChange}
-              //   required
             />
           </div>
         </div>
@@ -1609,7 +1653,6 @@ const Survey = () => {
               name="q9_6"
               value={formData.form.q9_6}
               onChange={handleChange}
-              //   required
             />
           </div>
         </div>
@@ -1659,12 +1702,11 @@ const Survey = () => {
           </div>
           <div className="flex flex-col flex-1 gap-2">
             <input
-              type="text"
+              type="number"
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="q9_8"
               value={formData.form.q9_8}
               onChange={handleChange}
-              //   required
             />
           </div>
         </div>
@@ -1677,12 +1719,11 @@ const Survey = () => {
           </div>
           <div className="flex flex-col flex-1 gap-2">
             <input
-              type="text"
+              type="number"
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               name="q9_9"
               value={formData.form.q9_9}
               onChange={handleChange}
-              //   required
             />
           </div>
         </div>
@@ -1724,31 +1765,28 @@ const Survey = () => {
             <div className="flex flex-row flex-1 gap-6">
               <div className="flex gap-2 text-sm items-center">
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="q9_11"
                   value="Consumption"
                   onChange={handleChange}
-                  required
                 />
                 Consumption
               </div>
               <div className="flex gap-2 text-sm items-center">
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="q9_11"
                   value="Education"
                   onChange={handleChange}
-                  required
                 />
                 Education
               </div>
               <div className="flex gap-2 text-sm items-center">
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="q9_11"
                   value="Other HH needs"
                   onChange={handleChange}
-                  required
                 />
                 Other HH needs
               </div>
@@ -1822,11 +1860,16 @@ const Survey = () => {
               {formData.form.q9_13 == "others" && (
                 <input
                   type="text"
-                  className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q9_13other || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
                   placeholder="Others (please specify)"
                   name="q9_13other"
                   value={formData.form.q9_13other}
                   onChange={handleChange}
+                  required
                 />
               )}
             </div>
@@ -1873,7 +1916,11 @@ const Survey = () => {
             {formData.form.q9_14 == "yes" && (
               <input
                 type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q9_12Spec || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
                 placeholder="Please specify"
                 name="q9_12Spec"
                 value={formData.form.q9_12Spec}
@@ -1942,20 +1989,27 @@ const Survey = () => {
               />
               No
             </div>
-            <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              placeholder="If no, state reason why not operational/used"
-              name="q10Reason"
-              value={formData.form.q10Reason}
-              onChange={handleChange}
-              required={
-                formData.form.q10 == "No"
-                  ? true
-                  : (formData.form.q10Reason = "")
-              }
-              disabled={formData.form.q10 == "fully utilized" ? true : false}
-            />
+
+            {formData.form.q10 == "No" && (
+              <input
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q10Reason || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                placeholder="If no, state reason why not operational/used"
+                name="q10Reason"
+                value={formData.form.q10Reason}
+                onChange={handleChange}
+                required={
+                  formData.form.q10 == "No"
+                    ? true
+                    : (formData.form.q10Reason = "")
+                }
+                disabled={formData.form.q10 == "fully utilized" ? true : false}
+              />
+            )}
           </div>
         </div>
 
@@ -2067,16 +2121,19 @@ const Survey = () => {
               Others
             </div>
             {formData.form.q11 == "Others" && (
-                <input
-              type="text"
-              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="q11_1spec"
-              placeholder="Please specify"
-              value={formData.form.q11_1spec}
-              onChange={handleChange}
-            />
+              <input
+                type="text"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                  (formData.form.q11_1spec || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+                name="q11_1spec"
+                placeholder="Please specify"
+                value={formData.form.q11_1spec}
+                onChange={handleChange}
+              />
             )}
-            
           </div>
         </div>
 

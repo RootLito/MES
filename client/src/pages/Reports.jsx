@@ -302,10 +302,11 @@ const Reports = () => {
                   Remarks on Satisfaction
                 </th>
                 <th className="py-2 whitespace-nowrap">
-                  Problems Encountered during Project Implementation
+                  Problems Encountered
                 </th>
 
-                <th className="py-2 whitespace-nowrap">Catch/Yield in Kgs</th>
+                <th className="py-2 whitespace-nowrap">Catch/Yield Before</th>
+                <th className="py-2 whitespace-nowrap">Catch/Yield After</th>
 
                 <th className="py-2 whitespace-nowrap">
                   Remarks on Contribution to Production
@@ -314,7 +315,8 @@ const Reports = () => {
                   Species Caught (Capture Only)
                 </th>
 
-                <th className="py-2 whitespace-nowrap">Income in Php</th>
+                <th className="py-2 whitespace-nowrap">Income Before</th>
+                <th className="py-2 whitespace-nowrap">Income After</th>
                 <th className="py-2 whitespace-nowrap">
                   Improvement in Family/Household
                 </th>
@@ -371,16 +373,20 @@ const Reports = () => {
                   <td className="py-2 whitespace-nowrap">
                     {survey.q8 === "none" ? survey.q8 : survey.q8Reason}
                   </td>
+                  <td className="py-2 whitespace-nowrap">{survey.q9_2}</td>
                   <td className="py-2 whitespace-nowrap">{survey.q9_3}</td>
                   <td className="py-2 whitespace-nowrap">{survey.q9_4}</td>
                   <td className="py-2 whitespace-nowrap">
                     {survey.q9_1 !== "N/A" ? survey.q9_1Spec : survey.q9_1}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                    {/* {survey.q9_9} */}
+                    {survey.q9_8}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.q9_10 == "yes" ? survey.q9_11 : survey.q9_10}
+                    {survey.q9_9}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                  {survey.q9_11?.join(", ") || "—"}
                   </td>
                   <td className="py-2 whitespace-nowrap">
                     {survey.q9_12 === "yes"

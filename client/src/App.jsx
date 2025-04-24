@@ -10,6 +10,10 @@ import Dashboard from "./pages/Dashboard";
 import Monitoring from "./pages/Monitoring";
 import Lists from "./pages/Lists";
 import View from "./pages/monitoring/View";
+import NotFound from "./pages/NotFound";
+import Evaluator from "./pages/Evaluator";
+
+import Login from "./auth/Login";
 
 
 function App() {
@@ -27,8 +31,10 @@ function App() {
                 <Route path="/lists" element={<Lists />} />
                 <Route path="/lists/view/:id" element={<View />} />
                 <Route path="/lists/update/:id" element={<Update />} />
-                <Route path="/analytics" element={<Analytics key="analytics-page" />} />
+                <Route path="/analytics" element={<Analytics/>} />
                 <Route path="/reports" element={<Reports />} />
+                <Route path="/evaluators" element={<Login />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
         </div>

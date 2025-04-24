@@ -3,6 +3,7 @@ import { MdKeyboardBackspace } from "react-icons/md";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { MdCheckCircle } from "react-icons/md";
 
 const Update = () => {
   const navigate = useNavigate();
@@ -10,13 +11,14 @@ const Update = () => {
   const [error, setError] = useState(false);
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const [showToast, setShowToast] = useState(false);
   const [provinces, setProvinces] = useState([]);
   const [cities, setCities] = useState([]);
   const [municipalities, setMunicipalities] = useState([]);
   const [barangays, setBarangays] = useState([]);
   const [areaType, setAreaType] = useState();
+  const [showToast, setShowToast] = useState(false);
 
+  //PROJECTS ------------------------------
   const capture = [
     "Hook & Line Gears",
     "Net Gears",
@@ -24,7 +26,6 @@ const Update = () => {
     "Shallow-Water Payao",
     "Fry Dozer",
   ];
-
   const aquaculture = [
     "Freshwater Tilapia Fingerlings",
     "Saline Tilapia Fingerlings",
@@ -36,19 +37,17 @@ const Update = () => {
     "Tilapia Broodstock",
     "Milkfish Broodstock",
   ];
-
   const postHarvest = [
     "Fish Drying Set",
     "Fish Deboning Set",
     "Freezing Equipment",
   ];
 
+  // FETCH RESPONSE DATA ----------------------
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `https://bfar-server.onrender.com/survey/${id}`
-        );
+        const res = await axios.get(`https://bfar-server.onrender.com/survey/${id}`);
         setData(res.data);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -61,6 +60,7 @@ const Update = () => {
     fetchData(id);
   }, [id]);
 
+  //FORM DATA -------------------
   const [formData, setFormData] = useState({
     form: {
       name: "",
@@ -153,6 +153,8 @@ const Update = () => {
     }
   }, [data]);
 
+  // CHANGE EVENTS ----------------------
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({
@@ -163,16 +165,19 @@ const Update = () => {
     }));
   };
 
+  //  HANDLE SUBMIT  ----------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const res = await axios.put(
-        `http://localhost:5000/survey/update/${id}`,
+        `https://bfar-server.onrender.com/survey/update/${id}`,
         formData.form
       );
-      console.log("Response:", res.data);
-      navigate("/monitoring/");
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
     } catch (err) {
       console.error(
         "Error occurred:",
@@ -279,6 +284,16 @@ const Update = () => {
           <div className="toast toast-top toast-center">
             <div className="alert alert-error">
               <span className="text-red-50">Error fetching data</span>
+            </div>
+          </div>
+        )}
+
+        {showToast && (
+          <div className="toast toast-top toast-center z-2">
+            <div className="alert alert-success">
+              <span className="flex items-center text-green-50">
+                <MdCheckCircle size={18} className="mr-2" /> Form updated successfully
+              </span>
             </div>
           </div>
         )}
@@ -390,6 +405,7 @@ const Update = () => {
           <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
             <div className="flex flex-col flex-1">
               <p className="text-sm">Name of Association</p>
+
               <input
                 type="text"
                 className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
@@ -399,97 +415,56 @@ const Update = () => {
               />
             </div>
             <div className="flex flex-col">
-              <p className="text-sm">Total No. of Memebers</p>
-              <input
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                name="totalMember"
-                value={formData.form.totalMember || ""}
-                onChange={handleChange}
-              />
+              {formData?.form?.nameAssoc?.toUpperCase() !== "N/A" && (
+                <>
+                  <p className="text-sm">Total No. of Memebers</p>
+
+                  <input
+                    type="text"
+                    className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                    name="totalMember"
+                    value={formData.form.totalMember || ""}
+                    onChange={handleChange}
+                  />
+                </>
+              )}
             </div>
           </div>
 
           <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
             <div className="flex flex-col flex-1">
               <p className="text-sm">Province</p>
-              <select
+
+              <input
+                type="text"
+                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                 name="province"
                 value={formData.form.province || ""}
-                onChange={handleProvinceChange}
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                required
-              >
-                <option value="" disabled>
-                  - - Select - -
-                </option>
-                {provinces.map((prov) => (
-                  <option key={prov.code} value={prov.name}>
-                    {prov.name}
-                  </option>
-                ))}
-              </select>
+                onChange={handleChange}
+              />
             </div>
 
             <div className="flex flex-col flex-1">
               <p className="text-sm">Municipality / City</p>
-              <select
+              <input
+                type="text"
+                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                 name="municipality"
                 value={formData.form.municipality || ""}
-                onChange={handleMunicipalityChange}
-                disabled={!formData.form.province}
-                required
-                className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none 
-      ${!formData.form.province ? "bg-gray-200 cursor-not-allowed" : ""}`}
-              >
-                <option value="" disabled>
-                  - - Select - -
-                </option>
-
-                {cities.length > 0 && (
-                  <>
-                    <option disabled>--- Cities ---</option>
-                    {cities.map((city) => (
-                      <option key={city.code} value={city.name}>
-                        {city.name}
-                      </option>
-                    ))}
-                  </>
-                )}
-
-                {municipalities.length > 0 && (
-                  <>
-                    <option disabled>--- Municipalities ---</option>
-                    {municipalities.map((mun) => (
-                      <option key={mun.code} value={mun.name}>
-                        {mun.name}
-                      </option>
-                    ))}
-                  </>
-                )}
-              </select>
+                onChange={handleChange}
+              />
             </div>
 
             <div className="flex flex-col flex-1">
               <p className="text-sm">Barangay</p>
-              <select
+
+              <input
+                type="text"
+                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                 name="baranggay"
                 value={formData.form.baranggay || ""}
                 onChange={handleChange}
-                disabled={!formData.form.municipality}
-                required
-                className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none 
-        ${!formData.form.municipality ? "bg-gray-200 cursor-not-allowed" : ""}`}
-              >
-                <option value="" disabled>
-                  - - Select - -
-                </option>
-                {barangays.map((brgy) => (
-                  <option key={brgy.code} value={brgy.name}>
-                    {brgy.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
           </div>
 
@@ -507,8 +482,7 @@ const Update = () => {
                     name="projectReceived"
                     value="Capture"
                     onChange={handleChange}
-                    checked={data.projectReceived === "Capture"}
-                    required
+                    checked={formData.form.projectReceived === "Capture"}
                   />
                 </div>
 
@@ -522,8 +496,7 @@ const Update = () => {
                     name="projectReceived"
                     value="Aquaculture"
                     onChange={handleChange}
-                    checked={data.projectReceived === "Aquaculture"}
-                    required
+                    checked={formData.form.projectReceived === "Aquaculture"}
                   />
                 </div>
 
@@ -537,8 +510,7 @@ const Update = () => {
                     name="projectReceived"
                     value="Post-harvest"
                     onChange={handleChange}
-                    checked={data.projectReceived === "Post-harvest"}
-                    required
+                    checked={formData.form.projectReceived === "Post-harvest"}
                   />
                 </div>
                 <div className="flex gap-2">
@@ -551,8 +523,7 @@ const Update = () => {
                     name="projectReceived"
                     value="Others"
                     onChange={handleChange}
-                    checked={data.projectReceived === "Others"}
-                    required
+                    checked={formData.form.projectReceived === "Others"}
                   />
                 </div>
               </div>
@@ -595,7 +566,7 @@ const Update = () => {
                 <select
                   className={`border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none`}
                   name="specProject"
-                  value={formData.form.specProject  || ""}
+                  value={formData.form.specProject || ""}
                   onChange={handleChange}
                 >
                   <option value="" disabled>
@@ -629,45 +600,12 @@ const Update = () => {
 
           <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
             <div className="flex flex-col flex-1">
-              <p className="text-sm">Income Source</p>
-              <select
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                name="mainIncome"
-                value={formData.form.mainIncome  || ""}
-                onChange={handleChange}
-                required
-              >
-                <option value="" disabled>
-                  - - Select - -
-                </option>
-                <option value="Fishing">Fishing</option>
-                <option value="Agri">Agri</option>
-                <option value="Others">Others</option>
-              </select>
-            </div>
-            <div className="flex flex-col flex-1">
-              <p className="text-sm">If others, please specify</p>
-              <input
-                name="otherIncome"
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="Please specify"
-                value={formData.form.otherIncome || ""}
-                onChange={handleChange}
-                required={formData.form.mainIncome === "Others"}
-                disabled={formData.form.mainIncome !== "Others"}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
-            <div className="flex flex-col flex-1">
               <p className="text-sm">No. of Units Received</p>
               <input
                 type="number"
                 className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                 name="noUnitsReceived"
-                value={formData.form.noUnitsReceived  || ""}
+                value={formData.form.noUnitsReceived || ""}
                 onChange={handleChange}
                 required
               />
@@ -677,13 +615,48 @@ const Update = () => {
               <input
                 type="date"
                 name="dateReceived"
-                value={formData.dateReceived || ""}
+                value={
+                  formData.form.dateReceived
+                    ? format(new Date(formData.form.dateReceived), "yyyy-MM-dd")
+                    : ""
+                }
                 onChange={handleChange}
                 className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
                 required
               />
             </div>
           </div>
+
+          <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
+            <div className="flex flex-col flex-1">
+              <p className="text-sm">Main Source of Income</p>
+              <select
+                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                name="mainIncome"
+                value={formData.form.mainIncome || ""}
+                onChange={handleChange}
+                required
+              >
+                <option value="" disabled>
+                  - - Select - -
+                </option>
+                <option value="Fishing">Fishing</option>
+                <option value="Agri">Agri</option>
+              </select>
+            </div>
+            <div className="flex flex-col flex-1">
+              <p className="text-sm">Other Source of Income</p>
+              <input
+                name="otherIncome"
+                type="text"
+                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                placeholder="Please specify (Optional)"
+                value={formData.form.otherIncome || ""}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
           <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
             <div className="flex flex-col flex-1">
               <p className="text-sm">Latitude</p>
@@ -736,8 +709,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="quantity"
-                  value="Yes"
-                  checked={formData.form.quantity === "Yes"}
+                  value="sufficient"
+                  checked={formData.form.quantity === "sufficient"}
                   onChange={handleChange}
                   required
                 />
@@ -747,23 +720,28 @@ const Update = () => {
                 <input
                   type="radio"
                   name="quantity"
-                  value="No"
-                  checked={formData.form.quantity === "No"}
+                  value="not sufficient"
+                  checked={formData.form.quantity === "not sufficient"}
                   onChange={handleChange}
                   required
                 />
                 No
               </div>
-              <input
-                name="quantityReason"
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If no, why?"
-                value={formData.form.quantityReason || ""}
-                onChange={handleChange}
-                required={formData.form.quantity === "No"}
-                disabled={formData.form.quantity === "Yes"}
-              />
+              {formData.form.quantity === "not sufficient" && (
+                <input
+                  name="quantityReason"
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.quantityReason || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If no, why?"
+                  value={formData.form.quantityReason}
+                  onChange={handleChange}
+                  required={formData.form.quantity === "not sufficient"}
+                />
+              )}
             </div>
           </div>
 
@@ -806,8 +784,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="quality"
-                  value="Yes"
-                  checked={formData.form.quality === "Yes"}
+                  value="no defects"
+                  checked={formData.form.quality === "no defects"}
                   onChange={handleChange}
                   required
                 />
@@ -817,23 +795,32 @@ const Update = () => {
                 <input
                   type="radio"
                   name="quality"
-                  value="No"
-                  checked={formData.form.quality === "No"}
+                  value="has defects"
+                  checked={formData.form.quality === "has defects"}
                   onChange={handleChange}
                   required
                 />
                 No
               </div>
-              <input
-                name="qualityReason"
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If no, why?"
-                value={formData.form.qualityReason || ""}
-                onChange={handleChange}
-                required={formData.form.quality === "No"}
-                disabled={formData.form.quality === "Yes"}
-              />
+              {formData.form.quality === "has defects" && (
+                <input
+                  name="qualityReason"
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.qualityReason || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If no, why?"
+                  value={formData.form.qualityReason}
+                  onChange={handleChange}
+                  required={
+                    formData.form.quality == "has defects"
+                      ? true
+                      : (formData.form.qualityReason = "")
+                  }
+                />
+              )}
             </div>
           </div>
 
@@ -902,16 +889,25 @@ const Update = () => {
                 />
                 No
               </div>
-              <input
-                type="text"
-                name="q2Reason"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If no, why?"
-                value={formData.form.q2Reason || ""}
-                onChange={handleChange}
-                required={formData.form.q2 === "No"}
-                disabled={formData.form.q2 === "Yes"}
-              />
+              {formData.form.q2 === "No" && (
+                <input
+                  type="text"
+                  name="q2Reason"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q2Reason || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If no, why?"
+                  value={formData.form.q2Reason}
+                  onChange={handleChange}
+                  required={
+                    formData.form.q2 == "No"
+                      ? true
+                      : (formData.form.q2Reason = "")
+                  }
+                />
+              )}
             </div>
           </div>
 
@@ -952,8 +948,10 @@ const Update = () => {
                 <input
                   type="radio"
                   name="uponRequest"
-                  value="Yes"
-                  checked={formData.form.uponRequest === "Yes"}
+                  value="provided upon request"
+                  checked={
+                    formData.form.uponRequest === "provided upon request"
+                  }
                   onChange={handleChange}
                   required
                 />
@@ -963,8 +961,10 @@ const Update = () => {
                 <input
                   type="radio"
                   name="uponRequest"
-                  value="No"
-                  checked={formData.form.uponRequest === "No"}
+                  value="not provided upon request"
+                  checked={
+                    formData.form.uponRequest === "not provided upon request"
+                  }
                   onChange={handleChange}
                   required
                 />
@@ -973,9 +973,9 @@ const Update = () => {
               <div className="flex gap-2 text-sm">
                 <input
                   type="radio"
-                  name="uponRequest"
-                  value="< 6 Months"
-                  checked={formData.form.uponRequest === "< 6 Months"}
+                  name="duration"
+                  value="(<6 months)"
+                  checked={formData.form.duration === "(<6 months)"}
                   onChange={handleChange}
                   required
                 />
@@ -984,9 +984,9 @@ const Update = () => {
               <div className="flex gap-2 text-sm">
                 <input
                   type="radio"
-                  name="uponRequest"
-                  value="< 1 Year"
-                  checked={formData.form.uponRequest === "< 1 Year"}
+                  name="duration"
+                  value="(<1 yeear)"
+                  checked={formData.form.duration === "(<1 yeear)"}
                   onChange={handleChange}
                   required
                 />
@@ -995,9 +995,9 @@ const Update = () => {
               <div className="flex gap-2 text-sm">
                 <input
                   type="radio"
-                  name="uponRequest"
-                  value="> 1 Year"
-                  checked={formData.form.uponRequest === "> 1 Year"}
+                  name="duration"
+                  value="(> 1 Year)"
+                  checked={formData.form.duration === "(> 1 Year)"}
                   onChange={handleChange}
                   required
                 />
@@ -1020,8 +1020,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q3"
-                  value="Yes"
-                  checked={formData.form.q3 === "Yes"}
+                  value="addressed the need"
+                  checked={formData.form.q3 === "addressed the need"}
                   onChange={handleChange}
                   required
                 />
@@ -1031,27 +1031,32 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q3"
-                  value="No"
-                  checked={formData.form.q3 === "No"}
+                  value="did not addressed the need"
+                  checked={formData.form.q3 === "did not addressed the need"}
                   onChange={handleChange}
                   required
                 />
                 No
               </div>
-              <input
-                type="text"
-                name="q3Reason"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If no, why?"
-                value={formData.form.q3Reason || ""} 
-                onChange={handleChange}
-                required={
-                  formData.form.q3 == "No"
-                    ? true
-                    : (formData.form.q3Reason = "")
-                }
-                disabled={formData.form.q3 == "Yes" ? true : false}
-              />
+              {formData.form.q3 === "did not addressed the need" && (
+                <input
+                  name="q3Reason"
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q3Reason || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If no, why?"
+                  value={formData.form.q3Reason}
+                  onChange={handleChange}
+                  required={
+                    formData.form.q3 == "did not addressed the need"
+                      ? true
+                      : (formData.form.q3Reason = "")
+                  }
+                />
+              )}
             </div>
           </div>
 
@@ -1067,7 +1072,7 @@ const Update = () => {
                 name="challenges"
                 value={formData.form.challenges || ""}
                 onChange={handleChange}
-                required
+                placeholder="Optional"
                 className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
               />
             </div>
@@ -1115,8 +1120,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q4"
-                  value="Yes"
-                  checked={formData.form.q4 === "Yes"}
+                  value="suitable for the area"
+                  checked={formData.form.q4 === "suitable for the area"}
                   onChange={handleChange}
                   required
                 />
@@ -1126,27 +1131,32 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q4"
-                  value="No"
-                  checked={formData.form.q4 === "No"}
+                  value="not suitable for the area"
+                  checked={formData.form.q4 === "not suitable for the area"}
                   onChange={handleChange}
                   required
                 />
                 No
               </div>
-              <input
-                type="text"
-                name="q4Reason"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If no, why?"
-                value={formData.form.q4Reason || ""}
-                onChange={handleChange}
-                required={
-                  formData.form.q4 == "No"
-                    ? true
-                    : (formData.form.q4Reason = "")
-                }
-                disabled={formData.form.q4 == "Yes" ? true : false}
-              />
+              {formData.form.q4 === "not suitable for the area" && (
+                <input
+                  type="text"
+                  name="q4Reason"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q4Reason || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If no, why?"
+                  value={formData.form.q4Reason}
+                  onChange={handleChange}
+                  required={
+                    formData.form.q4 == "not suitable for the area"
+                      ? true
+                      : (formData.form.q4Reason = "")
+                  }
+                />
+              )}
             </div>
           </div>
 
@@ -1168,8 +1178,11 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q5"
-                  value="Yes"
-                  checked={formData.form.q5 === "Yes"}
+                  value="well-aware of the type of project given"
+                  checked={
+                    formData.form.q5 ===
+                    "well-aware of the type of project given"
+                  }
                   onChange={handleChange}
                   required
                 />
@@ -1179,27 +1192,31 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q5"
-                  value="No"
-                  checked={formData.form.q5 === "No"}
+                  value="not aware of the type of project given"
+                  checked={
+                    formData.form.q5 ===
+                    "not aware of the type of project given"
+                  }
                   onChange={handleChange}
                   required
                 />
                 No
               </div>
-              <input
-                name="q5Reason"
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If no, why?"
-                value={formData.form.q5Reason || ""}
-                onChange={handleChange}
-                required={
-                  formData.form.q5 == "No"
-                    ? true
-                    : (formData.form.q5Reason = "")
-                }
-                disabled={formData.form.q5 == "Yes" ? true : false}
-              />
+              {formData.form.q5 ===
+                "not aware of the type of project given" && (
+                <input
+                  name="q5Reason"
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q5Reason || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If no, why?"
+                  value={formData.form.q5Reason}
+                  onChange={handleChange}
+                />
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
@@ -1255,27 +1272,32 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q6"
-                  value="No"
-                  checked={formData.form.q6 === "No"}
+                  value="none"
+                  checked={formData.form.q6 === "none"}
                   onChange={handleChange}
                   required
                 />
                 No
               </div>
-              <input
-                name="q6Reason"
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If Yes, pls specify project from other NGA/NGO"
-                value={formData.form.q6Reason || ""}
-                onChange={handleChange}
-                required={
-                  formData.form.q6 == "Yes"
-                    ? true
-                    : (formData.form.q6Reason = "")
-                }
-                disabled={formData.form.q6 == "Yes" ? false : true}
-              />
+              {formData.form.q6 === "Yes" && (
+                <input
+                  name="q6Reason"
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q6Reason || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If Yes, pls specify project from other NGA/NGO"
+                  value={formData.form.q6Reason}
+                  onChange={handleChange}
+                  required={
+                    formData.form.q6 == "Yes"
+                      ? true
+                      : (formData.form.q6Reason = "")
+                  }
+                />
+              )}
             </div>
           </div>
 
@@ -1302,8 +1324,10 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q7Satisfied"
-                  value="Yes"
-                  checked={formData.form.q7Satisfied === "Yes"}
+                  value="satisfied by the project"
+                  checked={
+                    formData.form.q7Satisfied === "satisfied by the project"
+                  }
                   onChange={handleChange}
                   required
                 />
@@ -1313,27 +1337,34 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q7Satisfied"
-                  value="No"
-                  checked={formData.form.q7Satisfied === "No"}
+                  value="not satisfied by the project"
+                  checked={
+                    formData.form.q7Satisfied === "not satisfied by the project"
+                  }
                   onChange={handleChange}
                   required
                 />
                 No
               </div>
-              <input
-                name="q7_1"
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If no, why?"
-                value={formData.form.q7_1 || ""}
-                onChange={handleChange}
-                required={
-                  formData.form.q7Satisfied == "No"
-                    ? true
-                    : (formData.form.q7_1 = "")
-                }
-                disabled={formData.form.q7Satisfied == "Yes" ? true : false}
-              />
+              {formData.form.q7Satisfied === "not satisfied by the project" && (
+                <input
+                  name="q7_1"
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q7_1 || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If no, why?"
+                  value={formData.form.q7_1}
+                  onChange={handleChange}
+                  required={
+                    formData.form.q7Satisfied == "not satisfied by the project"
+                      ? true
+                      : (formData.form.q7_1 = "")
+                  }
+                />
+              )}
             </div>
           </div>
 
@@ -1394,20 +1425,25 @@ const Update = () => {
                 />
                 No
               </div>
-              <input
-                name="q7_2Reason"
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If No, please specify"
-                value={formData.form.q7_2Reason || ""}
-                onChange={handleChange}
-                required={
-                  formData.form.q7_2 == "No"
-                    ? true
-                    : (formData.form.q7_2Reason = "")
-                }
-                disabled={formData.form.q7_2 == "Yes" ? true : false}
-              />
+              {formData.form.q7_2 === "No" && (
+                <input
+                  name="q7_2Reason"
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q7_2Reason || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If No, please specify"
+                  value={formData.form.q7_2Reason}
+                  onChange={handleChange}
+                  required={
+                    formData.form.q7_2 == "No"
+                      ? true
+                      : (formData.form.q7_2Reason = "")
+                  }
+                />
+              )}
             </div>
           </div>
 
@@ -1435,27 +1471,33 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q8"
-                  value="No"
-                  checked={formData.form.q8 === "No"}
+                  value="none"
+                  checked={formData.form.q8 === "none"}
                   onChange={handleChange}
                   required
                 />
                 No
               </div>
-              <input
-                name="q8Reason"
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If yes, please specify"
-                value={formData.form.q8Reason || ""}
-                onChange={handleChange}
-                required={
-                  formData.form.q8 == "Yes"
-                    ? true
-                    : (formData.form.q8Reason = "")
-                }
-                disabled={formData.form.q8 == "Yes" ? false : true}
-              />
+              {formData.form.q8 === "Yes" && (
+                <input
+                  name="q8Reason"
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q8Reason || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If yes, please specify"
+                  value={formData.form.q8Reason}
+                  onChange={handleChange}
+                  required={
+                    formData.form.q8 == "Yes"
+                      ? true
+                      : (formData.form.q8Reason = "")
+                  }
+                  disabled={formData.form.q8 == "Yes" ? false : true}
+                />
+              )}
             </div>
           </div>
 
@@ -1510,20 +1552,26 @@ const Update = () => {
                 />
                 N/A
               </div>
-              <input
-                name="q9_1Spec"
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="Species"
-                value={formData.form.q9_1Spec || ""}
-                onChange={handleChange}
-                required={
-                  formData.form.q9_1 == "Yes"
-                    ? true
-                    : (formData.form.q9_1Spec = "")
-                }
-                disabled={formData.form.q9_1 == "Yes" ? false : true}
-              />
+              {(formData.form.q9_1 === "Yes" ||
+                formData.form.q9_1 === "No") && (
+                <input
+                  name="q9_1Spec"
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q9_1Spec || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="Species"
+                  value={formData.form.q9_1Spec}
+                  onChange={handleChange}
+                  required={
+                    formData.form.q9_1 == "yes" || "no"
+                      ? true
+                      : formData.form.q9_1Spec == "N/A"
+                  }
+                />
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
@@ -1539,7 +1587,6 @@ const Update = () => {
                 name="q9_2"
                 value={formData.form.q9_2 || ""}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>
@@ -1556,7 +1603,6 @@ const Update = () => {
                 name="q9_3"
                 value={formData.form.q9_3 || ""}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>
@@ -1573,7 +1619,6 @@ const Update = () => {
                 name="q9_4"
                 value={formData.form.q9_4 || ""}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>
@@ -1609,7 +1654,6 @@ const Update = () => {
                 name="q9_6"
                 value={formData.form.q9_6 || ""}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>
@@ -1628,7 +1672,6 @@ const Update = () => {
                   value="Yes"
                   checked={formData.form.q9_7 === "Yes"}
                   onChange={handleChange}
-                  required
                 />
                 Yes
               </div>
@@ -1639,7 +1682,6 @@ const Update = () => {
                   value="No"
                   checked={formData.form.q9_7 === "No"}
                   onChange={handleChange}
-                  required
                 />
                 No
               </div>
@@ -1659,7 +1701,6 @@ const Update = () => {
                 name="q9_8"
                 value={formData.form.q9_8 || ""}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>
@@ -1677,7 +1718,6 @@ const Update = () => {
                 name="q9_9"
                 value={formData.form.q9_9 || ""}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>
@@ -1693,8 +1733,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q9_10"
-                  value="Yes"
-                  checked={formData.form.q9_10 === "Yes"}
+                  value="yes"
+                  checked={formData.form.q9_10 === "yes"}
                   onChange={handleChange}
                   required
                 />
@@ -1704,8 +1744,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q9_10"
-                  value="No"
-                  checked={formData.form.q9_10 === "No"}
+                  value="no"
+                  checked={formData.form.q9_10 === "no"}
                   onChange={handleChange}
                   required
                 />
@@ -1713,46 +1753,43 @@ const Update = () => {
               </div>
             </div>
           </div>
-
-          <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
-            <div className="flex-1"></div>
-
-            <div className="flex flex-row flex-1 gap-6">
-              <div className="flex gap-2 text-sm items-center">
-                <input
-                  type="radio"
-                  name="q9_11"
-                  value="Consumption"
-                  checked={formData.form.q9_11 === "Consumption"}
-                  onChange={handleChange}
-                  required
-                />
-                Consumption
-              </div>
-              <div className="flex gap-2 text-sm items-center">
-                <input
-                  type="radio"
-                  name="q9_11"
-                  value="Education"
-                  checked={formData.form.q9_11 === "Education"}
-                  onChange={handleChange}
-                  required
-                />
-                Education
-              </div>
-              <div className="flex gap-2 text-sm items-center">
-                <input
-                  type="radio"
-                  name="q9_11"
-                  value="Other HH needs"
-                  checked={formData.form.q9_11 === "Other HH needs"}
-                  onChange={handleChange}
-                  required
-                />
-                Other HH needs
+          {formData.form.q9_10 === "yes" && (
+            <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
+              <div className="flex-1"></div>
+              <div className="flex flex-row flex-1 gap-6">
+                <div className="flex gap-2 text-sm items-center">
+                  <input
+                    type="checkbox"
+                    name="q9_11"
+                    value="Consumption"
+                    onChange={handleChange}
+                    checked={formData.form.q9_11.includes("Consumption")}
+                  />
+                  Consumption
+                </div>
+                <div className="flex gap-2 text-sm items-center">
+                  <input
+                    type="checkbox"
+                    name="q9_11"
+                    value="Education"
+                    onChange={handleChange}
+                    checked={formData.form.q9_11.includes("Education")}
+                  />
+                  Education
+                </div>
+                <div className="flex gap-2 text-sm items-center">
+                  <input
+                    type="checkbox"
+                    name="q9_11"
+                    value="Other HH needs"
+                    onChange={handleChange}
+                    checked={formData.form.q9_11.includes("Other HH needs")}
+                  />
+                  Other HH needs
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
             <div className="flex flex-col flex-1">
@@ -1765,8 +1802,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q9_12"
-                  value="Yes"
-                  checked={formData.form.q9_12 === "Yes"}
+                  value="yes"
+                  checked={formData.form.q9_12 === "yes"}
                   onChange={handleChange}
                   required
                 />
@@ -1776,8 +1813,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q9_12"
-                  value="No"
-                  checked={formData.form.q9_12 === "No"}
+                  value="N/A"
+                  checked={formData.form.q9_12 === "N/A"}
                   onChange={handleChange}
                   required
                 />
@@ -1786,41 +1823,61 @@ const Update = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
-            <div className="flex-1"></div>
-            <div className="flex flex-col flex-1 gap-2">
-              <div className="flex gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="q9_13"
-                  value="Improved Skills/Knowledge"
-                  checked={formData.form.q9_13 === "Improved Skills/Knowledge"}
-                  onChange={handleChange}
-                  required
-                />
-                Improved Skills/Knowledge
+          {formData.form.q9_12 == "yes" && (
+            <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
+              <div className="flex-1"></div>
+              <div className="flex flex-col flex-1 gap-2">
+                <div className="flex gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="q9_13"
+                    value="Improved Skills/Knowledge"
+                    checked={formData.form.q9_13 === "Improved Skills/Knowledge"}
+                    onChange={handleChange}
+                    required
+                  />
+                  Improved Skills/Knowledge
+                </div>
+                <div className="flex gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="q9_13"
+                    value="From Association to Coop"
+                    checked={formData.form.q9_13 === "From Association to Coop"}
+                    onChange={handleChange}
+                    required
+                  />
+                  From Association to Coop
+                </div>
+                <div className="flex gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="q9_13"
+                    value="others"
+                    checked={formData.form.q9_13 === "others"}
+                    onChange={handleChange}
+                    required
+                  />
+                  Others
+                </div>
+                {formData.form.q9_13 == "others" && (
+                  <input
+                    type="text"
+                    className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                      (formData.form.q9_13other || "").trim() === ""
+                        ? "border-red-500"
+                        : "border-gray-400"
+                    }`}
+                    placeholder="Others (please specify)"
+                    name="q9_13other"
+                    value={formData.form.q9_13other}
+                    onChange={handleChange}
+                    required
+                  />
+                )}
               </div>
-              <div className="flex gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="q9_13"
-                  value="From Association to Coop"
-                  checked={formData.form.q9_13 === "From Association to Coop"}
-                  onChange={handleChange}
-                  required
-                />
-                From Association to Coop
-              </div>
-              <input
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="Others (please specify)"
-                name="q9_13other"
-                value={formData.form.q9_13other || ""}
-                onChange={handleChange}
-              />
             </div>
-          </div>
+          )}
 
           <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
             <div className="flex flex-col flex-1">
@@ -1833,8 +1890,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q9_14"
-                  value="Yes"
-                  checked={formData.form.q9_14 === "Yes"}
+                  value="yes"
+                  checked={formData.form.q9_14 === "yes"}
                   onChange={handleChange}
                   required
                 />
@@ -1844,8 +1901,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q9_14"
-                  value="No"
-                  checked={formData.form.q9_14 === "No"}
+                  value="none"
+                  checked={formData.form.q9_14 === "none"}
                   onChange={handleChange}
                   required
                 />
@@ -1862,15 +1919,21 @@ const Update = () => {
                 />
                 N/A
               </div>
-              <input
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="Please specify"
-                name="q9_12Spec"
-                value={formData.form.q9_12Spec || ""}
-                onChange={handleChange}
-                required
-              />
+              {formData.form.q9_14 == "yes" && (
+                <input
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q9_12Spec || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="Please specify"
+                  name="q9_12Spec"
+                  value={formData.form.q9_12Spec}
+                  onChange={handleChange}
+                  required
+                />
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
@@ -1916,8 +1979,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q10"
-                  value="Yes"
-                  checked={formData.form.q10 === "Yes"}
+                  value="fully utilized"
+                  checked={formData.form.q10 === "fully utilized"}
                   onChange={handleChange}
                   required
                 />
@@ -1934,20 +1997,28 @@ const Update = () => {
                 />
                 No
               </div>
-              <input
-                type="text"
-                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-                placeholder="If no, state reason why not operational/used"
-                name="q10Reason"
-                value={formData.form.q10Reason || ""}
-                onChange={handleChange}
-                required={
-                  formData.form.q10 == "No"
-                    ? true
-                    : (formData.form.q10Reason = "")
-                }
-                disabled={formData.form.q10 == "Yes" ? true : false}
-              />
+              {formData.form.q10 == "No" && (
+                <input
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q10Reason || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  placeholder="If no, state reason why not operational/used"
+                  name="q10Reason"
+                  value={formData.form.q10Reason}
+                  onChange={handleChange}
+                  required={
+                    formData.form.q10 == "No"
+                      ? true
+                      : (formData.form.q10Reason = "")
+                  }
+                  disabled={
+                    formData.form.q10 == "fully utilized" ? true : false
+                  }
+                />
+              )}
             </div>
           </div>
 
@@ -2036,8 +2107,8 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q11"
-                  value="Yes"
-                  checked={formData.form.q11 === "Yes"}
+                  value="yes"
+                  checked={formData.form.q11 === "yes"}
                   onChange={handleChange}
                   required
                 />
@@ -2047,56 +2118,83 @@ const Update = () => {
                 <input
                   type="radio"
                   name="q11"
-                  value="No"
-                  checked={formData.form.q11 === "No"}
+                  value="N/A"
+                  checked={formData.form.q11 === "N/A"}
                   onChange={handleChange}
                   required
                 />
                 No
               </div>
+              <div className="flex gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="q11"
+                  value="Others"
+                  checked={formData.form.q11 === "Others"}
+                  onChange={handleChange}
+                  required
+                />
+                Others
+              </div>
+              {formData.form.q11 == "Others" && (
+                <input
+                  type="text"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.q11_1spec || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  name="q11_1spec"
+                  placeholder="Please specify"
+                  value={formData.form.q11_1spec}
+                  onChange={handleChange}
+                />
+              )}
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
-            <div className="flex flex-col flex-1">
-              <p className="text-sm sm:indent-5 flex-1">Please specify</p>
+          {formData.form.q11 == "yes" && (
+            <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
+              <div className="flex flex-col flex-1">
+                <p className="text-sm sm:indent-5 flex-1">Please specify</p>
+              </div>
+              <div className="flex flex-col flex-1 gap-2">
+                <div className="flex gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="q11_1"
+                    value="Vending"
+                    checked={formData.form.q11_1 === "Vending"}
+                    onChange={handleChange}
+                    required={formData.form.q11 == "Yes" ? true : false}
+                  />
+                  Vending
+                </div>
+                <div className="flex gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="q11_1"
+                    value="Local Market"
+                    checked={formData.form.q11_1 === "Local Market"}
+                    onChange={handleChange}
+                    required={formData.form.q11 == "Yes" ? true : false}
+                  />
+                  Local Market
+                </div>
+                <div className="flex gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="q11_1"
+                    value="Trader/Consignee"
+                    checked={formData.form.q11_1 === "Trader/Consignee"}
+                    onChange={handleChange}
+                    required={formData.form.q11 == "Yes" ? true : false}
+                  />
+                  Trader/Consignee
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col flex-1 gap-2">
-              <div className="flex gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="q11_1"
-                  value="Vending"
-                  checked={formData.form.q11_1 === "Vending"}
-                  onChange={handleChange}
-                  required={formData.form.q11 == "Yes" ? true : false}
-                />
-                Vending
-              </div>
-              <div className="flex gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="q11_1"
-                  value="Local Market"
-                  checked={formData.form.q11_1 === "Local Market"}
-                  onChange={handleChange}
-                  required={formData.form.q11 == "Yes" ? true : false}
-                />
-                Local Market
-              </div>
-              <div className="flex gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="q11_1"
-                  value="Trader/Consignee"
-                  checked={formData.form.q11_1 === "Trader/Consignee"}
-                  onChange={handleChange}
-                  required={formData.form.q11 == "Yes" ? true : false}
-                />
-                Trader/Consignee
-              </div>
-            </div>
-          </div>
+          )}
           {/* SUSTAINABILITY OF THE PROJECT================================================================= */}
           <h1 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 mt-5 bg-blue-950 p-2">
             NEEDS ASSESSMENT
@@ -2121,7 +2219,6 @@ const Update = () => {
                 name="q12"
                 value={formData.form.q12 || ""}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>
@@ -2139,7 +2236,6 @@ const Update = () => {
               name="note"
               value={formData.form.note || ""}
               onChange={handleChange}
-              required
             />
           </div>
 
