@@ -21,7 +21,7 @@ const Reports = () => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/survey");
+        const response = await axios.get("https://bfar-server.onrender.com/survey");
         setSurveys(response.data);
         setTotalRes(response.data.length);
       } catch (err) {
