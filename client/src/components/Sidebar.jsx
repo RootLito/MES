@@ -30,6 +30,18 @@ const Sidebar = () => {
             <MdDashboard className="ml-5" size={18}/>
             Dashboard
           </NavLink>
+
+          <NavLink
+            to="/analytics"
+            className={({ isActive }) =>
+              isActive
+                ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
+            }
+          >
+            <MdAssessment className="ml-5" size={18}/>
+            Analytics
+          </NavLink>
           <NavLink
             to="/monitoring"
             className={({ isActive }) =>
@@ -51,23 +63,13 @@ const Sidebar = () => {
                 : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
             }
           >
-            <MdInsertDriveFile className="ml-5" size={18}/> Form Lists
+            <MdInsertDriveFile className="ml-5" size={18}/> Uploaded Forms
           </NavLink>
 
 
 
 
-          <NavLink
-            to="/analytics"
-            className={({ isActive }) =>
-              isActive
-                ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
-            }
-          >
-            <MdAssessment className="ml-5" size={18}/>
-            Analytics
-          </NavLink>
+          
           <NavLink
             to="/reports"
             className={({ isActive }) =>
@@ -77,7 +79,7 @@ const Sidebar = () => {
             }
           >
             <MdFolder className="ml-5" size={18}/>
-            Report
+            Report Summary
           </NavLink>
 
 

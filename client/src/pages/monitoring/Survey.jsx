@@ -102,6 +102,7 @@ const Survey = () => {
     "Motorized Boat",
     "Shallow-Water Payao",
     "Fry Dozer",
+    "Others"
   ];
 
   const aquaculture = [
@@ -120,6 +121,7 @@ const Survey = () => {
     "Fish Drying Set",
     "Fish Deboning Set",
     "Freezing Equipment",
+    "Others"
   ];
 
   const technologyDemonstration = ["Specify"];
@@ -655,7 +657,6 @@ const Survey = () => {
               value={formData.dateReceived}
               onChange={handleChange}
               className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
-              required
             />
           </div>
         </div>
@@ -675,7 +676,7 @@ const Survey = () => {
               </option>
               <option value="Fishing">Fishing</option>
               <option value="Agri">Agri</option>
-              {/* <option value="Others">Others</option> */}
+              <option value="Others">Others</option>
             </select>
           </div>
           <div className="flex flex-col flex-1">
@@ -720,6 +721,12 @@ const Survey = () => {
         <p className="text-sm italic mt-2 sm:mt-0 text-center">
           Note: Please provide GPS of beneficiary and/or project implemented
         </p>
+
+
+        <div className="add">
+            <p className="font-black ml-2 text-lg mt-5">Evaluation Criteria/Questions</p>
+            <p className="ml-2 text-sm"><b>Rating </b>(5=Very satisfied 4=Satisfied 3=Average 2=Not Satisfied 1=Disappointed)</p>
+        </div>
 
         {/* EFFICIENCY OF THE PROJECT================================================================= */}
         <h1 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 mt-5 bg-blue-950 p-2">

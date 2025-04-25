@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import ReactApexChart from "react-apexcharts";
+import { format } from "date-fns";
 
 // Icons
 import { GiFlatfish, GiFishingNet } from "react-icons/gi";
@@ -33,6 +34,8 @@ const Dashboard = () => {
   const [culture, setCulture] = useState(0);
   const [post, setPost] = useState(0);
   const [other, setOther] = useState(0);
+  const currentDate = new Date();
+  const date = format(currentDate, "MM/dd/yyyy");
 
   const handleTabChange = (event) => {
     setSelectedTab(event.target.getAttribute("aria-label"));
@@ -40,7 +43,9 @@ const Dashboard = () => {
 
   const fetchSurveys = async () => {
     try {
-      const response = await axios.get("https://bfar-server.onrender.com/survey");
+      const response = await axios.get(
+        "https://bfar-server.onrender.com/survey"
+      );
       const surveys = response.data;
       setTotalRes(surveys.length);
 
@@ -275,8 +280,16 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-col gap-10 p-10">
-      <div className="w-full h-36 grid grid-cols-4 gap-10">
+    <div className="w-full h-full flex flex-col gap-5 p-10">
+      <div className="w-full h-18 flex  bg-white rounded-lg shadow-sm p-5 items-center justify-between">
+        <h1 className="text-2xl font-black text-blue-950">Demographic Profile</h1>
+
+        <h1 className="text-lg font-black text-gray-700">
+          Total no. of respondents as of {date} = <span className="text-success text-2xl">{totalRes}</span>
+        </h1>
+      </div>
+
+      <div className="w-full h-36 grid grid-cols-4 gap-5">
         <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
           <div className="flex items-center gap-2">
             <GiFishingNet size={20} className="text-blue-950" />
@@ -341,9 +354,9 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="w-full flex-1 flex gap-10">
-        <div className="flex flex-1 flex-col gap-10">
-          <div className="h-1/2 grid grid-cols-[2fr_1fr] gap-10">
+      <div className="w-full flex-1 flex gap-5">
+        <div className="flex flex-1 flex-col gap-5">
+          <div className="h-1/2 grid grid-cols-[2fr_1fr] gap-5">
             <div className="flex flex-col p-6 rounded-box bg-white shadow-sm">
               <div className="flex gap-2 items-center">
                 <FaCalendarDay size={18} className="text-blue-950" />
@@ -415,7 +428,7 @@ const Dashboard = () => {
           <div className="h-1/2 bg-white rounded-box shadow-sm p-6 flex flex-col">
             <div className="flex gap-2 items-center">
               <FaCoins size={20} className="text-blue-950" />
-              <p className="font-black text-xl text-blue-950"> Income Source</p>
+              <p className="font-black text-xl text-blue-950"> Main Source of Income</p>
             </div>
             <div className="flex-1 flex items-center justify-center">
               {barData ? (
@@ -439,7 +452,7 @@ const Dashboard = () => {
             <div className="flex gap-2 items-center">
               <FaCoins size={20} className="text-blue-950" />
               <p className="font-black text-xl text-blue-950">
-                Other Income Source
+                Other Source of Income
               </p>
             </div>
             <div className="flex-1 flex items-center justify-center">

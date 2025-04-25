@@ -21,7 +21,9 @@ const Reports = () => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const response = await axios.get("https://bfar-server.onrender.com/survey");
+        const response = await axios.get(
+          "https://bfar-server.onrender.com/survey"
+        );
         setSurveys(response.data);
         setTotalRes(response.data.length);
       } catch (err) {
@@ -301,9 +303,7 @@ const Reports = () => {
                 <th className="py-2 whitespace-nowrap">
                   Remarks on Satisfaction
                 </th>
-                <th className="py-2 whitespace-nowrap">
-                  Problems Encountered
-                </th>
+                <th className="py-2 whitespace-nowrap">Problems Encountered</th>
 
                 <th className="py-2 whitespace-nowrap">Catch/Yield Before</th>
                 <th className="py-2 whitespace-nowrap">Catch/Yield After</th>
@@ -379,14 +379,10 @@ const Reports = () => {
                   <td className="py-2 whitespace-nowrap">
                     {survey.q9_1 !== "N/A" ? survey.q9_1Spec : survey.q9_1}
                   </td>
+                  <td className="py-2 whitespace-nowrap">{survey.q9_8}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.q9_9}</td>
                   <td className="py-2 whitespace-nowrap">
-                    {survey.q9_8}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.q9_9}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                  {survey.q9_11?.join(", ") || "—"}
+                    {survey.q9_11?.join(", ") || "—"}
                   </td>
                   <td className="py-2 whitespace-nowrap">
                     {survey.q9_12 === "yes"
