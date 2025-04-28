@@ -37,6 +37,7 @@ const createSurvey = async (req, res) => {
     try {
         const {
             name,
+            resType,
             civilStatus,
             sex,
             age,
@@ -55,6 +56,7 @@ const createSurvey = async (req, res) => {
             projectReceived,
             scale,
             specProject,
+            specOther,
             otherProject,
 
             mainIncome,
@@ -145,14 +147,18 @@ const createSurvey = async (req, res) => {
 
         const newSurvey = new Survey({
             name,
+            resType,
             civilStatus,
             sex,
             age,
             hhMember,
+
             fishR,
             boatR,
+
             nameAssoc,
             totalMember,
+            
             province,
             municipality,
             baranggay,
@@ -160,6 +166,7 @@ const createSurvey = async (req, res) => {
             projectReceived,
             scale,
             specProject,
+            specOther,
             otherProject,
 
             mainIncome,
@@ -261,14 +268,18 @@ const updateSurvey = async (req, res) => {
 
         const {
             name,
+            resType,
             civilStatus,
             sex,
             age,
             hhMember,
+
             fishR,
             boatR,
+
             nameAssoc,
             totalMember,
+            
             province,
             municipality,
             baranggay,
@@ -276,6 +287,7 @@ const updateSurvey = async (req, res) => {
             projectReceived,
             scale,
             specProject,
+            specOther,
             otherProject,
 
             mainIncome,
@@ -371,6 +383,7 @@ const updateSurvey = async (req, res) => {
         }
 
         if (name) survey.name = name;
+        if (resType) survey.resType = resType;
         if (civilStatus) survey.civilStatus = civilStatus;
         if (sex) survey.sex = sex;
         if (age) survey.age = age;
@@ -384,6 +397,7 @@ const updateSurvey = async (req, res) => {
         if (baranggay) survey.baranggay = baranggay;
         if (projectReceived) survey.projectReceived = projectReceived;
         if (specProject) survey.specProject = specProject;
+        if (specOther) survey.specOther = specOther;
         if (noUnitsReceived) survey.noUnitsReceived = noUnitsReceived;
         if (dateReceived) survey.dateReceived = dateReceived;
         if (mainIncome) survey.mainIncome = mainIncome;

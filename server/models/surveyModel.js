@@ -5,6 +5,7 @@ const Schema = mongoose.Schema
 
 const surveySchema = new Schema({
   name: { type: String },
+  resType: { type: String },
   civilStatus: { type: String },
   sex: { type: String },
   age: { type: Number },
@@ -23,6 +24,7 @@ const surveySchema = new Schema({
   projectReceived: { type: String },
   scale: {type: String},
   specProject: { type: String},
+  specOther: { type: String},
   otherProject: { type: String},
 
   

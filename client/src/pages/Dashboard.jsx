@@ -7,9 +7,21 @@ import { format } from "date-fns";
 // Icons
 import { GiFlatfish, GiFishingNet } from "react-icons/gi";
 import { FaBoxOpen } from "react-icons/fa6";
-import { MdMale, MdFemale, MdHandshake } from "react-icons/md";
+import { MdMale, MdFemale, MdHandshake, MdPerson4 } from "react-icons/md";
 import { FaCoins, FaCalendarDay } from "react-icons/fa";
 import { BiMaleFemale } from "react-icons/bi";
+
+import net from "./../assets/images/net.png";
+import carps from "./../assets/images/carps.png";
+import freezer from "./../assets/images/freezer.png";
+import robotic from "./../assets/images/robotic.png";
+import fishing from "./../assets/images/fishing.png";
+import calendar from "./../assets/images/calendar.png";
+import gender from "./../assets/images/gender.png";
+import money from "./../assets/images/money.png";
+import coin from "./../assets/images/coin.png";
+import users from "./../assets/images/users.png";
+import status from "./../assets/images/status.png";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -33,9 +45,19 @@ const Dashboard = () => {
   const [capture, setCapture] = useState(0);
   const [culture, setCulture] = useState(0);
   const [post, setPost] = useState(0);
+  const [techno, setTechno] = useState(0);
   const [other, setOther] = useState(0);
   const currentDate = new Date();
   const date = format(currentDate, "MM/dd/yyyy");
+  const [civilStatusCounts, setCivilStatusCounts] = useState({
+    Single: 0,
+    Married: 0,
+    Widowed: 0,
+    Divorced: 0,
+    Separated: 0,
+  });
+  const [provinces, setProvinces] = useState([]);
+  const [selectedProvinces, setSelectedProvinces] = useState([]);
 
   const handleTabChange = (event) => {
     setSelectedTab(event.target.getAttribute("aria-label"));
@@ -64,6 +86,11 @@ const Dashboard = () => {
         (survey) => survey.projectReceived === "Post-harvest"
       ).length;
       setPost(po);
+
+      const tech = surveys.filter(
+        (survey) => survey.projectReceived === "Techno-demo"
+      ).length;
+      setTechno(tech);
 
       const ot = surveys.filter(
         (survey) =>
@@ -131,13 +158,15 @@ const Dashboard = () => {
       setFemaleCount(female);
 
       const ageGroups = {
+        "18 below": 0,
         "18-24": 0,
         "25-39": 0,
         "40-59": 0,
         "60 and Above": 0,
       };
       surveys.forEach(({ age }) => {
-        if (age >= 18 && age <= 24) ageGroups["18-24"]++;
+        if (age < 18) ageGroups["18 below"]++;
+        else if (age >= 18 && age <= 24) ageGroups["18-24"]++;
         else if (age >= 25 && age <= 39) ageGroups["25-39"]++;
         else if (age >= 40 && age <= 59) ageGroups["40-59"]++;
         else ageGroups["60 and Above"]++;
@@ -146,9 +175,47 @@ const Dashboard = () => {
       setData(
         Object.entries(ageGroups).map(([name, value]) => ({ name, value }))
       );
+
+      // Use filter to count each civil status directly
+      const statCounts = {
+        Single: surveys.filter((survey) => survey.civilStatus === "Single")
+          .length,
+        Married: surveys.filter((survey) => survey.civilStatus === "Married")
+          .length,
+        Widowed: surveys.filter((survey) => survey.civilStatus === "Widowed")
+          .length,
+        Divorced: surveys.filter((survey) => survey.civilStatus === "Divorced")
+          .length,
+        Separated: surveys.filter(
+          (survey) => survey.civilStatus === "Separated"
+        ).length,
+      };
+
+      // Update the state with the counts
+      setCivilStatusCounts(statCounts);
     } catch (error) {
       console.error("Error fetching survey data:", error);
     }
+  };
+
+  //   FETCH PROVINCES ----------------------
+  useEffect(() => {
+    axios
+      .get("https://psgc.cloud/api/regions/1100000000/provinces")
+      .then((res) => {
+        setProvinces(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching provinces:", err);
+      });
+  }, []);
+
+  const handleCheckboxChange = (name) => {
+    setSelectedProvinces((prevSelected) =>
+      prevSelected.includes(name)
+        ? prevSelected.filter((n) => n !== name)
+        : [...prevSelected, name]
+    );
   };
 
   useEffect(() => {
@@ -205,7 +272,26 @@ const Dashboard = () => {
   useEffect(() => {
     setTimeout(() => {
       setBarData({
-        series: [{ data: [fishingCount, agriCount, othersCount] }],
+        series: [
+          {
+            data: [
+              {
+                x: "Fishing",
+                y: fishingCount,
+                fillColor: "#FF5733",
+              },
+              {
+                x: "Agri",
+                y: agriCount,
+                fillColor: "#12db35",
+              },
+              {
+                x: "Others",
+                y: othersCount,
+              },
+            ],
+          },
+        ],
         options: {
           chart: {
             type: "bar",
@@ -282,19 +368,23 @@ const Dashboard = () => {
   return (
     <div className="w-full h-full flex flex-col gap-5 p-10">
       <div className="w-full h-18 flex  bg-white rounded-lg shadow-sm p-5 items-center justify-between">
-        <h1 className="text-2xl font-black text-blue-950">Demographic Profile</h1>
+        <h1 className="text-2xl font-black text-blue-950">
+          Demographic Profile
+        </h1>
 
-        <h1 className="text-lg font-black text-gray-700">
-          Total no. of respondents as of {date} = <span className="text-success text-2xl">{totalRes}</span>
+        <h1 className="text-lg font-black text-gray-700 bg-gray-200 p-2 rounded-lg">
+          Total no. of respondents as of {date} ={" "}
+          <span className="text-success text-2xl">{totalRes}</span>
         </h1>
       </div>
 
-      <div className="w-full h-36 grid grid-cols-4 gap-5">
+      <div className="w-full h-36 grid grid-cols-5 gap-5">
         <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
           <div className="flex items-center gap-2">
-            <GiFishingNet size={20} className="text-blue-950" />
+            <img src={net} alt="" />
             <p className="font-black text-xl text-blue-950">Capture</p>
           </div>
+          {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
 
           {isVisible ? (
             <div className="flex-1 flex justify-end items-end">
@@ -308,9 +398,11 @@ const Dashboard = () => {
         </div>
         <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
           <div className="flex items-center gap-2">
-            <GiFlatfish size={20} className="text-blue-950" />
+            <img src={carps} alt="" />
             <p className="font-black text-xl text-blue-950">Aquaculture</p>
           </div>
+          {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
+
           {isVisible ? (
             <div className="flex-1 flex justify-end items-end">
               <h1 className="font-black text-5xl text-gray-700">{culture}</h1>
@@ -323,9 +415,11 @@ const Dashboard = () => {
         </div>
         <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
           <div className="flex items-center gap-2">
-            <FaBoxOpen size={18} className="text-blue-950" />
+            <img src={freezer} alt="" />
             <p className="font-black text-xl text-blue-950">Post-harvest</p>
           </div>
+          {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
+
           {isVisible ? (
             <div className="flex-1 flex justify-end items-end">
               <h1 className="font-black text-5xl text-gray-700">{post}</h1>
@@ -336,11 +430,31 @@ const Dashboard = () => {
             </div>
           )}
         </div>
+
         <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
           <div className="flex items-center gap-2">
-            <MdHandshake size={20} className="text-blue-950" />
+            <img src={robotic} alt="" />
+            <p className="font-black text-xl text-blue-950">Techno-demo</p>
+          </div>
+          {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
+
+          {isVisible ? (
+            <div className="flex-1 flex justify-end items-end">
+              <h1 className="font-black text-5xl text-gray-700">{techno}</h1>
+            </div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center">
+              <span className="loading loading-spinner loading-xl"></span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
+          <div className="flex items-center gap-2">
+            <img src={fishing} alt="" />
             <p className="font-black text-xl text-blue-950">Others</p>
           </div>
+          {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
 
           {isVisible ? (
             <div className="flex-1 flex justify-end items-end">
@@ -354,34 +468,36 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="w-full flex-1 flex gap-5">
-        <div className="flex flex-1 flex-col gap-5">
-          <div className="h-1/2 grid grid-cols-[2fr_1fr] gap-5">
-            <div className="flex flex-col p-6 rounded-box bg-white shadow-sm">
-              <div className="flex gap-2 items-center">
-                <FaCalendarDay size={18} className="text-blue-950" />
-                <p className="font-black text-xl text-blue-950">Age Bracket</p>
-              </div>
-              <div className="flex-1 flex items-center justify-center">
-                {barData ? (
-                  <div className="flex-1 p-2">
-                    <ReactApexChart
-                      options={chartData.options}
-                      series={chartData.series}
-                      type="donut"
-                      width="100%"
-                      height="100%"
-                    />
-                  </div>
-                ) : (
-                  <span className="loading loading-spinner loading-xl"></span>
-                )}
-              </div>
-            </div>
+      {/* MID ------------------------ */}
 
-            <div className="flex flex-col p-6 rounded-box bg-white shadow-sm">
+      <div className="w-full flex gap-5">
+        <div className="flex flex-col gap-5 w-1/2">
+          <div className="flex flex-col p-6 rounded-box bg-white shadow-sm">
+            <div className="flex gap-2 items-center">
+              <img src={calendar} alt="" />
+              <p className="font-black text-xl text-blue-950">Age Bracket</p>
+            </div>
+            <div className="flex-1 flex items-center justify-center">
+              {barData ? (
+                <div className="flex-1 p-2">
+                  <ReactApexChart
+                    options={chartData.options}
+                    series={chartData.series}
+                    type="donut"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+              ) : (
+                <span className="loading loading-spinner loading-xl"></span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex-1 grid grid-cols-2 gap-5">
+            <div className="flex flex-col rounded-box bg-white shadow-sm p-5">
               <div className="flex gap-2 items-center">
-                <BiMaleFemale size={24} className="text-blue-950" />
+                <img src={gender} alt="" />
                 <p className="font-black text-xl text-blue-950"> Sex</p>
               </div>
 
@@ -406,10 +522,10 @@ const Dashboard = () => {
                     <div className="flex gap-2 items-center flex-col">
                       <MdFemale
                         size={52}
-                        className="bg-blue-100 rounded-full p-2 text-blue-900"
+                        className="bg-red-100 rounded-full p-2 text-red-700"
                       />
                       <div className="data">
-                        <p className="text-4xl font-black text-blue-950 text-center">
+                        <p className="text-4xl font-black text-red-800 text-center">
                           {femaleCount}
                         </p>
                         <p className="text-md italic font-semibold text-gray-500">
@@ -423,12 +539,55 @@ const Dashboard = () => {
                 )}
               </div>
             </div>
-          </div>
 
-          <div className="h-1/2 bg-white rounded-box shadow-sm p-6 flex flex-col">
+            <div className="flex flex-col rounded-box bg-white shadow-sm p-5">
+              <div className="flex gap-2 items-center">
+                <img src={status} alt="" />
+                <p className="font-black text-xl text-blue-950">Civil Status</p>
+              </div>
+              {isVisible ? (
+                <div className="flex-1 flex gap-5 items-center justify-between mt-2">
+                  <>
+                    <div className="flex flex-col justify-center gap-1">
+                      <p className="font-semibold text-gray-600">Single</p>
+                      <p className="font-semibold text-gray-600">Married</p>
+                      <p className="font-semibold text-gray-600">Widowed</p>
+                      <p className="font-semibold text-gray-600">Divorced</p>
+                      <p className="font-semibold text-gray-600">Separated</p>
+                    </div>
+                    <div className="flex flex-col justify-center gap-1">
+                      <div className="badge badge-soft badge-primary font-black">
+                        {civilStatusCounts.Single}
+                      </div>
+                      <div className="badge badge-soft badge-secondary font-black">
+                        {civilStatusCounts.Married}
+                      </div>
+                      <div className="badge badge-soft badge-accent font-black">
+                        {civilStatusCounts.Widowed}
+                      </div>
+                      <div className="badge badge-soft badge-info font-black">
+                        {civilStatusCounts.Divorced}
+                      </div>
+                      <div className="badge badge-soft badge-success font-black">
+                        {civilStatusCounts.Separated}
+                      </div>
+                    </div>
+                  </>
+                </div>
+              ) : (
+                <span className="loading loading-spinner loading-xl block mx-auto"></span>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-5  w-1/2">
+          <div className=" bg-white rounded-box shadow-sm p-6 flex flex-col">
             <div className="flex gap-2 items-center">
-              <FaCoins size={20} className="text-blue-950" />
-              <p className="font-black text-xl text-blue-950"> Main Source of Income</p>
+              <img src={money} alt="" />
+              <p className="font-black text-xl text-blue-950">
+                {" "}
+                Main Source of Income
+              </p>
             </div>
             <div className="flex-1 flex items-center justify-center">
               {barData ? (
@@ -450,7 +609,7 @@ const Dashboard = () => {
 
           <div className="h-1/2 bg-white rounded-box shadow-sm p-6 flex flex-col">
             <div className="flex gap-2 items-center">
-              <FaCoins size={20} className="text-blue-950" />
+              <img src={coin} alt="" />
               <p className="font-black text-xl text-blue-950">
                 Other Source of Income
               </p>
@@ -473,118 +632,173 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="w-[500px] max-h-[calc(100vh - 84px)] flex flex-col rounded-box shadow-sm">
-          <div className="card h-full bg-white shadow-sm">
-            <div className="card-body">
-              <span className="font-black text-xl text-blue-950">
-                Monitoring and Evaluation Distribution
-              </span>
+      {/* MID ---------------------------- */}
 
-              {isVisible ? (
-                <div className="tabs tabs-lift mt-6">
-                  <input
-                    type="radio"
-                    name="my_tabs_3"
-                    className="tab"
-                    aria-label="Province"
-                    defaultChecked
-                    onChange={handleTabChange}
-                  />
-                  <div className="tab-content bg-base-100 border-base-300 p-6 h-full">
-                    {selectedTab === "Province" && (
-                      <div>
-                        <table className="table table-zebra w-full">
-                          <thead>
-                            <tr className="bg-blue-950 text-white ">
-                              <th>Province</th>
-                              <th>Count</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {Object.entries(provinceData).map(
-                              ([province, count]) => (
-                                <tr key={province}>
-                                  <td>{province}</td>
-                                  <td>{count}</td>
-                                </tr>
-                              )
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
+      <div className="w-full flex flex-col rounded-box shadow-sm">
+        <div className="card h-full bg-white shadow-sm">
+          <div className="card-body">
+            <div className="font-black text-xl text-blue-950 flex items-center gap-2">
+              <img src={users} alt="" />
+              No. of Respondents
+            </div>
 
-                  <input
-                    type="radio"
-                    name="my_tabs_3"
-                    className="tab"
-                    aria-label="Municipality"
-                    onChange={handleTabChange}
-                  />
-                  <div className="tab-content bg-base-100 border-base-300 p-6">
-                    {selectedTab === "Municipality" && (
-                      <div>
-                        <table className="table table-zebra w-full">
-                          <thead>
-                            <tr className="bg-blue-950 text-white ">
-                              <th>Municipality</th>
-                              <th>Count</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {Object.entries(municipalityData).map(
-                              ([municipality, count]) => (
-                                <tr key={municipality}>
-                                  <td>{municipality}</td>
-                                  <td>{count}</td>
-                                </tr>
-                              )
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-
-                  <input
-                    type="radio"
-                    name="my_tabs_3"
-                    className="tab"
-                    aria-label="Barangay"
-                    onChange={handleTabChange}
-                  />
-                  <div className="tab-content bg-base-100 border-base-300 p-6">
-                    {selectedTab === "Barangay" && (
-                      <div>
-                        <table className="table table-zebra w-full ">
-                          <thead>
-                            <tr className="bg-blue-950 text-white ">
-                              <th>Barangay</th>
-                              <th>Count</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {Object.entries(barangayData).map(
-                              ([barangay, count]) => (
-                                <tr key={barangay}>
-                                  <td>{barangay}</td>
-                                  <td>{count}</td>
-                                </tr>
-                              )
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
+            {/* {isVisible ? (
+              <div className="tabs tabs-lift mt-6">
+                <input
+                  type="radio"
+                  name="my_tabs_3"
+                  className="tab"
+                  aria-label="Province"
+                  defaultChecked
+                  onChange={handleTabChange}
+                />
+                <div className="tab-content bg-base-100 border-base-300 p-6 h-full">
+                  {selectedTab === "Province" && (
+                    <div>
+                      <table className="table table-zebra w-full">
+                        <thead>
+                          <tr className="bg-blue-950 text-white ">
+                            <th>Province</th>
+                            <th>Count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(provinceData).map(
+                            ([province, count]) => (
+                              <tr key={province}>
+                                <td>{province}</td>
+                                <td>{count}</td>
+                              </tr>
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="flex-1 flex items-center justify-center">
-                  <span className="loading loading-spinner loading-xl"></span>
+
+                <input
+                  type="radio"
+                  name="my_tabs_3"
+                  className="tab"
+                  aria-label="Municipality"
+                  onChange={handleTabChange}
+                />
+                <div className="tab-content bg-base-100 border-base-300 p-6">
+                  {selectedTab === "Municipality" && (
+                    <div>
+                      <table className="table table-zebra w-full">
+                        <thead>
+                          <tr className="bg-blue-950 text-white ">
+                            <th>Municipality</th>
+                            <th>Count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(municipalityData).map(
+                            ([municipality, count]) => (
+                              <tr key={municipality}>
+                                <td>{municipality}</td>
+                                <td>{count}</td>
+                              </tr>
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
-              )}
+
+                <input
+                  type="radio"
+                  name="my_tabs_3"
+                  className="tab"
+                  aria-label="Barangay"
+                  onChange={handleTabChange}
+                />
+                <div className="tab-content bg-base-100 border-base-300 p-6">
+                  {selectedTab === "Barangay" && (
+                    <div>
+                      <table className="table table-zebra w-full ">
+                        <thead>
+                          <tr className="bg-blue-950 text-white ">
+                            <th>Barangay</th>
+                            <th>Count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(barangayData).map(
+                            ([barangay, count]) => (
+                              <tr key={barangay}>
+                                <td>{barangay}</td>
+                                <td>{count}</td>
+                              </tr>
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <span className="loading loading-spinner loading-xl"></span>
+              </div>
+            )} */}
+
+            <div className="w-full flex gap-10">
+              <div className="w-1/2 h-full flex flex-col">
+                <h1 className="font-black text-lg text-blue-950 mt-5">
+                  Province
+                </h1>
+                <div className="w-full h-36 overflow-y-auto flex flex-col pl-5 gap-1 py-2">
+                  {provinces.map((province) => (
+                    <label
+                      key={province.code}
+                      className="text-md cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        value={province.name}
+                        checked={selectedProvinces.includes(province.name)}
+                        onChange={() => handleCheckboxChange(province.name)}
+                        className="mr-2"
+                      />
+                      {province.name}
+                    </label>
+                  ))}
+                </div>
+                <h1 className="font-black text-lg text-blue-950">
+                  Municipality
+                </h1>
+                <div className="w-full h-50 overflow-y-auto flex flex-col pl-5 gap-1 py-2">
+                  {provinces.map((province) => (
+                    <label
+                      key={province.code}
+                      className="text-md cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        value={province.name}
+                        checked={selectedProvinces.includes(province.name)}
+                        onChange={() => handleCheckboxChange(province.name)}
+                        className="mr-2"
+                      />
+                      {province.name}
+                    </label>
+                  ))}
+                </div>
+                <button className="btn btn-success w-full text-white">
+                  Filter
+                </button>
+              </div>
+
+              <div className="w-1/2 h-full ">
+                <h1 className="font-black text-lg text-blue-950">Baranggay</h1>
+              </div>
             </div>
           </div>
         </div>

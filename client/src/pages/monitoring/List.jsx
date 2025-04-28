@@ -188,7 +188,7 @@ const List = () => {
               <th>Name</th>
               <th>Address</th>
               <th>Project Received</th>
-              <th>Specific Project</th>
+              <th>Evaluator</th>
               <th>Date</th>
               <th>Action</th>
             </tr>

@@ -7,6 +7,7 @@ const Survey = () => {
   const [formData, setFormData] = useState({
     form: {
       name: "",
+      resType: "",
       civilStatus: "",
       sex: "",
       age: "",
@@ -21,6 +22,7 @@ const Survey = () => {
       projectReceived: "",
       scale: "",
       specProject: "",
+      specOther: "",
       noUnitsReceived: "",
       dateReceived: "",
       mainIncome: "",
@@ -97,31 +99,58 @@ const Survey = () => {
   const [areaType, setAreaType] = useState();
 
   const capture = [
-    "Hook & Line Gears",
-    "Net Gears",
-    "Motorized Boat",
-    "Shallow-Water Payao",
-    "Fry Dozer",
-    "Others"
+    "shallow water payao",
+    "lambaklad",
+    "hook and line",
+    "tuna handline",
+    "multiple handline",
+    "net gears",
+    "motorized boat",
+    "non-motorized boat",
+    "marine engine",
+    "fry dozer",
+    "others",
   ];
 
   const aquaculture = [
-    "Freshwater Tilapia Fingerlings",
-    "Saline Tilapia Fingerlings",
-    "Milkfish Fingerlings",
-    "Cages for Livelihood",
-    "Hito Fingerlings",
-    "Other Fingerlings",
-    "Tilapia Fingerlings for Broodstock Development",
-    "Tilapia Broodstock",
-    "Milkfish Broodstock",
+    "freshwater tilapia fingerlings",
+    "saline tilapia fingerlings",
+    "milkfish fingerlings",
+    "hito fingerlings",
+    "post-larvae shrimp",
+    "kitang fingerlings",
+    "mudcrabs",
+    "tilapia fingerlings for broodstock development",
+    "tilapia broodstock",
+    "milkfish broodstock",
+    "seaweed propagules",
+    "seaweed farm implements",
+    "seaweed nurseries",
+    "feeds",
+    "fertilizer",
+    "others",
   ];
 
   const postHarvest = [
-    "Fish Drying Set",
-    "Fish Deboning Set",
-    "Freezing Equipment",
-    "Others"
+    "freezer",
+    "dryer",
+    "fish stalls",
+    "smokehouse",
+    "vacuum sealer/packer",
+    "sorter",
+    "fish deboning set",
+    "fish bottling set",
+    "processing utensils",
+    "fish cart/kiosk",
+    "salt",
+    "others",
+  ];
+
+  const technoDemo = [
+    "Shellfish",
+    "Polyculture of Milkfish and Molobicus Tilapia",
+    "Monoculture of Milkfish",
+    "others",
   ];
 
   const technologyDemonstration = ["Specify"];
@@ -168,7 +197,7 @@ const Survey = () => {
     }
   };
 
-  //   FETCH BARANGGAY ----------------------
+  //   FETCH BARANGAY ----------------------
   const handleMunicipalityChange = async (e) => {
     const selectedArea = e.target.value;
 
@@ -223,11 +252,12 @@ const Survey = () => {
       ...prevState,
       form: {
         ...prevState.form,
-        [name]: type === "checkbox"
-          ? checked
-            ? [...prevState.form[name], value]  
-            : prevState.form[name].filter(item => item !== value) 
-          : value,  
+        [name]:
+          type === "checkbox"
+            ? checked
+              ? [...prevState.form[name], value]
+              : prevState.form[name].filter((item) => item !== value)
+            : value,
       },
     }));
   };
@@ -290,6 +320,25 @@ const Survey = () => {
               required
             />
           </div>
+
+          <div className="flex flex-col sm:w-[150px]">
+            <p className="text-sm">Respondent Type</p>
+            <select
+              className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+              name="civilStatus"
+              value={formData.form.civilStatus}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>
+                Select Type
+              </option>
+              <option value="Individual">Individual</option>
+              <option value="Group">Group</option>
+              <option value="LGU">LGU</option>
+            </select>
+          </div>
+          
           <div className="flex flex-col sm:w-[150px]">
             <p className="text-sm">Civil Status</p>
             <select
@@ -482,7 +531,7 @@ const Survey = () => {
 
           <div className="flex flex-col flex-1">
             <p className="text-sm">Barangay</p>
-            <select
+            {/* <select
               name="baranggay"
               value={formData.form.baranggay}
               onChange={handleChange}
@@ -499,7 +548,20 @@ const Survey = () => {
                   {brgy.name}
                 </option>
               ))}
-            </select>
+            </select> */}
+            <input
+              type="text"
+              name="baranggay"
+              value={formData.form.baranggay}
+              onChange={handleChange}
+              className={`border-1 px-3 h-[42px] rounded-md focus:outline-none ${
+                (formData.form.municipality || "").trim() === ""
+                  ? "cursor-not-allowed disabled:opacity-50 bg-gray-200 border-gray-400"
+                  : ""
+              }`}
+              placeholder="Please specify"
+              required
+            />
           </div>
         </div>
 
@@ -542,6 +604,19 @@ const Survey = () => {
                   type="radio"
                   name="projectReceived"
                   value="Post-harvest"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="flex gap-2">
+                <label htmlFor="tecnhoDemo" className="cursor-pointer">
+                  Techno-demo
+                </label>
+                <input
+                  id="tecnhoDemo"
+                  type="radio"
+                  name="projectReceived"
+                  value="Techno-demo"
                   onChange={handleChange}
                   required
                 />
@@ -632,10 +707,33 @@ const Survey = () => {
                       {item}
                     </option>
                   ))}
+                {formData.form.projectReceived === "Techno-demo" &&
+                  technoDemo.map((item, index) => (
+                    <option key={index} value={item}>
+                      {item}
+                    </option>
+                  ))}
               </select>
             )}
           </div>
         </div>
+
+        {formData.form.specProject === "others" && (
+          <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
+            <div className="flex flex-col flex-1">
+              <p className="text-sm">Others</p>
+              <input
+                type="text"
+                className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                name="specOther"
+                value={formData.form.specOther}
+                onChange={handleChange}
+                placeholder="Please specify"
+                required
+              />
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
@@ -718,18 +816,19 @@ const Survey = () => {
           </div>
         </div>
 
-        <p className="text-sm italic mt-2 sm:mt-0 text-center">
+        <p className="text-xs italic mt-2 sm:mt-0 text-center">
           Note: Please provide GPS of beneficiary and/or project implemented
         </p>
 
-
-        <div className="add">
-            <p className="font-black ml-2 text-lg mt-5">Evaluation Criteria/Questions</p>
-            <p className="ml-2 text-sm"><b>Rating </b>(5=Very satisfied 4=Satisfied 3=Average 2=Not Satisfied 1=Disappointed)</p>
+        <div className="my-10">
+          <p className="font-black ml-2 text-xl text-center text-gray-700">Evaluation Criteria/Questions</p>
+          <p className="ml-2 text-sm text-center">
+            <i><b>Rating </b>(5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp;  3⭐=Average; &nbsp;  2⭐=Not satisfied; &nbsp;  1⭐=Disappointed)</i>
+          </p>
         </div>
 
         {/* EFFICIENCY OF THE PROJECT================================================================= */}
-        <h1 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 mt-5 bg-blue-950 p-2">
+        <h1 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 bg-blue-950 p-2">
           EFFICIENCY OF THE PROJECT
         </h1>
         <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
