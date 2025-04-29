@@ -91,7 +91,7 @@ const Analytics = () => {
 
   return (
     <div className="flex-1 grid grid-cols-2 grid-rows-4 p-10 gap-10">
-      <div className="card bg-base-100 h-100 shadow-sm">
+      <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Quantity</h2>
           <div className="h-full w-full mt-5">
@@ -108,7 +108,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="card bg-base-100 h-100 shadow-sm">
+      <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Quality</h2>
           <div className="h-full w-full mt-5">
@@ -125,7 +125,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="card bg-base-100 h-100 shadow-sm">
+      <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Timeliness</h2>
           <div className="h-full w-full mt-5">
@@ -142,7 +142,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="card bg-base-100 h-100 shadow-sm">
+      <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Relevance</h2>
           <div className="h-full w-full mt-5">
@@ -159,7 +159,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="card bg-base-100 h-100 shadow-sm">
+      <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Coherence</h2>
           <div className="h-full w-full mt-5">
@@ -176,7 +176,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="card bg-base-100 h-100 shadow-sm">
+      <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Satisfaction</h2>
           <div className="h-full w-full mt-5">
@@ -193,7 +193,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="card bg-base-100 h-100 shadow-sm">
+      <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Impact</h2>
           <div className="h-full w-full mt-5">
@@ -210,7 +210,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="card bg-base-100 h-100 shadow-sm">
+      <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title text-blue-950 font-black">Rating on Sustainability</h2>
           <div className="h-full w-full mt-5">

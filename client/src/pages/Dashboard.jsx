@@ -58,6 +58,9 @@ const Dashboard = () => {
   });
   const [provinces, setProvinces] = useState([]);
   const [selectedProvinces, setSelectedProvinces] = useState([]);
+  const [allMun, setAllMun] = useState([]);
+  const [selectedMunicipalities, setSelectedMunicipalities] = useState([]);
+  const [surveys, setSurveys] = useState([]);
 
   const handleTabChange = (event) => {
     setSelectedTab(event.target.getAttribute("aria-label"));
@@ -69,6 +72,7 @@ const Dashboard = () => {
         "https://bfar-server.onrender.com/survey"
       );
       const surveys = response.data;
+      setSurveys(surveys);
       setTotalRes(surveys.length);
 
       // SPECIFIC PROJECTS
@@ -217,6 +221,83 @@ const Dashboard = () => {
         : [...prevSelected, name]
     );
   };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedBarangays(allBarangays);
+    } else {
+      setSelectedBarangays([]);
+    }
+  };
+
+  const fetchMunicipalities = async () => {
+    try {
+      const responses = await Promise.all(
+        selectedProvinces.map((code) =>
+          axios.get(
+            `https://psgc.cloud/api/provinces/${code}/cities-municipalities`
+          )
+        )
+      );
+
+      const allMunicipalities = responses.flatMap((res) => res.data);
+      setAllMun(allMunicipalities);
+      console.log(allMunicipalities);
+    } catch (error) {
+      console.error("Error fetching cities/municipalities:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedProvinces.length > 0) {
+      fetchMunicipalities();
+    }
+  }, [selectedProvinces]);
+
+  const handleMunicipalityChange = (name) => {
+    setSelectedMunicipalities((prevSelected) =>
+      prevSelected.includes(name)
+        ? prevSelected.filter((n) => n !== name)
+        : [...prevSelected, name]
+    );
+  };
+
+  const filteredSurveys = surveys.filter((survey) =>
+    selectedMunicipalities.includes(survey.municipality)
+  );
+
+  // Create a count map
+  const barangayCounts = {};
+
+  filteredSurveys.forEach((survey) => {
+    const barangay = survey.baranggay;
+    if (barangayCounts[barangay]) {
+      barangayCounts[barangay]++;
+    } else {
+      barangayCounts[barangay] = 1;
+    }
+  });
+
+  const handleSelectAllProvinces = (e) => {
+    if (e.target.checked) {
+      setSelectedProvinces(provinces.map((province) => province.code));
+    } else {
+      setSelectedProvinces([]);
+    }
+  };
+  const allProvincesSelected =
+    provinces.length > 0 && selectedProvinces.length === provinces.length;
+
+  const handleSelectAllMunicipalities = (e) => {
+    if (e.target.checked) {
+      setSelectedMunicipalities(allMun.map((mun) => mun.name));
+    } else {
+      setSelectedMunicipalities([]);
+    }
+  };
+
+  const allMunicipalitiesSelected =
+    allMun.length > 0 && selectedMunicipalities.length === allMun.length;
 
   useEffect(() => {
     fetchSurveys();
@@ -751,9 +832,23 @@ const Dashboard = () => {
 
             <div className="w-full flex gap-10">
               <div className="w-1/2 h-full flex flex-col">
-                <h1 className="font-black text-lg text-blue-950 mt-5">
-                  Province
-                </h1>
+                <div className="w-full">
+                  <div className="w-full flex justify-between items-center">
+                    <h1 className="font-black text-lg text-blue-950">
+                      Province
+                    </h1>
+                    <label className="text-md cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="mr-1"
+                        checked={allProvincesSelected}
+                        onChange={handleSelectAllProvinces}
+                      />
+                      Select All
+                    </label>
+                  </div>
+                </div>
+
                 <div className="w-full h-36 overflow-y-auto flex flex-col pl-5 gap-1 py-2">
                   {provinces.map((province) => (
                     <label
@@ -762,42 +857,67 @@ const Dashboard = () => {
                     >
                       <input
                         type="checkbox"
-                        value={province.name}
-                        checked={selectedProvinces.includes(province.name)}
-                        onChange={() => handleCheckboxChange(province.name)}
+                        value={province.code}
+                        checked={selectedProvinces.includes(province.code)}
+                        onChange={() => handleCheckboxChange(province.code)}
                         className="mr-2"
                       />
                       {province.name}
                     </label>
                   ))}
                 </div>
-                <h1 className="font-black text-lg text-blue-950">
-                  Municipality
-                </h1>
-                <div className="w-full h-50 overflow-y-auto flex flex-col pl-5 gap-1 py-2">
-                  {provinces.map((province) => (
-                    <label
-                      key={province.code}
-                      className="text-md cursor-pointer"
-                    >
+
+                <div className="w-full flex justify-between items-center">
+                  <h1 className="font-black text-lg text-blue-950">
+                    Municipality
+                  </h1>
+                  <label className="text-md cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="mr-1"
+                      checked={allMunicipalitiesSelected}
+                      onChange={handleSelectAllMunicipalities}
+                    />
+                    Select All
+                  </label>
+                </div>
+
+                <div className="w-full h-82 overflow-y-auto flex flex-col pl-5 gap-1 py-2">
+                  {allMun.map((mun) => (
+                    <label key={mun.name} className="text-md cursor-pointer">
                       <input
                         type="checkbox"
-                        value={province.name}
-                        checked={selectedProvinces.includes(province.name)}
-                        onChange={() => handleCheckboxChange(province.name)}
+                        value={mun.name}
+                        checked={selectedMunicipalities.includes(mun.name)}
+                        onChange={() => handleMunicipalityChange(mun.name)}
                         className="mr-2"
                       />
-                      {province.name}
+                      {mun.name}
                     </label>
                   ))}
                 </div>
-                <button className="btn btn-success w-full text-white">
-                  Filter
-                </button>
               </div>
 
-              <div className="w-1/2 h-full ">
+              <div className="flex flex-col w-1/2 h-full ">
                 <h1 className="font-black text-lg text-blue-950">Baranggay</h1>
+
+                <div className="w-full h-120 mt-2 overflow-y-auto">
+                  <div className="flex w-full justify-between text-blue-950 font-black mb-2">
+                    <div>Name</div>
+                    <div>Total</div>
+                  </div>
+                  {Object.entries(barangayCounts).map(
+                    ([barangayName, count]) => (
+                      <div
+                        key={barangayName}
+                        className="w-full flex justify-between hover:bg-gray-200 pr-2"
+                      >
+                        <div>{barangayName}</div>
+                        <div className="font-black">{count}</div>
+                      </div>
+                    )
+                  )}
+                </div>
               </div>
             </div>
           </div>

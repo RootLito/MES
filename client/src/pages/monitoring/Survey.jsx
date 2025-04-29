@@ -22,6 +22,7 @@ const Survey = () => {
       projectReceived: "",
       scale: "",
       specProject: "",
+      specRemarks: "",
       specOther: "",
       noUnitsReceived: "",
       dateReceived: "",
@@ -325,8 +326,8 @@ const Survey = () => {
             <p className="text-sm">Respondent Type</p>
             <select
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="civilStatus"
-              value={formData.form.civilStatus}
+              name="resType"    
+              value={formData.form.resType}
               onChange={handleChange}
               required
             >
@@ -338,7 +339,7 @@ const Survey = () => {
               <option value="LGU">LGU</option>
             </select>
           </div>
-          
+
           <div className="flex flex-col sm:w-[150px]">
             <p className="text-sm">Civil Status</p>
             <select
@@ -724,7 +725,11 @@ const Survey = () => {
               <p className="text-sm">Others</p>
               <input
                 type="text"
-                className="w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.specOther || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
                 name="specOther"
                 value={formData.form.specOther}
                 onChange={handleChange}
@@ -734,6 +739,17 @@ const Survey = () => {
             </div>
           </div>
         )}
+
+        <div className="flex flex-col flex-1 px-2">
+          <p className="text-sm">Remarks</p>
+          <input
+            name="specRemarks"
+            type="text"
+            className="border-1 px-3 h-[42px] rounded-md focus:outline-none border-gray-400"
+            value={formData.form.specRemarks}
+            onChange={handleChange}
+          />
+        </div>
 
         <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
@@ -821,9 +837,14 @@ const Survey = () => {
         </p>
 
         <div className="my-10">
-          <p className="font-black ml-2 text-xl text-center text-gray-700">Evaluation Criteria/Questions</p>
+          <p className="font-black ml-2 text-xl text-center text-gray-700">
+            Evaluation Criteria/Questions
+          </p>
           <p className="ml-2 text-sm text-center">
-            <i><b>Rating </b>(5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp;  3⭐=Average; &nbsp;  2⭐=Not satisfied; &nbsp;  1⭐=Disappointed)</i>
+            <i>
+              <b>Rating </b>(5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp;
+              3⭐=Average; &nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
+            </i>
           </p>
         </div>
 
@@ -1716,7 +1737,9 @@ const Survey = () => {
         </div>
         <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
           <div className="flex flex-col flex-1">
-            <p className="text-sm sm:indent-10">- Contribution to Production</p>
+            <p className="text-sm sm:indent-10">
+              - Contribution to Production in kgs.
+            </p>
           </div>
           <div className="flex flex-col flex-1 gap-2">
             <input

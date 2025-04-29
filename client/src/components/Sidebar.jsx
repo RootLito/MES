@@ -7,7 +7,7 @@ import {
   MdInsertDriveFile,
   MdFolder,
   MdDriveFileRenameOutline,
-  MdPeopleAlt
+  MdPeopleAlt,
 } from "react-icons/md";
 
 const Sidebar = () => {
@@ -24,10 +24,10 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
             }
           >
-            <MdDashboard className="ml-5" size={18}/>
+            <MdDashboard className="ml-5" size={18} />
             Dashboard
           </NavLink>
 
@@ -36,10 +36,10 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
             }
           >
-            <MdAssessment className="ml-5" size={18}/>
+            <MdAssessment className="ml-5" size={18} />
             Analytics
           </NavLink>
           <NavLink
@@ -47,54 +47,46 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
             }
           >
-            <MdDriveFileRenameOutline className="ml-5" size={18}/> Monitoring
+            <MdDriveFileRenameOutline className="ml-5" size={18} /> Monitoring
           </NavLink>
-
-
 
           <NavLink
             to="/lists"
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
             }
           >
-            <MdInsertDriveFile className="ml-5" size={18}/> Uploaded Forms
+            <MdInsertDriveFile className="ml-5" size={18} /> Uploaded Forms
           </NavLink>
 
-
-
-
-          
           <NavLink
             to="/reports"
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
             }
           >
-            <MdFolder className="ml-5" size={18}/>
+            <MdFolder className="ml-5" size={18} />
             Report Summary
           </NavLink>
-
 
           <NavLink
             to="/evaluators"
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
             }
           >
-            <MdPeopleAlt   className="ml-5" size={18}/>
+            <MdPeopleAlt className="ml-5" size={18} />
             Evaluators
-          </NavLink >
-
+          </NavLink>
         </div>
         <button className="btn btn-error text-red-200 hover:text-white mt-auto">
           Logout

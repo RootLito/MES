@@ -24,6 +24,7 @@ const surveySchema = new Schema({
   projectReceived: { type: String },
   scale: {type: String},
   specProject: { type: String},
+  specRemarks: { type: String},
   specOther: { type: String},
   otherProject: { type: String},
 

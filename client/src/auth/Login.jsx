@@ -15,13 +15,13 @@ const Login = () => {
           <h1 className="text-center text-3xl font-black text-blue-950">BFAR XI</h1>
           <h2 className="font-bold text-gray-600">Field Monitoring and Evaluation System</h2>
           <h1 className="mt-6 font-bold text-2xl mb-2 text-blue-950">Login</h1>
-          <label className="input">
+          <label className="input bg-gray-100 text-gray-700 outline-0 ">
             <MdPerson size={22} className="text-gray-600"/>
             <input type="text" className="grow" placeholder="Username" />
-          </label>
-          <label className="input">
-            <MdLock size={22} className="text-gray-600"/>
-            <input type="text" className="grow" placeholder="Username" />
+          </label>  
+          <label className="input bg-gray-100 text-gray-700">
+            <MdLock size={22} className="text-gray-600 "/>
+            <input type="text" className="grow " placeholder="Username" />
           </label>
           <button className="btn btn-success text-white mt-2">Login</button>
         </form>

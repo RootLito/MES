@@ -193,16 +193,16 @@ const Reports = () => {
   };
 
   return (
-    <div className="w-full p-10 flex flex-col gap-10 overflow-xp-auto">
-      <div className="p-10 bg-white rounded-box shadow-sm overflow-x-auto">
-        <h2 className="text-center font-black text-lg text-gray-600">
+    <div className="flex-1 p-10 flex flex-col gap-10 overflow-xp-auto">
+      <div className="p-10 h-full bg-white rounded-box shadow-sm overflow-x-auto">
+        {/* <h2 className="text-center font-black text-lg text-gray-600">
           TOTAL NO. OF RESPONDENTS AS OF {date}
         </h2>
         <div className="text-center">
           <div className="inline-block rounded-xl bg-blue-950 mb-10 font-bold text-white text-center text-5xl p-2">
             {totalRes}
           </div>
-        </div>
+        </div> */}
 
         <div className="flex justify-between mb-8 items-end">
           <div className="felx flex-col">
@@ -225,10 +225,10 @@ const Reports = () => {
 
         <div
           ref={contentRef}
-          className="overflow-x-auto border border-base-content/5 bg-base-100 text-xs"
+          className="h-120 overflow-x-auto  border border-base-content/5 bg-base-100 text-xs"
         >
-          <table ref={tableRef} className="table table-zebra text-sm">
-            <thead>
+          <table ref={tableRef} className="table table-zebra text-sm bg-blue-950">
+            <thead className="sticky top-0 ">
               <tr className="bg-blue-950 text-white">
                 <th className="py-2 whitespace-nowrap" rowSpan="2">
                   No.
@@ -275,7 +275,7 @@ const Reports = () => {
                 </th>
               </tr>
 
-              <tr className="bg-blue-900 text-white">
+              <tr className="bg-blue-900 text-white ">
                 <th className="py-2 whitespace-nowrap">Province/City</th>
                 <th className="py-2 whitespace-nowrap">
                   Municipality/District
@@ -337,7 +337,7 @@ const Reports = () => {
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="bg-white">
               {surveys.map((survey, index) => (
                 <tr key={index} className="py-0">
                   <th className="py-2 whitespace-nowrap">{index + 1}</th>
