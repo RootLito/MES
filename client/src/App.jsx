@@ -1,11 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import List from "./pages/monitoring/List";
 import Update from "./pages/monitoring/Update";
 import Analytics from "./pages/Analytics";
 import Reports from "./pages/Reports";
-
-import Sidebar from "./components/Sidebar";
-import Nav from "./components/Nav";
 import Dashboard from "./pages/Dashboard";
 import Monitoring from "./pages/Monitoring";
 import Lists from "./pages/Lists";
@@ -32,6 +28,7 @@ function App() {
           <Route path="/lists/update/:id" element={<Update />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/evaluators" element={<Evaluator />} />
         </Route>
 
         {/* Catch-all */}

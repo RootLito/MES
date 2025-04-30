@@ -8,32 +8,35 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [toastMessage, setToastMessage] = useState("");
+  const [loading, setLoading] = useState(false); // ⬅️ Loading state added
 
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true); // ⬅️ Start loading
 
     try {
-      const res = await axios.post("http://localhost:5000/api/login", {
-        username,
-        password,
-      });
+      const res = await axios.post(
+        "https://bfar-server.onrender.com/api/login",
+        {
+          username,
+          password,
+        }
+      );
 
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
         navigate("/dashboard");
       } else {
         setToastMessage(res.data.error || "Login failed");
-        setTimeout(() => {
-            setToastMessage("");
-          }, 3000);
+        setTimeout(() => setToastMessage(""), 3000);
       }
     } catch (err) {
       setToastMessage(err.message);
-      setTimeout(() => {
-        setToastMessage("");
-      }, 3000);
+      setTimeout(() => setToastMessage(""), 3000);
+    } finally {
+      setLoading(false); // ⬅️ Stop loading
     }
   };
 
@@ -77,6 +80,7 @@ const Login = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+                disabled={loading}
               />
             </label>
 
@@ -89,13 +93,25 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={loading}
               />
             </label>
 
-
-
-            <button type="submit" className="btn btn-success text-white mt-2">
-              Login
+            <button
+              type="submit"
+              className="btn btn-success text-white mt-2"
+              disabled={loading}
+              aria-busy={loading}
+              aria-live="polite"
+            >
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner loading-md "  aria-hidden="true"></span>
+                  <span className="visually-hidden">Logging in...</span>
+                </>
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
         </div>
