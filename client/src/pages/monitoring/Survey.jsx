@@ -270,7 +270,7 @@ const Survey = () => {
     setLoading(true);
 
     try {
-        console.log("specRemarks:", formData.form.specRemarks);
+        // console.log("specRemarks:", formData.form.specRemarks);
       const res = await axios.post(
         "https://bfar-server.onrender.com/survey/add",
         formData.form

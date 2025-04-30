@@ -14,31 +14,29 @@ import NotFound from "./pages/NotFound";
 import Evaluator from "./pages/Evaluator";
 
 import Login from "./auth/Login";
-
+import Summary from "./pages/Summary";
 
 function App() {
   return (
     <Router>
-      <div className="w-full min-h-screen flex bg-gray-200">
-        <Sidebar />
-        <div className="w-full min-h-screen flex flex-col overflow-hidden">
-          <Nav />
-          
-            <div className="flex flex-col flex-1 ">
-              <Routes>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/monitoring" element={<Monitoring />} />
-                <Route path="/lists" element={<Lists />} />
-                <Route path="/lists/view/:id" element={<View />} />
-                <Route path="/lists/update/:id" element={<Update />} />
-                <Route path="/analytics" element={<Analytics/>} />
-                <Route path="/reports" element={<Reports />} />
-                <Route path="/evaluators" element={<Login />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-        </div>
-      </div>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Protected Routes with Layout */}
+        <Route element={<Dashboard />}>
+          <Route path="/dashboard" element={<Summary />} />
+          <Route path="/monitoring" element={<Monitoring />} />
+          <Route path="/lists" element={<Lists />} />
+          <Route path="/lists/view/:id" element={<View />} />
+          <Route path="/lists/update/:id" element={<Update />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/reports" element={<Reports />} />
+        </Route>
+
+        {/* Catch-all */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </Router>
   );
 }

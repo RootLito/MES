@@ -39,9 +39,9 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex-1 p-10">
+      <div className="w-full h-screen flex flex-1 justify-center items-center p-10 bg-gray-100">
         {toastMessage && (
-          <div className="toast toast-top toast-center z-999">
+          <div className="toast toast-top toast-center">
             <div className="alert alert-error text-white">
               <span>{toastMessage}</span>
             </div>
