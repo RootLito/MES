@@ -209,7 +209,7 @@ const List = () => {
                     {survey.baranggay}, {survey.municipality}, {survey.province}
                   </td>
                   <td>{survey.projectReceived}</td>
-                  <td>{survey.evaluators}</td>
+                  <td>{survey.evaluator}</td>
                   <td>
                     {survey.createdAt
                       ? new Date(survey.createdAt).toLocaleDateString("en-CA")
