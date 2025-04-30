@@ -20,11 +20,11 @@ const Sidebar = () => {
         </div>
         <div className="flex flex-col gap-2 mt-5">
           <NavLink
-            to="/"
+            to="/dashboard"
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-gray-100 shadow-none"
             }
           >
             <MdDashboard className="ml-5" size={18} />
@@ -36,7 +36,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-gray-100 shadow-none"
             }
           >
             <MdAssessment className="ml-5" size={18} />
@@ -47,7 +47,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-gray-100 shadow-none"
             }
           >
             <MdDriveFileRenameOutline className="ml-5" size={18} /> Monitoring
@@ -58,7 +58,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-gray-100 shadow-none"
             }
           >
             <MdInsertDriveFile className="ml-5" size={18} /> Uploaded Forms
@@ -69,7 +69,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-gray-100 shadow-none"
             }
           >
             <MdFolder className="ml-5" size={18} />
@@ -81,7 +81,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
-                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-blue-50 shadow-none"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-gray-100 shadow-none"
             }
           >
             <MdPeopleAlt className="ml-5" size={18} />

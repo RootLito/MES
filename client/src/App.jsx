@@ -26,7 +26,7 @@ function App() {
           
             <div className="flex flex-col flex-1 ">
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/monitoring" element={<Monitoring />} />
                 <Route path="/lists" element={<Lists />} />
                 <Route path="/lists/view/:id" element={<View />} />

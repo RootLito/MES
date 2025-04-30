@@ -630,11 +630,11 @@ const Dashboard = () => {
                 <div className="flex-1 flex gap-5 items-center justify-between mt-2">
                   <>
                     <div className="flex flex-col justify-center gap-1">
-                      <p className="font-semibold text-gray-600">Single</p>
-                      <p className="font-semibold text-gray-600">Married</p>
-                      <p className="font-semibold text-gray-600">Widowed</p>
-                      <p className="font-semibold text-gray-600">Divorced</p>
-                      <p className="font-semibold text-gray-600">Separated</p>
+                      <p className="text-sm text-gray-600">Single</p>
+                      <p className="text-sm text-gray-600">Married</p>
+                      <p className="text-sm text-gray-600">Widowed</p>
+                      <p className="text-sm text-gray-600">Divorced</p>
+                      <p className="text-sm text-gray-600">Separated</p>
                     </div>
                     <div className="flex flex-col justify-center gap-1">
                       <div className="badge badge-soft badge-primary font-black">

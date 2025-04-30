@@ -8,6 +8,7 @@ const Nav = () => {
   const location = useLocation();
   const path = location.pathname;
   const nav = path.split('/').pop().toUpperCase();
+  
 
   return (
     <div className="navbar bg-white sticky top-0 z-1 border-b-1 border-gray-100 px-10 justify-between">

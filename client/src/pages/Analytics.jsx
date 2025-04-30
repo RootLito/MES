@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Bar, BarChart, Tooltip, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from "recharts";
+import {
+  Bar,
+  BarChart,
+  Tooltip,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
 import axios from "axios";
 
 const Analytics = () => {
@@ -93,7 +101,14 @@ const Analytics = () => {
     <div className="flex-1 grid grid-cols-2 grid-rows-4 p-10 gap-10">
       <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">Rating on Quantity</h2>
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Quantity
+          </h2>
+          <p className="ml-2 text-xs">
+            <i>
+              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
+            </i>
+          </p>
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.quantityRating)}>
@@ -101,7 +116,12 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000}  shape={customBar} />
+                <Bar
+                  dataKey="Total"
+                  fill="#1e3a8a"
+                  animationDuration={1000}
+                  shape={customBar}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -110,7 +130,14 @@ const Analytics = () => {
 
       <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">Rating on Quality</h2>
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Quality
+          </h2>
+          <p className="ml-2 text-xs">
+            <i>
+              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
+            </i>
+          </p>
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.qualityRating)}>
@@ -118,7 +145,12 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
+                <Bar
+                  dataKey="Total"
+                  fill="#1e3a8a"
+                  animationDuration={1000}
+                  shape={customBar}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -127,7 +159,14 @@ const Analytics = () => {
 
       <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">Rating on Timeliness</h2>
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Timeliness
+          </h2>
+          <p className="ml-2 text-xs">
+            <i>
+              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
+            </i>
+          </p>
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.timelinessRating)}>
@@ -135,7 +174,12 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
+                <Bar
+                  dataKey="Total"
+                  fill="#1e3a8a"
+                  animationDuration={1000}
+                  shape={customBar}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -144,7 +188,14 @@ const Analytics = () => {
 
       <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">Rating on Relevance</h2>
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Relevance
+          </h2>
+          <p className="ml-2 text-xs">
+            <i>
+              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
+            </i>
+          </p>
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.relevanceRating)}>
@@ -152,7 +203,12 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
+                <Bar
+                  dataKey="Total"
+                  fill="#1e3a8a"
+                  animationDuration={1000}
+                  shape={customBar}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -161,7 +217,14 @@ const Analytics = () => {
 
       <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">Rating on Coherence</h2>
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Coherence
+          </h2>
+          <p className="ml-2 text-xs">
+            <i>
+              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
+            </i>
+          </p>
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.coherenceRating)}>
@@ -169,7 +232,12 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
+                <Bar
+                  dataKey="Total"
+                  fill="#1e3a8a"
+                  animationDuration={1000}
+                  shape={customBar}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -178,7 +246,14 @@ const Analytics = () => {
 
       <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">Rating on Satisfaction</h2>
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Satisfaction
+          </h2>
+          <p className="ml-2 text-xs">
+            <i>
+              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
+            </i>
+          </p>
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.satisfactionRating)}>
@@ -186,7 +261,12 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
+                <Bar
+                  dataKey="Total"
+                  fill="#1e3a8a"
+                  animationDuration={1000}
+                  shape={customBar}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -195,7 +275,14 @@ const Analytics = () => {
 
       <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">Rating on Impact</h2>
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Impact
+          </h2>
+          <p className="ml-2 text-xs">
+            <i>
+              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
+            </i>
+          </p>
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.impactRating)}>
@@ -203,7 +290,12 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
+                <Bar
+                  dataKey="Total"
+                  fill="#1e3a8a"
+                  animationDuration={1000}
+                  shape={customBar}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -212,7 +304,14 @@ const Analytics = () => {
 
       <div className="card bg-white h-100 shadow-sm">
         <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">Rating on Sustainability</h2>
+          <h2 className="card-title text-blue-950 font-black">
+            Rating on Sustainability
+          </h2>
+          <p className="ml-2 text-xs">
+            <i>
+              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
+            </i>
+          </p>
           <div className="h-full w-full mt-5">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={ratingData(ratings.sustainabilityRating)}>
@@ -220,7 +319,12 @@ const Analytics = () => {
                 <XAxis dataKey="rating" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="Total" fill="#1e3a8a" animationDuration={1000} shape={customBar} />
+                <Bar
+                  dataKey="Total"
+                  fill="#1e3a8a"
+                  animationDuration={1000}
+                  shape={customBar}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>

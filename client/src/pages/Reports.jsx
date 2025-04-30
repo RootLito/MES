@@ -228,7 +228,7 @@ const Reports = () => {
           className="h-120 overflow-x-auto  border border-base-content/5 bg-base-100 text-xs"
         >
           <table ref={tableRef} className="table table-zebra text-sm bg-blue-950">
-            <thead className="sticky top-0 ">
+            <thead className="sticky top-0 bg-blue-950">
               <tr className="bg-blue-950 text-white">
                 <th className="py-2 whitespace-nowrap" rowSpan="2">
                   No.

@@ -54,16 +54,20 @@ const List = () => {
   const fetchSurveys = async () => {
     try {
       const response = await axios.get("https://bfar-server.onrender.com/survey");
-
-
-      setSurveys(response.data);
-      setFilteredSurveys(response.data);
+  
+      const sortedSurveys = response.data.sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);  
+      });
+  
+      setSurveys(sortedSurveys);
+      setFilteredSurveys(sortedSurveys);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
 
   useEffect(() => {

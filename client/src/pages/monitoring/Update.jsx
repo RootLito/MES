@@ -20,34 +20,67 @@ const Update = () => {
 
   //PROJECTS ------------------------------
   const capture = [
-    "Hook & Line Gears",
-    "Net Gears",
-    "Motorized Boat",
-    "Shallow-Water Payao",
-    "Fry Dozer",
+    "shallow water payao",
+    "lambaklad",
+    "hook and line",
+    "tuna handline",
+    "multiple handline",
+    "net gears",
+    "motorized boat",
+    "non-motorized boat",
+    "marine engine",
+    "fry dozer",
+    "others",
   ];
+
   const aquaculture = [
-    "Freshwater Tilapia Fingerlings",
-    "Saline Tilapia Fingerlings",
-    "Milkfish Fingerlings",
-    "Cages for Livelihood",
-    "Hito Fingerlings",
-    "Other Fingerlings",
-    "Tilapia Fingerlings for Broodstock Development",
-    "Tilapia Broodstock",
-    "Milkfish Broodstock",
+    "freshwater tilapia fingerlings",
+    "saline tilapia fingerlings",
+    "milkfish fingerlings",
+    "hito fingerlings",
+    "post-larvae shrimp",
+    "kitang fingerlings",
+    "mudcrabs",
+    "tilapia fingerlings for broodstock development",
+    "tilapia broodstock",
+    "milkfish broodstock",
+    "seaweed propagules",
+    "seaweed farm implements",
+    "seaweed nurseries",
+    "feeds",
+    "fertilizer",
+    "others",
   ];
+
   const postHarvest = [
-    "Fish Drying Set",
-    "Fish Deboning Set",
-    "Freezing Equipment",
+    "freezer",
+    "dryer",
+    "fish stalls",
+    "smokehouse",
+    "vacuum sealer/packer",
+    "sorter",
+    "fish deboning set",
+    "fish bottling set",
+    "processing utensils",
+    "fish cart/kiosk",
+    "salt",
+    "others",
+  ];
+
+  const technoDemo = [
+    "Shellfish",
+    "Polyculture of Milkfish and Molobicus Tilapia",
+    "Monoculture of Milkfish",
+    "others",
   ];
 
   // FETCH RESPONSE DATA ----------------------
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`https://bfar-server.onrender.com/survey/${id}`);
+        const res = await axios.get(
+          `https://bfar-server.onrender.com/survey/${id}`
+        );
         setData(res.data);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -64,6 +97,7 @@ const Update = () => {
   const [formData, setFormData] = useState({
     form: {
       name: "",
+      resType: "",
       civilStatus: "",
       sex: "",
       age: "",
@@ -78,26 +112,25 @@ const Update = () => {
       projectReceived: "",
       scale: "",
       specProject: "",
+      specRemarks: "",
+      specOther: "",
       noUnitsReceived: "",
       dateReceived: "",
       mainIncome: "",
       otherIncome: "",
       lat: "",
       lon: "",
-
       quantity: "",
       quantityReason: "",
       quantityRating: "",
       quality: "",
       qualityReason: "",
       qualityRating: "",
-
       q2: "",
       q2Reason: "",
       timelinessRating: "",
       uponRequest: "",
       duration: "",
-
       q3: "",
       q3Reason: "",
       challenges: "",
@@ -128,7 +161,7 @@ const Update = () => {
       q9_9: "",
       q9_10: "",
       q10_e: "",
-      q9_11: "",
+      q9_11: [],
       q9_11other: "",
       q9_12: "",
       q9_12Spec: "",
@@ -142,6 +175,7 @@ const Update = () => {
       sustainabilityRating: "",
       q11: "",
       q11_1: "",
+      q11_1spec: "",
       q12: "",
       note: "",
     },
@@ -155,12 +189,17 @@ const Update = () => {
 
   // CHANGE EVENTS ----------------------
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  const handleChange = ({ target: { name, value, type, checked } }) => {
     setFormData((prevState) => ({
+      ...prevState,
       form: {
         ...prevState.form,
-        [name]: value,
+        [name]:
+          type === "checkbox"
+            ? checked
+              ? [...prevState.form[name], value]
+              : prevState.form[name].filter((item) => item !== value)
+            : value,
       },
     }));
   };
@@ -178,6 +217,8 @@ const Update = () => {
       setTimeout(() => {
         setShowToast(false);
       }, 3000);
+
+      console.log("Form updated successfully:", res.data);
     } catch (err) {
       console.error(
         "Error occurred:",
@@ -292,7 +333,8 @@ const Update = () => {
           <div className="toast toast-top toast-center z-2">
             <div className="alert alert-success">
               <span className="flex items-center text-green-50">
-                <MdCheckCircle size={18} className="mr-2" /> Form updated successfully
+                <MdCheckCircle size={18} className="mr-2" /> Form updated
+                successfully
               </span>
             </div>
           </div>
@@ -321,6 +363,23 @@ const Update = () => {
                 value={formData.form.name || ""}
                 onChange={handleChange}
               />
+            </div>
+            <div className="flex flex-col sm:w-[150px]">
+              <p className="text-sm">Respondent Type</p>
+              <select
+                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                name="resType"
+                value={formData.form.resType}
+                onChange={handleChange}
+                required
+              >
+                <option value="" disabled>
+                  Select Type
+                </option>
+                <option value="Individual">Individual</option>
+                <option value="Group">Group</option>
+                <option value="LGU">LGU</option>
+              </select>
             </div>
             <div className="flex flex-col sm:w-[150px]">
               <p className="text-sm">Civil Status</p>
@@ -514,6 +573,19 @@ const Update = () => {
                   />
                 </div>
                 <div className="flex gap-2">
+                  <label htmlFor="tecnhoDemo" className="cursor-pointer">
+                    Techno-demo
+                  </label>
+                  <input
+                    id="tecnhoDemo"
+                    type="radio"
+                    name="projectReceived"
+                    value="Techno-demo"
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="flex gap-2">
                   <label htmlFor="others" className="cursor-pointer">
                     Others
                   </label>
@@ -523,7 +595,7 @@ const Update = () => {
                     name="projectReceived"
                     value="Others"
                     onChange={handleChange}
-                    checked={formData.form.projectReceived === "Others"}
+                    required
                   />
                 </div>
               </div>
@@ -559,7 +631,11 @@ const Update = () => {
                 <input
                   type="text"
                   name="specProject"
-                  className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                  className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
+                    (formData.form.specProject || "").trim() === ""
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
                   placeholder="Please specify"
                 />
               ) : (
@@ -593,9 +669,26 @@ const Update = () => {
                         {item}
                       </option>
                     ))}
+                  {formData.form.projectReceived === "Techno-demo" &&
+                    technoDemo.map((item, index) => (
+                      <option key={index} value={item}>
+                        {item}
+                      </option>
+                    ))}
                 </select>
               )}
             </div>
+          </div>
+
+          <div className="flex flex-col flex-1 px-2">
+            <p className="text-sm">Remarks</p>
+            <input
+              name="specRemarks"
+              type="text"
+              className="border-1 px-3 h-[42px] rounded-md focus:outline-none border-gray-400"
+              value={formData.form.specRemarks || ""}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="flex flex-col gap-2 px-5 mt-2 sm:mt-0 sm:flex-row sm:p-2">
@@ -682,9 +775,21 @@ const Update = () => {
             </div>
           </div>
 
-          <p className="text-sm italic mt-2 sm:mt-0 text-center">
+          <p className="text-xs italic mt-2 sm:mt-0 text-center">
             Note: Please provide GPS of beneficiary and/or project implemented
           </p>
+
+          <div className="my-10">
+            <p className="font-black ml-2 text-xl text-center text-gray-700">
+              Evaluation Criteria/Questions
+            </p>
+            <p className="ml-2 text-sm text-center">
+              <i>
+                <b>Rating </b>(5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp;
+                3⭐=Average; &nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
+              </i>
+            </p>
+          </div>
 
           {/* EFFICIENCY OF THE PROJECT================================================================= */}
           <h1 className="text-sm font-bold text-white mb-2 mx-5 sm:mx-2 mt-5 bg-blue-950 p-2">
@@ -1637,7 +1742,6 @@ const Update = () => {
                 name="q9_5"
                 value={formData.form.q9_5 || ""}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>
@@ -1832,7 +1936,9 @@ const Update = () => {
                     type="radio"
                     name="q9_13"
                     value="Improved Skills/Knowledge"
-                    checked={formData.form.q9_13 === "Improved Skills/Knowledge"}
+                    checked={
+                      formData.form.q9_13 === "Improved Skills/Knowledge"
+                    }
                     onChange={handleChange}
                     required
                   />

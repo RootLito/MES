@@ -3,6 +3,7 @@ const express = require( 'express' )
 const cors = require( 'cors' )
 const mongoose = require( 'mongoose' ) 
 const surveyRoutes = require('./routes/surveyRoute')
+const authRoutes = require('./routes/auth');
 
 
 // VARIABLE DECLARATION
@@ -18,6 +19,7 @@ app.use(express.json())
 
 // ROUTES
 app.use('/survey', surveyRoutes);
+app.use('/api', authRoutes);
 
 
 // DB CONNECTION 
@@ -28,6 +30,9 @@ mongoose.connect(db)
     .catch((err) => {
         console.log('Error connecting to MongoDB Atlas: ' + err)
     })
+
+
+
 
 
 // START SERVER 

@@ -260,6 +260,7 @@ const Survey = () => {
               : prevState.form[name].filter((item) => item !== value)
             : value,
       },
+      
     }));
   };
 
@@ -269,6 +270,7 @@ const Survey = () => {
     setLoading(true);
 
     try {
+        console.log("specRemarks:", formData.form.specRemarks);
       const res = await axios.post(
         "https://bfar-server.onrender.com/survey/add",
         formData.form
@@ -277,6 +279,7 @@ const Survey = () => {
       setTimeout(() => {
         setShowToast(false);
       }, 3000);
+      console.log("Form submitted successfully:", res.data);
     } catch (err) {
       console.error(
         "Error occurred:",
@@ -744,6 +747,7 @@ const Survey = () => {
           <p className="text-sm">Remarks</p>
           <input
             name="specRemarks"
+            placeholder="Please specify"
             type="text"
             className="border-1 px-3 h-[42px] rounded-md focus:outline-none border-gray-400"
             value={formData.form.specRemarks}
@@ -768,7 +772,7 @@ const Survey = () => {
             <input
               type="date"
               name="dateReceived"
-              value={formData.dateReceived}
+              value={formData.form.dateReceived}
               onChange={handleChange}
               className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
             />
@@ -802,8 +806,6 @@ const Survey = () => {
               placeholder="Please specify"
               value={formData.form.otherIncome}
               onChange={handleChange}
-              //   required={formData.form.mainIncome === "Others"}
-              //   disabled={formData.form.mainIncome !== "Others"}
             />
           </div>
         </div>
