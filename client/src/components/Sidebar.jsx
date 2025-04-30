@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "./../assets/images/bfar.png";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   MdDashboard,
   MdAssessment,
@@ -11,6 +12,12 @@ import {
 } from "react-icons/md";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
   return (
     <>
       <div className="flex flex-col w-[300px] h-screen bg-white border-r-1 border-gray-100 p-5 sticky top-0 left-0">
@@ -88,9 +95,27 @@ const Sidebar = () => {
             Evaluators
           </NavLink>
         </div>
-        <button className="btn btn-error text-red-200 hover:text-white mt-auto">
+        <button
+          className="btn btn-error text-red-200 hover:text-white mt-auto"
+          onClick={() => document.getElementById("my_modal_1").showModal()}
+        >
           Logout
         </button>
+
+        <dialog id="my_modal_1" className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Logout</h3>
+            <p className="py-4">
+            Are you sure you want to log out?
+            </p>
+            <div className="modal-action">
+              <form method="dialog">
+                <button className="btn btn-success text-white" onClick={handleLogout} > Logout </button>
+                <button className="btn btn-error ml-2 text-white">Cancel</button>
+              </form>
+            </div>
+          </div>
+        </dialog>
       </div>
     </>
   );
