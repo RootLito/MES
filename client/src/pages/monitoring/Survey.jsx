@@ -4,6 +4,8 @@ import { MdCheckCircle } from "react-icons/md";
 import "react-datepicker/dist/react-datepicker.css";
 
 const Survey = () => {
+  const name = localStorage.getItem("name");
+
   const [formData, setFormData] = useState({
     form: {
       name: "",
@@ -88,6 +90,7 @@ const Survey = () => {
       q11_1spec: "",
       q12: "",
       note: "",
+      evaluator: name,
     },
   });
 
@@ -260,7 +263,6 @@ const Survey = () => {
               : prevState.form[name].filter((item) => item !== value)
             : value,
       },
-      
     }));
   };
 
@@ -270,7 +272,7 @@ const Survey = () => {
     setLoading(true);
 
     try {
-        // console.log("specRemarks:", formData.form.specRemarks);
+      // console.log("specRemarks:", formData.form.specRemarks);
       const res = await axios.post(
         "https://bfar-server.onrender.com/survey/add",
         formData.form
@@ -329,7 +331,7 @@ const Survey = () => {
             <p className="text-sm">Respondent Type</p>
             <select
               className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
-              name="resType"    
+              name="resType"
               value={formData.form.resType}
               onChange={handleChange}
               required
@@ -729,10 +731,10 @@ const Survey = () => {
               <input
                 type="text"
                 className={`border-1 px-3 h-[42px] rounded-md focus:outline-none placeholder-red-500 ${
-                    (formData.form.specOther || "").trim() === ""
-                      ? "border-red-500"
-                      : "border-gray-400"
-                  }`}
+                  (formData.form.specOther || "").trim() === ""
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
                 name="specOther"
                 value={formData.form.specOther}
                 onChange={handleChange}

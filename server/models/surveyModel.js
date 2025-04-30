@@ -111,7 +111,8 @@ const surveySchema = new Schema({
   q11_1: { type: String },
   q11_1spec: { type: String},
   q12: { type: String },
-  note: { type: String }
+  note: { type: String },
+  evaluator: { type: String }
 },
 { timestamps: true });
 

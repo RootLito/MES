@@ -132,6 +132,7 @@ const createSurvey = async (req, res) => {
       q11_1,
       q12,
       note,
+      evaluator,
     } = req.body;
 
     const newSurvey = new Survey({
@@ -233,6 +234,7 @@ const createSurvey = async (req, res) => {
       q11_1,
       q12,
       note,
+      evaluator,
     });
     await newSurvey.save();
     res.status(201).json(newSurvey);
@@ -345,6 +347,7 @@ const updateSurvey = async (req, res) => {
       q11_1,
       q12,
       note,
+      evaluator,
     } = req.body;
 
     const survey = await Survey.findById(id);

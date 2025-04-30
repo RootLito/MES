@@ -27,6 +27,7 @@ const Login = () => {
 
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
+        localStorage.setItem("name", res.data.name); 
         navigate("/dashboard");
       } else {
         setToastMessage(res.data.error || "Login failed");
@@ -36,7 +37,7 @@ const Login = () => {
       setToastMessage(err.message);
       setTimeout(() => setToastMessage(""), 3000);
     } finally {
-      setLoading(false); // ⬅️ Stop loading
+      setLoading(false);
     }
   };
 
