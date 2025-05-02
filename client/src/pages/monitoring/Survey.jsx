@@ -323,6 +323,7 @@ const Survey = () => {
               name="name"
               value={formData.form.name}
               onChange={handleChange}
+              placeholder="Last Name, First Name, Middle Initial"
               required
             />
           </div>

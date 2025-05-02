@@ -233,6 +233,16 @@ const Reports = () => {
                 <th className="py-2 whitespace-nowrap" rowSpan="2">
                   No.
                 </th>
+
+
+                <th className="py-2 whitespace-nowrap text-center" colSpan="12">
+                  Personal Information
+                </th>
+
+
+
+
+
                 <th className="py-2 whitespace-nowrap text-center" colSpan="3">
                   Location
                 </th>
@@ -244,6 +254,9 @@ const Reports = () => {
                 </th>
                 <th className="py-2 whitespace-nowrap" rowSpan="2">
                   No. of Units Received
+                </th>
+                <th className="py-2 whitespace-nowrap" rowSpan="2">
+                Date Received/Implemented
                 </th>
 
                 <th className="py-2 whitespace-nowrap text-center" colSpan="3">
@@ -278,12 +291,37 @@ const Reports = () => {
                 </th>
               </tr>
 
+
+
+
+
+
+
               <tr className="bg-blue-900 text-white ">
-                <th className="py-2 whitespace-nowrap">Province/City</th>
+
+              <th className="py-2 whitespace-nowrap">Respondent Type</th>
+              <th className="py-2 whitespace-nowrap">Name</th>
+              <th className="py-2 whitespace-nowrap">Civil Status</th>
+              <th className="py-2 whitespace-nowrap">Sex</th>
+              <th className="py-2 whitespace-nowrap">Age</th>
+              <th className="py-2 whitespace-nowrap">No. of Household Members</th>
+              <th className="py-2 whitespace-nowrap">FishR</th>
+              <th className="py-2 whitespace-nowrap">BoatR</th>
+              <th className="py-2 whitespace-nowrap">Name of Association</th>
+              <th className="py-2 whitespace-nowrap">Total No. of Memebers</th>
+              <th className="py-2 whitespace-nowrap">Main Source of Income</th>
+              <th className="py-2 whitespace-nowrap">Other Source of Income</th>
+
+
+
+
+
+
+                <th className="py-2 whitespace-nowrap">Province</th>
                 <th className="py-2 whitespace-nowrap">
-                  Municipality/District
+                  City/Municipality
                 </th>
-                <th className="py-2 whitespace-nowrap">Baranggay</th>
+                <th className="py-2 whitespace-nowrap">Barangay</th>
 
                 <th className="py-2 whitespace-nowrap">
                   Remarks on Sufficiency
@@ -344,6 +382,25 @@ const Reports = () => {
               {surveys.map((survey, index) => (
                 <tr key={index} className="py-0">
                   <th className="py-2 whitespace-nowrap">{index + 1}</th>
+
+                  <td className="py-2 whitespace-nowrap">{survey.resType}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.name}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.civilStatus}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.sex}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.age}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.hhMember}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.fishR}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.boatR}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.nameAssoc}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.totalMember}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.mainIncome}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.otherIncome}</td>
+
+
+
+
+
+
                   <td className="py-2 whitespace-nowrap">{survey.province}</td>
                   <td className="py-2 whitespace-nowrap">
                     {survey.municipality}
@@ -358,6 +415,9 @@ const Reports = () => {
 
                   <td className="py-2 whitespace-nowrap">
                     {survey.noUnitsReceived}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                  {survey.dateReceived ? format(new Date(survey.dateReceived), 'dd/MM/yyyy') : 'N/A'}
                   </td>
                   <td className="py-2 whitespace-nowrap">{survey.quantity}</td>
                   <td className="py-2 whitespace-nowrap">{survey.quality}</td>
