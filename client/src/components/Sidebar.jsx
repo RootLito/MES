@@ -83,7 +83,7 @@ const Sidebar = () => {
             Report Summary
           </NavLink>
 
-          <NavLink
+          {/* <NavLink
             to="/evaluators"
             className={({ isActive }) =>
               isActive
@@ -93,7 +93,7 @@ const Sidebar = () => {
           >
             <MdPeopleAlt className="ml-5" size={18} />
             Evaluators
-          </NavLink>
+          </NavLink> */}
         </div>
         <button
           className="btn btn-error text-red-200 hover:text-white mt-auto"
