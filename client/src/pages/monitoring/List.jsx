@@ -172,7 +172,7 @@ const List = () => {
         </div>
       )}
 
-      <label className="input w-1/2">
+      <label className="input w-1/2 bg-gray-100">
         <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></g></svg>
         <input
           type="search"
@@ -208,7 +208,24 @@ const List = () => {
                   <td>
                     {survey.baranggay}, {survey.municipality}, {survey.province}
                   </td>
-                  <td>{survey.projectReceived}</td>
+                  <td>
+                    {
+                        survey.projectReceived === "Capture" ? (
+                        <div className="badge badge-error text-white">{survey.projectReceived}</div>
+                        ) : survey.projectReceived === "Aquaculture" ? (
+                        <div className="badge badge-warning text-white">{survey.projectReceived}</div>
+                        ) : survey.projectReceived === "Post-harvest" ? (
+                        <div className="badge badge-accent text-white">{survey.projectReceived}</div>
+                        ) : survey.projectReceived === "Techno-demo" ? (
+                        <div className="badge badge-info text-white">{survey.projectReceived}</div>
+                        ) : survey.projectReceived === "Others" ? (
+                        <div className="badge badge-success text-white">{survey.projectReceived}</div>
+                        ) : (
+                        <div className="badge badge-soft badge-warning">{survey.projectReceived}</div>
+                        )
+                    }
+                    </td>
+
                   <td>{survey.evaluator}</td>
                   <td>
                     {survey.createdAt
