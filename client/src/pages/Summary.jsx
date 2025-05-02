@@ -92,7 +92,7 @@ const Summary = () => {
 
       const ot = surveys.filter(
         (survey) =>
-          !["Capture", "Aquaculture", "Post-harvest"].includes(
+          !["Capture", "Aquaculture", "Post-harvest", "Techno-demo"].includes(
             survey.projectReceived
           )
       ).length;
@@ -131,6 +131,13 @@ const Summary = () => {
       setIncomeTypes(labels);
       const counts = Object.values(otherIncomeCounts);
       setIncomeCounts(counts);
+
+
+      
+
+
+
+
 
       const provinceCounts = surveys.reduce((acc, survey) => {
         acc[survey.province] = (acc[survey.province] || 0) + 1;
