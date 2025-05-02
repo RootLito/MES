@@ -3,7 +3,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import ReactApexChart from "react-apexcharts";
 import { format } from "date-fns";
-import { MdMale, MdFemale, } from "react-icons/md";
+import { MdMale, MdFemale } from "react-icons/md";
 
 import net from "./../assets/images/net.png";
 import carps from "./../assets/images/carps.png";
@@ -132,13 +132,6 @@ const Summary = () => {
       const counts = Object.values(otherIncomeCounts);
       setIncomeCounts(counts);
 
-
-      
-
-
-
-
-
       const provinceCounts = surveys.reduce((acc, survey) => {
         acc[survey.province] = (acc[survey.province] || 0) + 1;
         return acc;
@@ -163,14 +156,14 @@ const Summary = () => {
       setFemaleCount(female);
 
       const ageGroups = {
-        "18 below": 0,
+        "17 below": 0,
         "18-24": 0,
         "25-39": 0,
         "40-59": 0,
         "60 and Above": 0,
       };
       surveys.forEach(({ age }) => {
-        if (age < 18) ageGroups["18 below"]++;
+        if (age < 18) ageGroups["17 below"]++;
         else if (age >= 18 && age <= 24) ageGroups["18-24"]++;
         else if (age >= 25 && age <= 39) ageGroups["25-39"]++;
         else if (age >= 40 && age <= 59) ageGroups["40-59"]++;
@@ -460,93 +453,97 @@ const Summary = () => {
         </h1>
       </div>
 
-      <div className="w-full h-36 grid grid-cols-5 gap-5">
-        <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
-          <div className="flex items-center gap-2">
-            <img src={net} alt="" />
-            <p className="font-black text-xl text-blue-950">Capture</p>
+      <div className="w-full">
+      <div className="divider"><span className="text-xl font-black text-gray-500">Interventions Received</span></div>
+        
+        <div className="w-full h-36 grid grid-cols-5 gap-5">
+          <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
+            <div className="flex items-center gap-2">
+              <img src={net} alt="" />
+              <p className="font-black text-xl text-blue-950">Capture</p>
+            </div>
+            {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
+
+            {isVisible ? (
+              <div className="flex-1 flex justify-end items-end">
+                <h1 className="font-black text-5xl text-gray-700">{capture}</h1>
+              </div>
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <span className="loading loading-spinner loading-xl"></span>
+              </div>
+            )}
           </div>
-          {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
+          <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
+            <div className="flex items-center gap-2">
+              <img src={carps} alt="" />
+              <p className="font-black text-xl text-blue-950">Aquaculture</p>
+            </div>
+            {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
 
-          {isVisible ? (
-            <div className="flex-1 flex justify-end items-end">
-              <h1 className="font-black text-5xl text-gray-700">{capture}</h1>
-            </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <span className="loading loading-spinner loading-xl"></span>
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
-          <div className="flex items-center gap-2">
-            <img src={carps} alt="" />
-            <p className="font-black text-xl text-blue-950">Aquaculture</p>
+            {isVisible ? (
+              <div className="flex-1 flex justify-end items-end">
+                <h1 className="font-black text-5xl text-gray-700">{culture}</h1>
+              </div>
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <span className="loading loading-spinner loading-xl"></span>
+              </div>
+            )}
           </div>
-          {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
+          <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
+            <div className="flex items-center gap-2">
+              <img src={freezer} alt="" />
+              <p className="font-black text-xl text-blue-950">Post-harvest</p>
+            </div>
+            {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
 
-          {isVisible ? (
-            <div className="flex-1 flex justify-end items-end">
-              <h1 className="font-black text-5xl text-gray-700">{culture}</h1>
-            </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <span className="loading loading-spinner loading-xl"></span>
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
-          <div className="flex items-center gap-2">
-            <img src={freezer} alt="" />
-            <p className="font-black text-xl text-blue-950">Post-harvest</p>
+            {isVisible ? (
+              <div className="flex-1 flex justify-end items-end">
+                <h1 className="font-black text-5xl text-gray-700">{post}</h1>
+              </div>
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <span className="loading loading-spinner loading-xl"></span>
+              </div>
+            )}
           </div>
-          {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
 
-          {isVisible ? (
-            <div className="flex-1 flex justify-end items-end">
-              <h1 className="font-black text-5xl text-gray-700">{post}</h1>
+          <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
+            <div className="flex items-center gap-2">
+              <img src={robotic} alt="" />
+              <p className="font-black text-xl text-blue-950">Techno-demo</p>
             </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <span className="loading loading-spinner loading-xl"></span>
-            </div>
-          )}
-        </div>
+            {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
 
-        <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
-          <div className="flex items-center gap-2">
-            <img src={robotic} alt="" />
-            <p className="font-black text-xl text-blue-950">Techno-demo</p>
+            {isVisible ? (
+              <div className="flex-1 flex justify-end items-end">
+                <h1 className="font-black text-5xl text-gray-700">{techno}</h1>
+              </div>
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <span className="loading loading-spinner loading-xl"></span>
+              </div>
+            )}
           </div>
-          {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
 
-          {isVisible ? (
-            <div className="flex-1 flex justify-end items-end">
-              <h1 className="font-black text-5xl text-gray-700">{techno}</h1>
+          <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
+            <div className="flex items-center gap-2">
+              <img src={fishing} alt="" />
+              <p className="font-black text-xl text-blue-950">Others</p>
             </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <span className="loading loading-spinner loading-xl"></span>
-            </div>
-          )}
-        </div>
+            {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
 
-        <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
-          <div className="flex items-center gap-2">
-            <img src={fishing} alt="" />
-            <p className="font-black text-xl text-blue-950">Others</p>
+            {isVisible ? (
+              <div className="flex-1 flex justify-end items-end">
+                <h1 className="font-black text-5xl text-gray-700">{other}</h1>
+              </div>
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <span className="loading loading-spinner loading-xl"></span>
+              </div>
+            )}
           </div>
-          {/* <p className="text-sm text-gray-600">Interventions Received</p> */}
-
-          {isVisible ? (
-            <div className="flex-1 flex justify-end items-end">
-              <h1 className="font-black text-5xl text-gray-700">{other}</h1>
-            </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <span className="loading loading-spinner loading-xl"></span>
-            </div>
-          )}
         </div>
       </div>
 
@@ -900,7 +897,7 @@ const Summary = () => {
               </div>
 
               <div className="flex flex-col w-1/2 h-full ">
-                <h1 className="font-black text-lg text-blue-950">Baranggay</h1>
+                <h1 className="font-black text-lg text-blue-950">Barangay</h1>
 
                 <div className="w-full h-120 mt-2 overflow-y-auto">
                   <div className="flex w-full justify-between text-blue-950 font-black mb-2">

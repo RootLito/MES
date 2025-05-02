@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Bar,
-  BarChart,
-  Tooltip,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-} from "recharts";
 import axios from "axios";
+import ReactApexChart from "react-apexcharts";
 
 const Analytics = () => {
   const [formData, setFormData] = useState([]);
@@ -59,277 +51,100 @@ const Analytics = () => {
         sustainabilityRating: [0, 0, 0, 0, 0],
       }
     );
-
     setRatings(newRatings);
   }, [formData]);
 
-  const ratingData = (ratingArray) => {
-    return ratingArray.map((count, index) => ({
-      rating: `Rating ${index + 1}`,
-      Total: count,
-    }));
+  const chartOptions = {
+    chart: {
+      type: "bar",
+      height: "100%",
+      stacked: false,
+    },
+    plotOptions: {
+      bar: {
+        distributed: true,
+        horizontal: false, 
+        columnWidth: "80%",
+      },
+    },
+    tooltip: {
+        enabled: true,
+        y: {
+          formatter: (value) => `Total: ${value}`, 
+        },
+      },
+    dataLabels: {
+      enabled: false, 
+    },
+    xaxis: {
+      categories: ["⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"],
+    },
+
+    legend: {
+      show: false,
+    },
+    colors: ["#007bff"],
   };
 
-  const customBar = (props) => {
-    const { x, y, width, height, fill, stroke, strokeWidth } = props;
-    return (
-      <g>
-        {/* Create a 3D-like shadow */}
-        <rect
-          x={x + 5}
-          y={y + 5}
-          width={width}
-          height={height}
-          fill="rgba(0, 0, 0, 0.3)" // Shadow color
-          stroke="none"
-        />
-        {/* Main bar */}
-        <rect
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          fill={fill}
-          stroke={stroke}
-          strokeWidth={strokeWidth}
-        />
-      </g>
-    );
-  };
+  const chartSeries = [
+    {
+      name: "Quantity Rating",
+      data: ratings.quantityRating,
+    },
+    {
+      name: "Quality Rating",
+      data: ratings.qualityRating,
+    },
+    {
+      name: "Timeliness Rating",
+      data: ratings.timelinessRating,
+    },
+    {
+      name: "Relevance Rating",
+      data: ratings.relevanceRating,
+    },
+    {
+      name: "Coherence Rating",
+      data: ratings.coherenceRating,
+    },
+    {
+      name: "Satisfaction Rating",
+      data: ratings.satisfactionRating,
+    },
+    {
+      name: "Impact Rating",
+      data: ratings.impactRating,
+    },
+    {
+      name: "Sustainability Rating",
+      data: ratings.sustainabilityRating,
+    },
+  ];
 
   return (
     <div className="flex-1 grid grid-cols-2 grid-rows-4 p-10 gap-10">
-      <div className="card bg-white h-100 shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">
-            Rating on Quantity
-          </h2>
-          <p className="ml-2 text-xs">
-            <i>
-              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
-            </i>
-          </p>
-          <div className="h-full w-full mt-5">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={ratingData(ratings.quantityRating)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="rating" />
-                <YAxis />
-                <Tooltip />
-                <Bar
-                  dataKey="Total"
-                  fill="#1e3a8a"
-                  animationDuration={1000}
-                  shape={customBar}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+      {["quantityRating", "qualityRating", "timelinessRating", "relevanceRating", "coherenceRating", "satisfactionRating", "impactRating", "sustainabilityRating"].map((ratingKey, index) => (
+        <div key={index} className="card bg-white shadow-sm">
+          <div className="card-body">
+            <h2 className="card-title text-blue-950 font-black">
+              Rating on {ratingKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+            </h2>
+            <p className="ml-2 text-xs">
+              <i>
+                (5⭐=Very satisfied; 4⭐=Satisfied; 3⭐=Average; 2⭐=Not satisfied; 1⭐=Disappointed)
+              </i>
+            </p>
+            <div className="h-full w-full mt-5">
+              <ReactApexChart
+                options={chartOptions}
+                series={[{ name: ratingKey, data: ratings[ratingKey] }]}
+                type="bar"
+                height="300"
+              />
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="card bg-white h-100 shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">
-            Rating on Quality
-          </h2>
-          <p className="ml-2 text-xs">
-            <i>
-              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
-            </i>
-          </p>
-          <div className="h-full w-full mt-5">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={ratingData(ratings.qualityRating)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="rating" />
-                <YAxis />
-                <Tooltip />
-                <Bar
-                  dataKey="Total"
-                  fill="#1e3a8a"
-                  animationDuration={1000}
-                  shape={customBar}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      <div className="card bg-white h-100 shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">
-            Rating on Timeliness
-          </h2>
-          <p className="ml-2 text-xs">
-            <i>
-              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
-            </i>
-          </p>
-          <div className="h-full w-full mt-5">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={ratingData(ratings.timelinessRating)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="rating" />
-                <YAxis />
-                <Tooltip />
-                <Bar
-                  dataKey="Total"
-                  fill="#1e3a8a"
-                  animationDuration={1000}
-                  shape={customBar}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      <div className="card bg-white h-100 shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">
-            Rating on Relevance
-          </h2>
-          <p className="ml-2 text-xs">
-            <i>
-              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
-            </i>
-          </p>
-          <div className="h-full w-full mt-5">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={ratingData(ratings.relevanceRating)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="rating" />
-                <YAxis />
-                <Tooltip />
-                <Bar
-                  dataKey="Total"
-                  fill="#1e3a8a"
-                  animationDuration={1000}
-                  shape={customBar}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      <div className="card bg-white h-100 shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">
-            Rating on Coherence
-          </h2>
-          <p className="ml-2 text-xs">
-            <i>
-              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
-            </i>
-          </p>
-          <div className="h-full w-full mt-5">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={ratingData(ratings.coherenceRating)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="rating" />
-                <YAxis />
-                <Tooltip />
-                <Bar
-                  dataKey="Total"
-                  fill="#1e3a8a"
-                  animationDuration={1000}
-                  shape={customBar}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      <div className="card bg-white h-100 shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">
-            Rating on Satisfaction
-          </h2>
-          <p className="ml-2 text-xs">
-            <i>
-              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
-            </i>
-          </p>
-          <div className="h-full w-full mt-5">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={ratingData(ratings.satisfactionRating)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="rating" />
-                <YAxis />
-                <Tooltip />
-                <Bar
-                  dataKey="Total"
-                  fill="#1e3a8a"
-                  animationDuration={1000}
-                  shape={customBar}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      <div className="card bg-white h-100 shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">
-            Rating on Impact
-          </h2>
-          <p className="ml-2 text-xs">
-            <i>
-              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
-            </i>
-          </p>
-          <div className="h-full w-full mt-5">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={ratingData(ratings.impactRating)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="rating" />
-                <YAxis />
-                <Tooltip />
-                <Bar
-                  dataKey="Total"
-                  fill="#1e3a8a"
-                  animationDuration={1000}
-                  shape={customBar}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      <div className="card bg-white h-100 shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title text-blue-950 font-black">
-            Rating on Sustainability
-          </h2>
-          <p className="ml-2 text-xs">
-            <i>
-              (5⭐=Very satisfied; &nbsp; 4⭐=Satisfied; &nbsp; 3⭐=Average;&nbsp; 2⭐=Not satisfied; &nbsp; 1⭐=Disappointed)
-            </i>
-          </p>
-          <div className="h-full w-full mt-5">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={ratingData(ratings.sustainabilityRating)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="rating" />
-                <YAxis />
-                <Tooltip />
-                <Bar
-                  dataKey="Total"
-                  fill="#1e3a8a"
-                  animationDuration={1000}
-                  shape={customBar}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
+      ))}
     </div>
   );
 };

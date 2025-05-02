@@ -63,7 +63,7 @@ const View = () => {
               BUREAU OF FISHERIES AND AQUATIC RESOURCES XI
             </h2>
             <p className="text-blue-950 font-semibold t2">
-              Fiel Monitoring and Evaluation Form
+              Field Monitoring and Evaluation Form
             </p>
             <p className="t3">
               <i>(for beneficiaries)</i>

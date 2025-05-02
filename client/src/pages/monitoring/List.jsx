@@ -212,7 +212,7 @@ const List = () => {
                     {
                         survey.projectReceived === "Capture" ? (
                         <div className="badge badge-error text-white">{survey.projectReceived}</div>
-                        ) : survey.projectReceived === "Aquaculture" ? (
+                        ) : survey.projectReceived === "Aquaculture" ? ( 
                         <div className="badge badge-warning text-white">{survey.projectReceived}</div>
                         ) : survey.projectReceived === "Post-harvest" ? (
                         <div className="badge badge-accent text-white">{survey.projectReceived}</div>
