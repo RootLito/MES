@@ -262,7 +262,7 @@ const Reports = () => {
                   Impact of the Project
                 </th>
 
-                <th className="py-2 whitespace-nowrap text-center" colSpan="2">
+                <th className="py-2 whitespace-nowrap text-center" colSpan="4">
                   Sustainability of the Project
                 </th>
 
@@ -272,6 +272,9 @@ const Reports = () => {
 
                 <th className="py-2 whitespace-nowrap text-center" rowSpan={2}>
                   Evaluator's Note
+                </th>
+                <th className="py-2 whitespace-nowrap text-center" rowSpan={2}>
+                  Evaluator
                 </th>
               </tr>
 
@@ -402,6 +405,7 @@ const Reports = () => {
                   </td>
                   <td className="py-2 whitespace-nowrap">{survey.q12}</td>
                   <td className="py-2 whitespace-nowrap">{survey.note}</td>
+                  <td className="py-2 whitespace-nowrap">{survey.evaluator}</td>
                 </tr>
               ))}
             </tbody>

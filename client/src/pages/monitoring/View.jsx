@@ -293,13 +293,13 @@ const View = () => {
                     <div className="flex-1 flex flex-col">
                         <span><b>12. How else can the government through BFAR help or assist you?</b></span>
                         <span>(credit facilitation, training, livelihood assistance, others, please specify):</span>
-                        <span>{survey.q12 || "N/A"}</span>
+                        <span><b>{survey.q12 || "N/A"}</b></span>
                     </div>
                 </div>
                 <div className="flex w-full  px-1 border-t-1 border-black">
                     <div className="flex-1 flex flex-col">
                         <span><b>Evaluator's Note (cite practices, success stories and other observations):</b></span>
-                        <span>{survey.note || "N/A"}</span>
+                        <span><b>{survey.note || "N/A"}</b></span>
                     </div>
                 </div>
             </div>

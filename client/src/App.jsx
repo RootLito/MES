@@ -16,10 +16,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={<Login />} />
-
-        {/* Protected Routes with Layout */}
         <Route element={<Dashboard />}>
           <Route path="/dashboard" element={<Summary />} />
           <Route path="/monitoring" element={<Monitoring />} />
@@ -30,8 +27,6 @@ function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/evaluators" element={<Evaluator />} />
         </Route>
-
-        {/* Catch-all */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
