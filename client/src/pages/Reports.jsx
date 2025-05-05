@@ -61,9 +61,21 @@ const Reports = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Survey Data");
 
-    // Set row 1 directly to avoid being pushed
+    // Row 1: Top headers
     worksheet.getRow(1).values = [
       "No.",
+      "Personal Information",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
       "Location",
       "",
       "",
@@ -90,41 +102,61 @@ const Reports = () => {
       "",
       "Needs Assessment",
       "Evaluator's Note",
+      "Evaluator",
     ];
 
-    // Merge top headers (same as your original)
-    worksheet.mergeCells("A1:A2");
-    worksheet.mergeCells("B1:D1");
-    worksheet.mergeCells("E1:E2");
-    worksheet.mergeCells("F1:F2");
-    worksheet.mergeCells("G1:G2");
-    worksheet.mergeCells("H1:J1");
-    worksheet.mergeCells("K1:L1");
-    worksheet.mergeCells("M1:N1");
-    worksheet.mergeCells("O1:P1");
-    worksheet.mergeCells("Q1:W1");
-    worksheet.mergeCells("X1:Y1");
-    worksheet.mergeCells("Z1:Z2");
-    worksheet.mergeCells("AA1:AA2");
+    // Merge headers
+    worksheet.mergeCells("A1:A2"); // No.
+    worksheet.mergeCells("B1:M1"); // Personal Information
+    worksheet.mergeCells("N1:P1"); // Location
+    worksheet.mergeCells("Q1:Q2"); // Project Received
+    worksheet.mergeCells("R1:R2"); 
+    worksheet.mergeCells("S1:S2"); 
 
-    // Set row 2 (subheaders)
+    worksheet.mergeCells("T1:V1"); // Efficiency
+    worksheet.mergeCells("W1:X1"); // Relevance
+    worksheet.mergeCells("Y1:Z1"); // Coherence
+    worksheet.mergeCells("AA1:AB1"); // Effectiveness
+    worksheet.mergeCells("AC1:AH1"); // Impact
+    worksheet.mergeCells("AI1:AJ1"); // Sustainability
+    worksheet.mergeCells("AK1:AK2"); // Needs Assessment
+    worksheet.mergeCells("AL1:AL2"); // Evaluator's Note
+    worksheet.mergeCells("AM1:AM2"); // Evaluator
+
+    // Row 2: Subheaders
     worksheet.getRow(2).values = [
-      "", // for No.
-      "Municipality/District",
-      "Baranggay",
-      "Province/City",
+      "",
+      "Respondent Type",
+      "Name",
+      "Civil Status",
+      "Sex",
+      "Age",
+      "No. of Household Members",
+      "FishR",
+      "BoatR",
+      "Name of Association",
+      "Total No. of Members",
+      "Main Source of Income",
+      "Other Source of Income",
+      "Province",
+      "City/Municipality",
+      "Barangay",
       "",
       "",
       "",
       "Remarks on Sufficiency",
       "Remarks on Quality",
       "Remarks on Timeliness",
+
       "Remarks on Relevance",
       "Remarks on Sustainability",
-      "Remarks on Coherance",
+
+      "Remarks on Coherence",
       "Remarks on Project Duplication",
+
       "Remarks on Satisfaction",
       "Problems Encountered",
+
       "Catch/Yield in Kgs",
       "Contribution to Production",
       "Species Caught",
@@ -132,16 +164,30 @@ const Reports = () => {
       "Improvement in Family",
       "Improvement in Association",
       "Improvement in Community",
+
       "Remarks on Sustainability",
       "Availability of Market",
       "",
       "",
+      "",
     ];
 
-    // Populate rows
+    // Populate data rows
     surveys.forEach((survey, index) => {
       worksheet.addRow([
         index + 1,
+        survey.resType,
+        survey.name,
+        survey.civilStatus,
+        survey.sex,
+        survey.age,
+        survey.hhMember,
+        survey.fishR,
+        survey.boatR,
+        survey.nameAssoc,
+        survey.totalMember,
+        survey.mainIncome, 
+        survey.otherIncome,
         survey.province,
         survey.municipality,
         survey.baranggay,
@@ -150,7 +196,7 @@ const Reports = () => {
         survey.noUnitsReceived,
         survey.quantity,
         survey.quality,
-        survey.uponRequest,
+        survey.uponRequest + " " + survey.duration,
         survey.q3,
         survey.q4,
         survey.q5,
@@ -161,7 +207,7 @@ const Reports = () => {
         survey.q9_4,
         survey.q9_1 !== "N/A" ? survey.q9_1Spec : survey.q9_1,
         "", // q9_9 not included
-        survey.q9_10 === "yes" ? survey.q9_11 : survey.q9_10,
+        survey.q9_10 === "yes" ? survey.q9_11?.join(", ") : survey.q9_10,
         survey.q9_12 === "yes"
           ? survey.q9_13 === "others"
             ? survey.q9_13other
@@ -172,10 +218,11 @@ const Reports = () => {
         survey.q11 === "yes" ? survey.q11_1 : survey.q11,
         survey.q12,
         survey.note,
+        survey.evaluator,
       ]);
     });
 
-    // Format header rows
+    // Format headers
     worksheet.getRow(1).font = { bold: true };
     worksheet.getRow(2).font = { bold: true };
     worksheet.columns.forEach((col) => {
@@ -187,6 +234,7 @@ const Reports = () => {
       };
     });
 
+    // Export file
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: "application/octet-stream" });
     saveAs(blob, "survey_data.xlsx");
@@ -227,21 +275,19 @@ const Reports = () => {
           ref={contentRef}
           className="h-120 overflow-x-auto  border border-base-content/5 bg-base-100 text-xs"
         >
-          <table ref={tableRef} className="table table-zebra text-sm bg-blue-950">
+          <table
+            ref={tableRef}
+            className="table table-zebra text-sm bg-blue-950"
+          >
             <thead className="sticky top-0 bg-blue-950">
               <tr className="bg-blue-950 text-white">
                 <th className="py-2 whitespace-nowrap" rowSpan="2">
                   No.
                 </th>
 
-
                 <th className="py-2 whitespace-nowrap text-center" colSpan="12">
                   Personal Information
                 </th>
-
-
-
-
 
                 <th className="py-2 whitespace-nowrap text-center" colSpan="3">
                   Location
@@ -256,7 +302,7 @@ const Reports = () => {
                   No. of Units Received
                 </th>
                 <th className="py-2 whitespace-nowrap" rowSpan="2">
-                Date Received/Implemented
+                  Date Received/Implemented
                 </th>
 
                 <th className="py-2 whitespace-nowrap text-center" colSpan="3">
@@ -291,36 +337,30 @@ const Reports = () => {
                 </th>
               </tr>
 
-
-
-
-
-
-
               <tr className="bg-blue-900 text-white ">
-
-              <th className="py-2 whitespace-nowrap">Respondent Type</th>
-              <th className="py-2 whitespace-nowrap">Name</th>
-              <th className="py-2 whitespace-nowrap">Civil Status</th>
-              <th className="py-2 whitespace-nowrap">Sex</th>
-              <th className="py-2 whitespace-nowrap">Age</th>
-              <th className="py-2 whitespace-nowrap">No. of Household Members</th>
-              <th className="py-2 whitespace-nowrap">FishR</th>
-              <th className="py-2 whitespace-nowrap">BoatR</th>
-              <th className="py-2 whitespace-nowrap">Name of Association</th>
-              <th className="py-2 whitespace-nowrap">Total No. of Memebers</th>
-              <th className="py-2 whitespace-nowrap">Main Source of Income</th>
-              <th className="py-2 whitespace-nowrap">Other Source of Income</th>
-
-
-
-
-
+                <th className="py-2 whitespace-nowrap">Respondent Type</th>
+                <th className="py-2 whitespace-nowrap">Name</th>
+                <th className="py-2 whitespace-nowrap">Civil Status</th>
+                <th className="py-2 whitespace-nowrap">Sex</th>
+                <th className="py-2 whitespace-nowrap">Age</th>
+                <th className="py-2 whitespace-nowrap">
+                  No. of Household Members
+                </th>
+                <th className="py-2 whitespace-nowrap">FishR</th>
+                <th className="py-2 whitespace-nowrap">BoatR</th>
+                <th className="py-2 whitespace-nowrap">Name of Association</th>
+                <th className="py-2 whitespace-nowrap">
+                  Total No. of Memebers
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  Main Source of Income
+                </th>
+                <th className="py-2 whitespace-nowrap">
+                  Other Source of Income
+                </th>
 
                 <th className="py-2 whitespace-nowrap">Province</th>
-                <th className="py-2 whitespace-nowrap">
-                  City/Municipality
-                </th>
+                <th className="py-2 whitespace-nowrap">City/Municipality</th>
                 <th className="py-2 whitespace-nowrap">Barangay</th>
 
                 <th className="py-2 whitespace-nowrap">
@@ -385,21 +425,24 @@ const Reports = () => {
 
                   <td className="py-2 whitespace-nowrap">{survey.resType}</td>
                   <td className="py-2 whitespace-nowrap">{survey.name}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.civilStatus}</td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.civilStatus}
+                  </td>
                   <td className="py-2 whitespace-nowrap">{survey.sex}</td>
                   <td className="py-2 whitespace-nowrap">{survey.age}</td>
                   <td className="py-2 whitespace-nowrap">{survey.hhMember}</td>
                   <td className="py-2 whitespace-nowrap">{survey.fishR}</td>
                   <td className="py-2 whitespace-nowrap">{survey.boatR}</td>
                   <td className="py-2 whitespace-nowrap">{survey.nameAssoc}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.totalMember}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.mainIncome}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.otherIncome}</td>
-
-
-
-
-
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.totalMember}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.mainIncome}
+                  </td>
+                  <td className="py-2 whitespace-nowrap">
+                    {survey.otherIncome}
+                  </td>
 
                   <td className="py-2 whitespace-nowrap">{survey.province}</td>
                   <td className="py-2 whitespace-nowrap">
@@ -417,7 +460,9 @@ const Reports = () => {
                     {survey.noUnitsReceived}
                   </td>
                   <td className="py-2 whitespace-nowrap">
-                  {survey.dateReceived ? format(new Date(survey.dateReceived), 'dd/MM/yyyy') : 'N/A'}
+                    {survey.dateReceived
+                      ? format(new Date(survey.dateReceived), "dd/MM/yyyy")
+                      : "N/A"}
                   </td>
                   <td className="py-2 whitespace-nowrap">{survey.quantity}</td>
                   <td className="py-2 whitespace-nowrap">{survey.quality}</td>

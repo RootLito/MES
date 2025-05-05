@@ -454,8 +454,12 @@ const Summary = () => {
       </div>
 
       <div className="w-full">
-      <div className="divider"><span className="text-xl font-black text-gray-500">Interventions Received</span></div>
-        
+        <div className="divider">
+          <span className="text-xl font-black text-gray-500">
+            Interventions Received
+          </span>
+        </div>
+
         <div className="w-full h-36 grid grid-cols-5 gap-5">
           <div className="flex flex-col bg-white rounded-lg shadow-sm p-5">
             <div className="flex items-center gap-2">
@@ -847,22 +851,32 @@ const Summary = () => {
                   </div>
                 </div>
 
-                <div className="w-full h-36 overflow-y-auto flex flex-col pl-5 gap-1 py-2">
-                  {provinces.map((province) => (
-                    <label
-                      key={province.code}
-                      className="text-md cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        value={province.code}
-                        checked={selectedProvinces.includes(province.code)}
-                        onChange={() => handleCheckboxChange(province.code)}
-                        className="mr-2"
-                      />
-                      {province.name}
-                    </label>
-                  ))}
+                <div className="w-full h-36 overflow-y-auto flex justify-between  pl-5 gap-1 py-2">
+                  <div className="flex flex-col">
+                    {provinces.map((province) => (
+                      <label
+                        key={province.code}
+                        className="text-md cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          value={province.code}
+                          checked={selectedProvinces.includes(province.code)}
+                          onChange={() => handleCheckboxChange(province.code)}
+                          className="mr-2"
+                        />
+                        {province.name}
+                      </label>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col">
+                    {provinces.map((province) => (
+                      <tr key={province.code}>
+                        <td>{provinceData[province.name] || 0}</td>{" "}
+                      </tr>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="w-full flex justify-between items-center">
