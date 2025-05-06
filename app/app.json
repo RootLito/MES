@@ -8,15 +8,20 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app needs location to work offline."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/bfar.png",
         "backgroundColor": "#ffffff"
       },
+      "permissions": ["ACCESS_FINE_LOCATION"],
       "package": "com.anonymous.MyApp"
     },
+
     "web": {
       "favicon": "./assets/favicon.png"
     },

@@ -14,6 +14,7 @@ import {
 import { useState, useEffect } from "react";
 import Icon from "react-native-vector-icons/Feather";
 import axios from "axios";
+import Coordinates from "../components/Coordinates";
 
 export default function Home() {
   const [isConnected, setIsConnected] = useState(null);
@@ -74,7 +75,6 @@ export default function Home() {
         </View>
       </View>
 
-      {/* {action bar diri} */}
       <View style={styles.content}>
         <View style={styles.total}>
           <View
@@ -95,6 +95,13 @@ export default function Home() {
               {totalRes}
             </Text>
           </View>
+        </View>
+
+        <View style={{ marginTop: 16 }}>
+          <Text style={{ fontWeight: "bold", marginBottom: 4 }}>GPS Coordinates:</Text>
+          <Coordinates
+            onLocation={(loc) => console.log("Current Location:", loc)}
+          />
         </View>
 
         {!isConnected ? (
@@ -224,7 +231,7 @@ const styles = StyleSheet.create({
   cell1: {
     flex: 1,
     textAlign: "left",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   cell2: {
     flex: 4,
