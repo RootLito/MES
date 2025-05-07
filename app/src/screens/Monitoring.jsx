@@ -186,39 +186,43 @@ export default function Monitoring() {
     try {
       const dataToSave = formData.form;
       const fileUri = FileSystem.documentDirectory + "formData.json";
-  
+
       if (isConnected) {
-        const response = await fetch("https://bfar-server.onrender.com/survey/add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(dataToSave),
-        });
-      
-        const text = await response.text(); // for better error logging
+        const response = await fetch(
+          "https://bfar-server.onrender.com/survey/add",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dataToSave),
+          }
+        );
+
+        const text = await response.text();
         console.log("Upload response status:", response.status);
         console.log("Upload response body:", text);
-      
+
         if (response.ok) {
           alert("Data successfully submitted to MongoDB!");
         } else {
           throw new Error("Failed to upload to MongoDB. Saving locally.");
         }
-      }
-       else {
-        // ✅ Offline: Save to single local JSON file
+      } else {
         let existingData = [];
-  
+
         const fileInfo = await FileSystem.getInfoAsync(fileUri);
         if (fileInfo.exists) {
           const fileContent = await FileSystem.readAsStringAsync(fileUri);
           existingData = JSON.parse(fileContent);
         }
-  
+
         existingData.push(dataToSave); // Add new form to array
-  
-        await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(existingData, null, 2));
+
+        await FileSystem.writeAsStringAsync(
+          fileUri,
+          JSON.stringify(existingData, null, 2)
+        );
         console.log("Saved locally to:", fileUri);
         alert("Offline: Data saved locally.");
       }
@@ -227,7 +231,6 @@ export default function Monitoring() {
       alert("An error occurred while saving the data.");
     }
   };
-  
 
   //   PARA SA WIFI CONNECTIVITY
   useEffect(() => {
@@ -464,46 +467,41 @@ export default function Monitoring() {
               <Text style={styles.label}>Name of Association</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                value={formData.email}
-                onChangeText={(text) => handleChange("email", text)}
+                value={formData.form.nameAssoc}
+                onChangeText={(text) => handleChange("nameAssoc", text)}
               />
 
-              <Text style={styles.label}>Total No. of Memebers</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                value={formData.email}
-                onChangeText={(text) => handleChange("email", text)}
-              />
+              {formData.form.nameAssoc.toUpperCase() !== "N/A" && (
+                <>
+                  <Text style={styles.label}>Total No. of Members</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={formData.form.totalMember}
+                    onChangeText={(text) => handleChange("totalMember", text)}
+                    keyboardType="numeric"
+                  />
+                </>
+              )}
 
               <Text style={styles.label}>Province</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                value={formData.email}
-                onChangeText={(text) => handleChange("email", text)}
+                value={formData.form.province}
+                onChangeText={(text) => handleChange("province", text)}
               />
 
               <Text style={styles.label}>Municipality</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                value={formData.email}
-                onChangeText={(text) => handleChange("email", text)}
+                value={formData.form.municipality}
+                onChangeText={(text) => handleChange("municipality", text)}
               />
 
-              <Text style={styles.label}>Baranggay</Text>
+              <Text style={styles.label}>Barangay</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                value={formData.email}
-                onChangeText={(text) => handleChange("email", text)}
+                value={formData.form.baranggay}
+                onChangeText={(text) => handleChange("baranggay", text)}
               />
 
               <Text style={styles.label}>Project Received</Text>
@@ -537,57 +535,32 @@ export default function Monitoring() {
                   <Text style={styles.label}>Date Received</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
                     value={formData.email}
                     onChangeText={(text) => handleChange("email", text)}
                   />
                 </View>
               </View>
 
-              <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
+              <View style={{ width: "100%", flexDirection: "row", gap: 10, marginBottom: 24 }}>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                   <Text style={styles.label}>Main Source if Income</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
-                    value={formData.email}
-                    onChangeText={(text) => handleChange("email", text)}
+                    value={formData.form.mainIncome}
+                    onChangeText={(text) => handleChange("mainIncome", text)}
                   />
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                   <Text style={styles.label}>Other Source of Income</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
-                    value={formData.email}
-                    onChangeText={(text) => handleChange("email", text)}
+                    value={formData.form.otherIncome}
+                    onChangeText={(text) => handleChange("otherIncome", text)}
                   />
                 </View>
               </View>
 
-              <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
-                <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>Latitude</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
-                    value={formData.email}
-                    onChangeText={(text) => handleChange("email", text)}
-                  />
-                </View>
-                <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>Longitude</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={formData.email}
-                    onChangeText={(text) => handleChange("email", text)}
-                  />
-                </View>
-              </View>
+              
             </ProgressStep>
 
             {/* ACTUAL FORM  */}
@@ -1926,7 +1899,7 @@ export default function Monitoring() {
                   Evaluator's Name
                 </Text>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { marginBottom: 24 }]}
                   value={formData.form.evaluator}
                   onChangeText={(text) => handleChange("evaluator", text)}
                   placeholder="Last Name, First Name, Middle Initial"
