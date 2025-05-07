@@ -19,7 +19,7 @@ export default function Coordinates({ onLocation }) {
       });
 
       setCoords(loc.coords);
-      if (onLocation) onLocation(loc.coords); // send back to parent if needed
+      if (onLocation) onLocation(loc.coords);
     };
 
     getLocation();

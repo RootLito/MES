@@ -1,4 +1,3 @@
-import NetInfo from "@react-native-community/netinfo";
 import {
   Platform,
   StatusBar,
@@ -10,44 +9,206 @@ import {
   ScrollView,
 } from "react-native";
 import { useState, useEffect } from "react";
+import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
+import { Rating } from "react-native-ratings";
+import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
-import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
-import { Rating } from "react-native-ratings";
+import {
+  initStorage,
+  saveDocument,
+  readAllDocuments,
+} from "../utils/fileStorage";
 
 export default function Monitoring() {
   const [isConnected, setIsConnected] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-  });
   const [savedData, setSavedData] = useState([]);
-  const handleChange = (key, value) => {
-    setFormData({ ...formData, [key]: value });
-  };
   const [rating, setRating] = useState(0);
+  const [formData, setFormData] = useState({
+    form: {
+      name: "",
+      resType: "",
+      civilStatus: "",
+      sex: "",
+      age: "",
+      hhMember: "",
+      fishR: "",
+      boatR: "",
+      nameAssoc: "",
+      totalMember: "",
+      province: "",
+      municipality: "",
+      baranggay: "",
+      projectReceived: "",
+      scale: "",
+      specProject: "",
+      specRemarks: "",
+      specOther: "",
+      noUnitsReceived: "",
+      dateReceived: "",
+      mainIncome: "",
+      otherIncome: "",
+      lat: "",
+      lon: "",
+      quantity: "",
+      quantityReason: "",
+      quantityRating: "",
+      quality: "",
+      qualityReason: "",
+      qualityRating: "",
+      q2: "",
+      q2Reason: "",
+      timelinessRating: "",
+      uponRequest: "",
+      duration: "",
+      q3: "",
+      q3Reason: "",
+      challenges: "",
+      relevanceRating: "",
+      q4: "",
+      q4Reason: "",
+      q5: "",
+      q5Reason: "",
+      coherenceRating: "",
+      q6: "",
+      q6Reason: "",
+      q7Satisfied: "",
+      q7_1: "",
+      satisfactionRating: "",
+      q7_2: "",
+      q7_2Reason: "",
+      q8: "",
+      q8Reason: "",
+      q9_1: "",
+      q9_1Spec: "",
+      q9_2: "",
+      q9_3: "",
+      q9_4: "",
+      q9_5: "",
+      q9_6: "",
+      q9_7: "",
+      q9_8: "",
+      q9_9: "",
+      q9_10: "",
+      q10_e: "",
+      q9_11: [],
+      q9_11other: "",
+      q9_12: "",
+      q9_12Spec: "",
+      q9_13: "",
+      q9_13other: "",
+      q9_14: "",
+      impactRating: "",
+      q10: "",
+      q10Reason: "",
+      q10_1: "",
+      sustainabilityRating: "",
+      q11: "",
+      q11_1: "",
+      q11_1spec: "",
+      q12: "",
+      note: "",
+      evaluator: "",
+    },
+  });
 
-  const handleSubmit = async () => {
-    try {
-      const existingData = await AsyncStorage.getItem("formDataList");
-      const parsedData = existingData ? JSON.parse(existingData) : [];
+  const capture = [
+    "shallow water payao",
+    "lambaklad",
+    "hook and line",
+    "tuna handline",
+    "multiple handline",
+    "net gears",
+    "motorized boat",
+    "non-motorized boat",
+    "marine engine",
+    "fry dozer",
+    "others",
+  ];
 
-      const updatedData = [...parsedData, formData];
+  const aquaculture = [
+    "freshwater tilapia fingerlings",
+    "saline tilapia fingerlings",
+    "milkfish fingerlings",
+    "hito fingerlings",
+    "post-larvae shrimp",
+    "kitang fingerlings",
+    "mudcrabs",
+    "tilapia fingerlings for broodstock development",
+    "tilapia broodstock",
+    "milkfish broodstock",
+    "seaweed propagules",
+    "seaweed farm implements",
+    "seaweed nurseries",
+    "feeds",
+    "fertilizer",
+    "others",
+  ];
 
-      await AsyncStorage.setItem("formDataList", JSON.stringify(updatedData));
+  const postHarvest = [
+    "freezer",
+    "dryer",
+    "fish stalls",
+    "smokehouse",
+    "vacuum sealer/packer",
+    "sorter",
+    "fish deboning set",
+    "fish bottling set",
+    "processing utensils",
+    "fish cart/kiosk",
+    "salt",
+    "others",
+  ];
 
-      setSavedData(updatedData);
+  const technoDemo = [
+    "Shellfish",
+    "Polyculture of Milkfish and Molobicus Tilapia",
+    "Monoculture of Milkfish",
+    "others",
+  ];
 
-      Alert.alert("Success", "Data has been saved!");
-
-      setFormData({ name: "", email: "" });
-    } catch (error) {
-      console.error("Failed to save form data", error);
-      Alert.alert("Error", "Failed to save data.");
-    }
+  const handleChange = (name, value, type = "text", checked = false) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      form: {
+        ...prevState.form,
+        [name]:
+          type === "checkbox"
+            ? checked
+              ? [...(prevState.form[name] || []), value]
+              : (prevState.form[name] || []).filter((item) => item !== value)
+            : value,
+      },
+    }));
   };
 
+  //   EXPO FILE SYSTEM
+  useEffect(() => {
+    initStorage();
+  }, []);
+  //   const handleSubmit = async () => {
+  //     try {
+  //       // Save new form data to file
+  //       await saveDocument(formData);
+
+  //       // Read all saved data from the file
+  //       const updatedData = await readAllDocuments();
+  //       setSavedData(updatedData);
+
+  //       Alert.alert('Success', 'Data has been saved!');
+
+  //       // Clear the form after submission
+  //       setFormData({ name: '', email: '' });
+  //     } catch (error) {
+  //       console.error('Failed to save form data', error);
+  //       Alert.alert('Error', 'Failed to save data.');
+  //     }
+  //   };
+  const handleSubmit = async () => {
+    console.log("Form data to be saved:", formData);
+  };
+  //   PARA SA WIFI CONNECTIVITY
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected);
@@ -117,37 +278,84 @@ export default function Monitoring() {
               <Text style={styles.label}>Name</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your name"
-                value={formData.name}
+                value={formData.form.name}
                 onChangeText={(text) => handleChange("name", text)}
+                placeholder="Last Name, First Name, Middle Initial"
               />
+
+              <Text style={styles.label}>Respondent Type</Text>
+
+              <View
+                style={{
+                  height: 48,
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  backgroundColor: "#e0e0e0",
+                  borderRadius: 8,
+                  justifyContent: "center",
+                }}
+              >
+                <RNPickerSelect
+                  onValueChange={(value) => handleChange("resType", value)}
+                  value={formData.form.resType}
+                  items={[
+                    { label: "Individual", value: "Individual" },
+                    { label: "Group", value: "Group" },
+                    { label: "LGU", value: "LGU" },
+                  ]}
+                />
+              </View>
+
               <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                   <Text style={styles.label}>Civil Status</Text>
-                  
-                  <RNPickerSelect
-                    onValueChange={(value) =>
-                      console.log("Selected Civil Status:", value)
-                    }
-                    items={[
-                      { label: "Single", value: "single" },
-                      { label: "Married", value: "married" },
-                      { label: "Divorced", value: "divorced" },
-                      { label: "Widowed", value: "widowed" },
-                    ]}
-                  />
+
+                  <View
+                    style={{
+                      height: 48,
+                      borderWidth: 1,
+                      borderColor: "#ccc",
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: 8,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <RNPickerSelect
+                      onValueChange={(value) =>
+                        handleChange("civilStatus", value)
+                      }
+                      value={formData.form.civilStatus}
+                      items={[
+                        { label: "Single", value: "single" },
+                        { label: "Married", value: "married" },
+                        { label: "Divorced", value: "divorced" },
+                        { label: "Widowed", value: "widowed" },
+                      ]}
+                    />
+                  </View>
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                   <Text style={styles.label}>Sex</Text>
-                  <RNPickerSelect
-                    onValueChange={(value) =>
-                      console.log("Selected Sex:", value)
-                    }
-                    items={[
-                      { label: "Male", value: "male" },
-                      { label: "Female", value: "female" },
-                    ]}
-                  />
+
+                  <View
+                    style={{
+                      height: 48,
+                      borderWidth: 1,
+                      borderColor: "#ccc",
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: 8,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <RNPickerSelect
+                      onValueChange={(value) => handleChange("sex", value)}
+                      value={formData.form.sex}
+                      items={[
+                        { label: "Male", value: "male" },
+                        { label: "Female", value: "female" },
+                      ]}
+                    />
+                  </View>
                 </View>
               </View>
 
@@ -156,20 +364,18 @@ export default function Monitoring() {
                   <Text style={styles.label}>Age</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
-                    value={formData.email}
-                    onChangeText={(text) => handleChange("email", text)}
+                    keyboardType="numeric"
+                    onChangeText={(value) => handleChange("age", value)}
+                    value={formData.form.age}
                   />
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                   <Text style={styles.label}>No. of HH Member</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
-                    value={formData.email}
-                    onChangeText={(text) => handleChange("email", text)}
+                    keyboardType="numeric"
+                    onChangeText={(value) => handleChange("hhMember", value)}
+                    value={formData.hhMember}
                   />
                 </View>
               </View>
@@ -177,23 +383,60 @@ export default function Monitoring() {
               <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                   <Text style={styles.label}>FishR</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
-                    value={formData.email}
-                    onChangeText={(text) => handleChange("email", text)}
-                  />
+                  <View
+                    style={{
+                      height: 48,
+                      borderWidth: 1,
+                      borderColor: "#ccc",
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: 8,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <RNPickerSelect
+                      onValueChange={(value) => handleChange("fishR", value)}
+                      value={formData.form.fishR}
+                      items={[
+                        { label: "Registered", value: "Registered" },
+                        { label: "LGU Registered", value: "LGU Registered" },
+                        {
+                          label: "For Registration",
+                          value: "For Registration",
+                        },
+                        {
+                          label: "For Verification",
+                          value: "For Verification",
+                        },
+                      ]}
+                    />
+                  </View>
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                   <Text style={styles.label}>BoatR</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
-                    value={formData.email}
-                    onChangeText={(text) => handleChange("email", text)}
-                  />
+                  <View
+                    style={{
+                      height: 48,
+                      borderWidth: 1,
+                      borderColor: "#ccc",
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: 8,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <RNPickerSelect
+                      onValueChange={(value) => handleChange("boatR", value)}
+                      value={formData.form.boatR}
+                      items={[
+                        { label: "Registered", value: "Registered" },
+                        { label: "LGU Registered", value: "LGU Registered" },
+                        {
+                          label: "For Registration",
+                          value: "For Registration",
+                        },
+                        { label: "N/A", value: "N/A" },
+                      ]}
+                    />
+                  </View>
                 </View>
               </View>
 
