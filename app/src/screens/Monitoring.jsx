@@ -607,7 +607,7 @@ export default function Monitoring() {
 
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginLeft: 10 }}
+                  containerStyle={{ flexDirection: "row", gap: 20 }}
                   value={formData.form.quantity}
                   onSelected={(value) => handleChange("quantity", value)}
                   radioBackground="green"
@@ -660,24 +660,40 @@ export default function Monitoring() {
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Rating on Quantity
                 </Text>
-                <RNPickerSelect
-                  onValueChange={(value) =>
-                    handleChange("quantityRating", value)
-                  }
-                  value={formData.form.quantityRating}
-                  items={[
-                    { label: "⭐⭐⭐⭐⭐", value: 5 },
-                    { label: "⭐⭐⭐⭐", value: 4 },
-                    { label: "⭐⭐⭐", value: 3 },
-                    { label: "⭐⭐", value: 2 },
-                    { label: "⭐", value: 1 },
-                  ]}
-                />
+                <View
+                  style={{
+                    height: 48,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#e3e3e3",
+                    borderRadius: 8,
+                    justifyContent: "center",
+                    marginBottom: 10,
+                  }}
+                >
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("quantityRating", value)
+                    }
+                    value={formData.form.quantityRating}
+                    items={[
+                      { label: "⭐⭐⭐⭐⭐", value: 5 },
+                      { label: "⭐⭐⭐⭐", value: 4 },
+                      { label: "⭐⭐⭐", value: 3 },
+                      { label: "⭐⭐", value: 2 },
+                      { label: "⭐", value: 1 },
+                    ]}
+                  />
+                </View>
 
                 <Text>- Is it new, has no defect or suitable? (quality)</Text>
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginBottom: 10, marginLeft: 10 }}
+                  containerStyle={{
+                    flexDirection: "row",
+                    gap: 20,
+                    marginBottom: 10,
+                  }}
                   value={formData.form.quality}
                   onSelected={(value) => handleChange("quality", value)}
                   radioBackground="green"
@@ -732,26 +748,43 @@ export default function Monitoring() {
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Rating on Quality
                 </Text>
-                <RNPickerSelect
-                  onValueChange={(value) =>
-                    handleChange("qualityRating", value)
-                  }
-                  value={formData.form.qualityRating}
-                  items={[
-                    { label: "⭐⭐⭐⭐⭐", value: 5 },
-                    { label: "⭐⭐⭐⭐", value: 4 },
-                    { label: "⭐⭐⭐", value: 3 },
-                    { label: "⭐⭐", value: 2 },
-                    { label: "⭐", value: 1 },
-                  ]}
-                />
+
+                <View
+                  style={{
+                    height: 48,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#e3e3e3",
+                    borderRadius: 8,
+                    justifyContent: "center",
+                    marginBottom: 10,
+                  }}
+                >
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("qualityRating", value)
+                    }
+                    value={formData.form.qualityRating}
+                    items={[
+                      { label: "⭐⭐⭐⭐⭐", value: 5 },
+                      { label: "⭐⭐⭐⭐", value: 4 },
+                      { label: "⭐⭐⭐", value: 3 },
+                      { label: "⭐⭐", value: 2 },
+                      { label: "⭐", value: 1 },
+                    ]}
+                  />
+                </View>
 
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   2. Is it timely with the fishing/production/stocking season?
                 </Text>
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginBottom: 10, marginLeft: 10 }}
+                  containerStyle={{
+                    flexDirection: "row",
+                    gap: 20,
+                    marginBottom: 10,
+                  }}
                   value={formData.form.q2}
                   onSelected={(value) => handleChange("q2", value)}
                   radioBackground="green"
@@ -801,24 +834,40 @@ export default function Monitoring() {
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Rating on Timeliness
                 </Text>
-                <RNPickerSelect
-                  onValueChange={(value) =>
-                    handleChange("timelinessRating", value)
-                  }
-                  value={formData.form.timelinessRating}
-                  items={[
-                    { label: "⭐⭐⭐⭐⭐", value: 5 },
-                    { label: "⭐⭐⭐⭐", value: 4 },
-                    { label: "⭐⭐⭐", value: 3 },
-                    { label: "⭐⭐", value: 2 },
-                    { label: "⭐", value: 1 },
-                  ]}
-                />
+                <View
+                  style={{
+                    height: 48,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#e3e3e3",
+                    borderRadius: 8,
+                    justifyContent: "center",
+                    marginBottom: 10,
+                  }}
+                >
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("timelinessRating", value)
+                    }
+                    value={formData.form.timelinessRating}
+                    items={[
+                      { label: "⭐⭐⭐⭐⭐", value: 5 },
+                      { label: "⭐⭐⭐⭐", value: 4 },
+                      { label: "⭐⭐⭐", value: 3 },
+                      { label: "⭐⭐", value: 2 },
+                      { label: "⭐", value: 1 },
+                    ]}
+                  />
+                </View>
 
                 <Text>Is it upon request?</Text>
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginBottom: 10, marginLeft: 10 }}
+                  containerStyle={{
+                    flexDirection: "row",
+                    gap: 20,
+                    marginBottom: 10,
+                  }}
                   value={formData.form.uponRequest}
                   onSelected={(value) => handleChange("uponRequest", value)}
                   radioBackground="green"
@@ -844,15 +893,26 @@ export default function Monitoring() {
                 </RadioButtonGroup>
 
                 <Text>Duration</Text>
-                <RNPickerSelect
-                  onValueChange={(value) => handleChange("duration", value)}
-                  value={formData.form.duration}
-                  items={[
-                    { label: "< 6 months", value: "<6 months" },
-                    { label: "< 1 year", value: "<1 year" },
-                    { label: "> 1 year", value: ">1 year" },
-                  ]}
-                />
+                <View
+                  style={{
+                    height: 48,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#e3e3e3",
+                    borderRadius: 8,
+                    justifyContent: "center",
+                  }}
+                >
+                  <RNPickerSelect
+                    onValueChange={(value) => handleChange("duration", value)}
+                    value={formData.form.duration}
+                    items={[
+                      { label: "< 6 months", value: "<6 months" },
+                      { label: "< 1 year", value: "<1 year" },
+                      { label: "> 1 year", value: ">1 year" },
+                    ]}
+                  />
+                </View>
 
                 <View
                   style={{
@@ -879,7 +939,11 @@ export default function Monitoring() {
                 </Text>
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginBottom: 10, marginLeft: 10 }}
+                  containerStyle={{
+                    flexDirection: "row",
+                    gap: 20,
+                    marginBottom: 10,
+                  }}
                   value={formData.form.q3}
                   onSelected={(value) => handleChange("q3", value)}
                   radioBackground="green"
@@ -928,29 +992,39 @@ export default function Monitoring() {
 
                 <Text>- Please specify the needs and challenges</Text>
                 <TextInput
-                placeholder="Optional"
+                  placeholder="Optional"
                   style={styles.input}
                   value={formData.form.challenges}
                   onChangeText={(text) => handleChange("challenges", text)}
                 />
 
-
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Rating on Relevance
                 </Text>
-                <RNPickerSelect
-                  onValueChange={(value) =>
-                    handleChange("relevanceRating", value)
-                  }
-                  value={formData.form.relevanceRating}
-                  items={[
-                    { label: "⭐⭐⭐⭐⭐", value: 5 },
-                    { label: "⭐⭐⭐⭐", value: 4 },
-                    { label: "⭐⭐⭐", value: 3 },
-                    { label: "⭐⭐", value: 2 },
-                    { label: "⭐", value: 1 },
-                  ]}
-                />
+                <View
+                  style={{
+                    height: 48,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#e3e3e3",
+                    borderRadius: 8,
+                    justifyContent: "center",
+                  }}
+                >
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("relevanceRating", value)
+                    }
+                    value={formData.form.relevanceRating}
+                    items={[
+                      { label: "⭐⭐⭐⭐⭐", value: 5 },
+                      { label: "⭐⭐⭐⭐", value: 4 },
+                      { label: "⭐⭐⭐", value: 3 },
+                      { label: "⭐⭐", value: 2 },
+                      { label: "⭐", value: 1 },
+                    ]}
+                  />
+                </View>
 
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   4. Was the project suitable for the local environment and
@@ -958,7 +1032,11 @@ export default function Monitoring() {
                 </Text>
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginBottom: 10, marginLeft: 10, flexDirection: 'row', gap: 20 }}
+                  containerStyle={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
                   value={formData.form.q4}
                   onSelected={(value) => handleChange("q4", value)}
                   radioBackground="green"
@@ -1005,15 +1083,13 @@ export default function Monitoring() {
                   </>
                 )}
 
-
-
                 <View
                   style={{
                     width: "100%",
                     backgroundColor: "#182553",
                     padding: 10,
                     borderRadius: 5,
-                    marginTop: 24,
+                    marginTop: 12,
                   }}
                 >
                   <Text
@@ -1033,7 +1109,11 @@ export default function Monitoring() {
                 </Text>
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginBottom: 10, marginLeft: 10, flexDirection: 'row', gap: 20 }}
+                  containerStyle={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
                   value={formData.form.q5}
                   onSelected={(value) => handleChange("q5", value)}
                   radioBackground="green"
@@ -1042,7 +1122,8 @@ export default function Monitoring() {
                     value="well-aware of the type of project given"
                     label=" Yes"
                     style={
-                      formData.form.q5 === "well-aware of the type of project given"
+                      formData.form.q5 ===
+                      "well-aware of the type of project given"
                         ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
                         : {}
                     }
@@ -1051,13 +1132,15 @@ export default function Monitoring() {
                     value="not aware of the type of project given"
                     label=" No"
                     style={
-                      formData.form.q5 === "not aware of the type of project given"
+                      formData.form.q5 ===
+                      "not aware of the type of project given"
                         ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
                         : {}
                     }
                   />
                 </RadioButtonGroup>
-                {formData.form.q5 === "not aware of the type of project given" && (
+                {formData.form.q5 ===
+                  "not aware of the type of project given" && (
                   <>
                     <TextInput
                       placeholder="If no, why?"
@@ -1080,22 +1163,32 @@ export default function Monitoring() {
                   </>
                 )}
 
-                <Text style={{ fontWeight: "bold", marginTop: 12 }}>
-                  Rating on Coherence
-                </Text>
-                <RNPickerSelect
-                  onValueChange={(value) =>
-                    handleChange("coherenceRating", value)
-                  }
-                  value={formData.form.coherenceRating}
-                  items={[
-                    { label: "⭐⭐⭐⭐⭐", value: 5 },
-                    { label: "⭐⭐⭐⭐", value: 4 },
-                    { label: "⭐⭐⭐", value: 3 },
-                    { label: "⭐⭐", value: 2 },
-                    { label: "⭐", value: 1 },
-                  ]}
-                />
+                <Text style={{ fontWeight: "bold" }}>Rating on Coherence</Text>
+
+                <View
+                  style={{
+                    height: 48,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#e3e3e3",
+                    borderRadius: 8,
+                    justifyContent: "center",
+                  }}
+                >
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("coherenceRating", value)
+                    }
+                    value={formData.form.coherenceRating}
+                    items={[
+                      { label: "⭐⭐⭐⭐⭐", value: 5 },
+                      { label: "⭐⭐⭐⭐", value: 4 },
+                      { label: "⭐⭐⭐", value: 3 },
+                      { label: "⭐⭐", value: 2 },
+                      { label: "⭐", value: 1 },
+                    ]}
+                  />
+                </View>
 
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   6. Were there any complementarity or duplications with other
@@ -1103,7 +1196,11 @@ export default function Monitoring() {
                 </Text>
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginBottom: 10, marginLeft: 10, flexDirection: 'row', gap: 20 }}
+                  containerStyle={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
                   value={formData.form.q6}
                   onSelected={(value) => handleChange("q6", value)}
                   radioBackground="green"
@@ -1156,7 +1253,7 @@ export default function Monitoring() {
                     backgroundColor: "#182553",
                     padding: 10,
                     borderRadius: 5,
-                    marginTop: 24,
+                    marginTop: 12,
                   }}
                 >
                   <Text
@@ -1175,7 +1272,11 @@ export default function Monitoring() {
                 <Text>- Were you satisfied with the project given?</Text>
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginBottom: 10, marginLeft: 10, flexDirection: 'row', gap: 20 }}
+                  containerStyle={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
                   value={formData.form.q7Satisfied}
                   onSelected={(value) => handleChange("q7Satisfied", value)}
                   radioBackground="green"
@@ -1193,13 +1294,15 @@ export default function Monitoring() {
                     value="not satisfied by the project"
                     label=" No"
                     style={
-                      formData.form.q7Satisfied === "not satisfied by the project"
+                      formData.form.q7Satisfied ===
+                      "not satisfied by the project"
                         ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
                         : {}
                     }
                   />
                 </RadioButtonGroup>
-                {formData.form.q7Satisfied === "not satisfied by the project" && (
+                {formData.form.q7Satisfied ===
+                  "not satisfied by the project" && (
                   <>
                     <TextInput
                       placeholder="If no, why?"
@@ -1222,32 +1325,44 @@ export default function Monitoring() {
                   </>
                 )}
 
-
-
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Rating on Satisfaction
                 </Text>
-                <RNPickerSelect
-                  onValueChange={(value) =>
-                    handleChange("satisfactionRating", value)
-                  }
-                  value={formData.form.satisfactionRating}
-                  items={[
-                    { label: "⭐⭐⭐⭐⭐", value: 5 },
-                    { label: "⭐⭐⭐⭐", value: 4 },
-                    { label: "⭐⭐⭐", value: 3 },
-                    { label: "⭐⭐", value: 2 },
-                    { label: "⭐", value: 1 },
-                  ]}
-                />
 
-
-
+                <View
+                  style={{
+                    height: 48,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#e3e3e3",
+                    borderRadius: 8,
+                    justifyContent: "center",
+                    marginBottom: 10,
+                  }}
+                >
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("satisfactionRating", value)
+                    }
+                    value={formData.form.satisfactionRating}
+                    items={[
+                      { label: "⭐⭐⭐⭐⭐", value: 5 },
+                      { label: "⭐⭐⭐⭐", value: 4 },
+                      { label: "⭐⭐⭐", value: 3 },
+                      { label: "⭐⭐", value: 2 },
+                      { label: "⭐", value: 1 },
+                    ]}
+                  />
+                </View>
 
                 <Text>- Were you able to use it as soon as given?</Text>
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginBottom: 10, marginLeft: 10, flexDirection: 'row', gap: 20 }}
+                  containerStyle={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
                   value={formData.form.q7_2}
                   onSelected={(value) => handleChange("q7_2", value)}
                   radioBackground="green"
@@ -1299,7 +1414,11 @@ export default function Monitoring() {
                 </Text>
                 <RadioButtonGroup
                   size={16}
-                  containerStyle={{ marginBottom: 10, marginLeft: 10, flexDirection: 'row', gap: 20 }}
+                  containerStyle={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
                   value={formData.form.q8}
                   onSelected={(value) => handleChange("q8", value)}
                   radioBackground="green"
@@ -1352,7 +1471,7 @@ export default function Monitoring() {
                     backgroundColor: "#182553",
                     padding: 10,
                     borderRadius: 5,
-                    marginTop: 24,
+                    marginTop: 12,
                   }}
                 >
                   <Text
@@ -1484,7 +1603,32 @@ export default function Monitoring() {
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Rating on Impact
                 </Text>
-                <Rating size={24} rating={rating} />
+
+                <View
+                  style={{
+                    height: 48,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#e3e3e3",
+                    borderRadius: 8,
+                    justifyContent: "center",
+                    marginBottom: 10,
+                  }}
+                >
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("impactRating", value)
+                    }
+                    value={formData.form.impactRating}
+                    items={[
+                      { label: "⭐⭐⭐⭐⭐", value: 5 },
+                      { label: "⭐⭐⭐⭐", value: 4 },
+                      { label: "⭐⭐⭐", value: 3 },
+                      { label: "⭐⭐", value: 2 },
+                      { label: "⭐", value: 1 },
+                    ]}
+                  />
+                </View>
 
                 <View
                   style={{
@@ -1492,7 +1636,7 @@ export default function Monitoring() {
                     backgroundColor: "#182553",
                     padding: 10,
                     borderRadius: 5,
-                    marginTop: 24,
+                    marginTop: 12,
                   }}
                 >
                   <Text
@@ -1508,38 +1652,207 @@ export default function Monitoring() {
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   10. Is the project ongoing/operational/used?
                 </Text>
-                <Text>Yes or No</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
-                />
+                <RadioButtonGroup
+                  size={16}
+                  containerStyle={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
+                  value={formData.form.q10}
+                  onSelected={(value) => handleChange("q10", value)}
+                  radioBackground="green"
+                >
+                  <RadioButtonItem
+                    value="fully utilized"
+                    label=" Yes"
+                    style={
+                      formData.form.q10 === "fully utilized"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="No"
+                    label=" No"
+                    style={
+                      formData.form.q10 === "No"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                </RadioButtonGroup>
+                {formData.form.q10 === "No" && (
+                  <>
+                    <TextInput
+                      placeholder="If no, state reason why not operational/used"
+                      style={[
+                        styles.input,
+                        formData.form.q10Reason.trim() === "" &&
+                          formData.form.q10 !== "" && {
+                            borderColor: "red",
+                          },
+                      ]}
+                      value={formData.form.q10Reason}
+                      onChangeText={(text) => handleChange("q10Reason", text)}
+                    />
+                    {formData.form.q10Reason.trim() === "" &&
+                      formData.form.q10 !== "" && (
+                        <Text style={{ color: "red" }}>
+                          This field is required!
+                        </Text>
+                      )}
+                  </>
+                )}
 
                 <Text>If yes, how long did the project last?</Text>
-                <Text>&lt; 3 months</Text>
-                <Text>&lt; 1 year</Text>
-                <Text>&gt; 1 year</Text>
+                <View
+                  style={{
+                    height: 48,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#e3e3e3",
+                    borderRadius: 8,
+                    justifyContent: "center",
+                  }}
+                >
+                  <RNPickerSelect
+                    onValueChange={(value) => handleChange("q10_1", value)}
+                    value={formData.form.q10_1}
+                    items={[
+                      { label: "< 3 months", value: "< 3 months" },
+                      { label: "< 1 year>", value: "< 1 year>" },
+                      { label: "> 1 year", value: "> 1 year" },
+                    ]}
+                  />
+                </View>
 
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Rating on Sustainability
                 </Text>
-                <Rating size={24} rating={rating} />
+
+                <View
+                  style={{
+                    height: 48,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    backgroundColor: "#e3e3e3",
+                    borderRadius: 8,
+                    justifyContent: "center",
+                  }}
+                >
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("sustainabilityRating", value)
+                    }
+                    value={formData.form.sustainabilityRating}
+                    items={[
+                      { label: "⭐⭐⭐⭐⭐", value: 5 },
+                      { label: "⭐⭐⭐⭐", value: 4 },
+                      { label: "⭐⭐⭐", value: 3 },
+                      { label: "⭐⭐", value: 2 },
+                      { label: "⭐", value: 1 },
+                    ]}
+                  />
+                </View>
 
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   11. Availability of market for the produce (fresh or
                   processed)?
                 </Text>
-                <Text>Yes or No</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
-                />
+                <RadioButtonGroup
+                  size={16}
+                  containerStyle={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
+                  value={formData.form.q11}
+                  onSelected={(value) => handleChange("q11", value)}
+                  radioBackground="green"
+                >
+                  <RadioButtonItem
+                    value="yes"
+                    label=" Yes"
+                    style={
+                      formData.form.q11 === "yes"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="N/A"
+                    label=" No"
+                    style={
+                      formData.form.q11 === "N/A"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="Others"
+                    label=" Others"
+                    style={
+                      formData.form.q11 === "Others"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                </RadioButtonGroup>
+                {formData.form.q11 === "yes" && (
+                  <>
+                    <Text>If yes, please Specify</Text>
+                    <View
+                      style={{
+                        height: 48,
+                        borderWidth: 1,
+                        borderColor: "#ccc",
+                        backgroundColor: "#e3e3e3",
+                        borderRadius: 8,
+                        justifyContent: "center",
+                        marginBottom: 12,
+                      }}
+                    >
+                      <RNPickerSelect
+                        onValueChange={(value) =>
+                          handleChange("sustainabilityRating", value)
+                        }
+                        value={formData.form.sustainabilityRating}
+                        items={[
+                          { label: "Vending", value: "Vending" },
+                          { label: "Local Martket", value: "Local Martket" },
+                          {
+                            label: "Trader/Consignee",
+                            value: "Trader/Consignee",
+                          },
+                        ]}
+                      />
+                    </View>
+                  </>
+                )}
 
-                <Text>Please Specify</Text>
-                <Text>Vending</Text>
-                <Text>Local Martket</Text>
-                <Text>Trader/Consignee</Text>
+                {formData.form.q11 === "Others" && (
+                  <>
+                    <TextInput
+                      placeholder="Please specify"
+                      style={[
+                        styles.input,
+                        formData.form.q8Reason.trim() === "" &&
+                          formData.form.q8 !== "" && {
+                            borderColor: "red",
+                          },
+                      ]}
+                      value={formData.form.q8Reason}
+                      onChangeText={(text) => handleChange("q8Reason", text)}
+                    />
+                    {formData.form.q8Reason.trim() === "" &&
+                      formData.form.q8 !== "" && (
+                        <Text style={{ color: "red" }}>
+                          This field is required!
+                        </Text>
+                      )}
+                  </>
+                )}
               </View>
             </ProgressStep>
 
