@@ -17,11 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
 import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
 
-import {
-  initStorage,
-  saveDocument,
-  readAllDocuments,
-} from "../utils/fileStorage";
+import * as FileSystem from "expo-file-system";
 
 export default function Monitoring() {
   const [isConnected, setIsConnected] = useState(null);
@@ -186,31 +182,53 @@ export default function Monitoring() {
     }));
   };
 
-  //   EXPO FILE SYSTEM
-  useEffect(() => {
-    initStorage();
-  }, []);
-  //   const handleSubmit = async () => {
-  //     try {
-  //       // Save new form data to file
-  //       await saveDocument(formData);
-
-  //       // Read all saved data from the file
-  //       const updatedData = await readAllDocuments();
-  //       setSavedData(updatedData);
-
-  //       Alert.alert('Success', 'Data has been saved!');
-
-  //       // Clear the form after submission
-  //       setFormData({ name: '', email: '' });
-  //     } catch (error) {
-  //       console.error('Failed to save form data', error);
-  //       Alert.alert('Error', 'Failed to save data.');
-  //     }
-  //   };
   const handleSubmit = async () => {
-    console.log("Form data to be saved:", formData);
+    try {
+      const dataToSave = formData.form;
+      const fileUri = FileSystem.documentDirectory + "formData.json";
+  
+      if (isConnected) {
+        const response = await fetch("https://bfar-server.onrender.com/survey/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSave),
+        });
+      
+        const text = await response.text(); // for better error logging
+        console.log("Upload response status:", response.status);
+        console.log("Upload response body:", text);
+      
+        if (response.ok) {
+          alert("Data successfully submitted to MongoDB!");
+        } else {
+          throw new Error("Failed to upload to MongoDB. Saving locally.");
+        }
+      }
+       else {
+        // ✅ Offline: Save to single local JSON file
+        let existingData = [];
+  
+        const fileInfo = await FileSystem.getInfoAsync(fileUri);
+        if (fileInfo.exists) {
+          const fileContent = await FileSystem.readAsStringAsync(fileUri);
+          existingData = JSON.parse(fileContent);
+        }
+  
+        existingData.push(dataToSave); // Add new form to array
+  
+        await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(existingData, null, 2));
+        console.log("Saved locally to:", fileUri);
+        alert("Offline: Data saved locally.");
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+      alert("An error occurred while saving the data.");
+    }
   };
+  
+
   //   PARA SA WIFI CONNECTIVITY
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -1862,6 +1880,25 @@ export default function Monitoring() {
               buttonNextTextColor="#FFFFFF"
               onSubmit={handleSubmit}
             >
+              <View
+                style={{
+                  width: "100%",
+                  backgroundColor: "#182553",
+                  padding: 10,
+                  borderRadius: 5,
+                  marginBottom: 12,
+                }}
+              >
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: "white",
+                    textAlign: "center",
+                  }}
+                >
+                  NEEDS ASSESSMENT
+                </Text>
+              </View>
               <View style={{}}>
                 <Text style={{ fontWeight: "bold" }}>
                   12. How else can the government through BFAR help or assist
@@ -1873,8 +1910,8 @@ export default function Monitoring() {
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
+                  value={formData.form.q12}
+                  onChangeText={(text) => handleChange("q12", text)}
                 />
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Evaluator's Note (cite practices, success stories and other
@@ -1882,8 +1919,17 @@ export default function Monitoring() {
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
+                  value={formData.form.note}
+                  onChangeText={(text) => handleChange("note", text)}
+                />
+                <Text style={{ fontWeight: "bold", marginTop: 12 }}>
+                  Evaluator's Name
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  value={formData.form.evaluator}
+                  onChangeText={(text) => handleChange("evaluator", text)}
+                  placeholder="Last Name, First Name, Middle Initial"
                 />
               </View>
             </ProgressStep>

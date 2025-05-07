@@ -11,7 +11,9 @@ import {
 
 import { useState, useEffect } from "react";
 import Icon from "react-native-vector-icons/Feather";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as FileSystem from "expo-file-system";
+import { AppState } from "react-native";
+
 
 export default function List() {
   const [isConnected, setIsConnected] = useState(null);
@@ -36,20 +38,39 @@ export default function List() {
 
   const fetchSavedData = async () => {
     try {
-      const data = await AsyncStorage.getItem("formDataList");
-      if (data) {
-        setSavedData(JSON.parse(data));
-      } else {
-        setSavedData([]);
+      const fileUri = FileSystem.documentDirectory + "formData.json";
+      const fileInfo = await FileSystem.getInfoAsync(fileUri);
+
+      if (!fileInfo.exists) {
+        console.log("File not found");
+        return;
       }
+
+      const content = await FileSystem.readAsStringAsync(fileUri);
+      const parsedData = JSON.parse(content);
+
+      // If it's a single form, wrap in array; if already array, leave as-is
+      const dataArray = Array.isArray(parsedData) ? parsedData : [parsedData];
+      setSavedData(dataArray); // assuming you declared: const [savedData, setSavedData] = useState([])
     } catch (error) {
-      console.error("Failed to fetch saved data", error);
+      console.error("Error reading saved data:", error);
     }
   };
 
-  const handleReload = () => {
-    fetchSavedData();
-  };
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (nextAppState === "active") {
+        fetchSavedData(); // refresh when user returns
+      }
+    });
+  
+    fetchSavedData(); // initial load
+  
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+  
 
   return (
     <View style={styles.container}>
@@ -186,36 +207,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "gray",
   },
-    // FLATLIST
-    header: {
-        flexDirection: "row",
-        gap: 10,
-        backgroundColor: "#182553",
-        padding: 10,
-        borderRadius: 5,
-      },
-      headerText: {
-        color: "#fff",
-        fontWeight: "bold",
-      },
-      row: {
-        flexDirection: "row",
-        padding: 10,
-        borderBottomWidth: 0.2,
-        borderBottomColor: "#ccc",
-        gap: 10,
-      },
-      cell1: {
-        flex: 1,
-        textAlign: "left",
-        fontWeight: "bold"
-      },
-      cell2: {
-        flex: 4,
-        textAlign: "left",
-      },
-      cell3: {
-        flex: 5,
-        textAlign: "left",
-      },
+  // FLATLIST
+  header: {
+    flexDirection: "row",
+    gap: 10,
+    backgroundColor: "#182553",
+    padding: 10,
+    borderRadius: 5,
+  },
+  headerText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  row: {
+    flexDirection: "row",
+    padding: 10,
+    borderBottomWidth: 0.2,
+    borderBottomColor: "#ccc",
+    gap: 10,
+  },
+  cell1: {
+    flex: 1,
+    textAlign: "left",
+    fontWeight: "bold",
+  },
+  cell2: {
+    flex: 4,
+    textAlign: "left",
+  },
+  cell3: {
+    flex: 5,
+    textAlign: "left",
+  },
 });

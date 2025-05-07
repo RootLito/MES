@@ -34,7 +34,7 @@ export default function Coordinates({ onLocation }) {
   }
 
   return (
-    <View>
+    <View style={{ flexDirection: "row", gap: 24 }}>
       <Text>Latitude: {coords.latitude}</Text>
       <Text>Longitude: {coords.longitude}</Text>
     </View>

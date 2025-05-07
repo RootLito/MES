@@ -50,7 +50,6 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      {/* {action bar diri} */}
       <View style={styles.actionBar}>
         <Text style={styles.text}>HOME</Text>
 
