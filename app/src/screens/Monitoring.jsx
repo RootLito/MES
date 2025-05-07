@@ -15,6 +15,8 @@ import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
+import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
+
 import {
   initStorage,
   saveDocument,
@@ -25,6 +27,7 @@ export default function Monitoring() {
   const [isConnected, setIsConnected] = useState(null);
   const [savedData, setSavedData] = useState([]);
   const [rating, setRating] = useState(0);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [formData, setFormData] = useState({
     form: {
       name: "",
@@ -508,10 +511,8 @@ export default function Monitoring() {
                   <Text style={styles.label}>No. of Units Received</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
-                    value={formData.email}
-                    onChangeText={(text) => handleChange("email", text)}
+                    value={formData.form.dateReceived}
+                    onChangeText={(text) => handleChange("dateReceived", text)}
                   />
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
@@ -564,8 +565,6 @@ export default function Monitoring() {
                   <Text style={styles.label}>Longitude</Text>
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
                     value={formData.email}
                     onChangeText={(text) => handleChange("email", text)}
                   />
@@ -602,26 +601,141 @@ export default function Monitoring() {
                 <Text style={{ fontWeight: "bold" }}>
                   1. Quantity and quality of goods/project received
                 </Text>
-                <Text>- Is it sufficient/enough? (Quantity)</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
-                />
+                <Text style={{marginTop: 10}}>- Is it sufficient/enough? (Quantity)</Text>
+
+                <RadioButtonGroup
+                  size={16}
+                  containerStyle={{marginLeft: 10 }}
+                  value={formData.form.quantity}
+                  onSelected={(value) => handleChange("quantity", value)}
+                  radioBackground="green"
+                >
+                  <RadioButtonItem
+                    value="sufficient"
+                    label=" Yes"
+                    style={
+                      formData.form.quantity === "sufficient"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  
+                  <RadioButtonItem
+                    value="not sufficient"
+                    label=" No"
+                    style={
+                      formData.form.quantity === "not sufficient"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                </RadioButtonGroup>
+                {formData.form.quantity === "not sufficient" && (
+                  <>
+                    <TextInput
+                      style={[
+                        styles.input,
+                        formData.form.quantityReason.trim() === "" &&
+                          formData.form.quantity !== "" && {
+                            borderColor: "red",
+                          },
+                      ]}
+                      value={formData.form.quantityReason}
+                      onChangeText={(text) =>
+                        handleChange("quantityReason", text)
+                      }
+                    />
+                    {formData.form.quantityReason.trim() === "" &&
+                      formData.form.quantity !== "" && (
+                        <Text style={{ color: "red" }}>
+                          This field is required!
+                        </Text>
+                      )}
+                  </>
+                )}
+
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Rating on Quantity
                 </Text>
-                <Rating size={24} rating={rating} />
+                <RNPickerSelect
+                      onValueChange={(value) => handleChange("quantityRating", value)}
+                      value={formData.form.quantityRating}
+                      items={[
+                        { label: "⭐⭐⭐⭐⭐", value: 5 },
+                        { label: "⭐⭐⭐⭐", value: 4 },
+                        { label: "⭐⭐⭐", value: 3 },
+                        { label: "⭐⭐", value: 2 },
+                        { label: "⭐", value: 1 },
+                      ]}
+                    />
+
+
                 <Text>- Is it new, has no defect or suitable? (quality)</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
-                />
+                <RadioButtonGroup
+                  size={16}
+                  containerStyle={{ marginBottom: 10, marginLeft: 10 }}
+                  value={formData.form.quality}
+                  onSelected={(value) => handleChange("quality", value)}
+                  radioBackground="green"
+                >
+                  <RadioButtonItem
+                    value="no defects"
+                    label=" Yes"
+                    style={
+                      formData.form.quality === "no defects"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="has defects"
+                    label=" No"
+                    style={
+                      formData.form.quality === "has defects"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                </RadioButtonGroup>
+                {formData.form.quality === "has defects" && (
+                  <>
+                    <Text>- Is it new, has no defect or suitable? (quality)</Text>
+                    <TextInput
+                      style={[
+                        styles.input,
+                        formData.form.qualityReason.trim() === "" &&
+                          formData.form.quality !== "" && {
+                            borderColor: "red",
+                          },
+                      ]}
+                      value={formData.form.qualityReason}
+                      onChangeText={(text) =>
+                        handleChange("qualityReason", text)
+                      }
+                    />
+                    {formData.form.qualityReason.trim() === "" &&
+                      formData.form.quantity !== "" && (
+                        <Text style={{ color: "red" }}>
+                          This field is required!
+                        </Text>
+                      )}
+                  </>
+                )}
+
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Rating on Quality
                 </Text>
-                <Rating size={24} rating={rating} />
+                <RNPickerSelect
+                      onValueChange={(value) => handleChange("qualityRating", value)}
+                      value={formData.form.qualityRating}
+                      items={[
+                        { label: "⭐⭐⭐⭐⭐", value: 5 },
+                        { label: "⭐⭐⭐⭐", value: 4 },
+                        { label: "⭐⭐⭐", value: 3 },
+                        { label: "⭐⭐", value: 2 },
+                        { label: "⭐", value: 1 },
+                      ]}
+                    />
 
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   2. Is it timely with the fishing/production/stocking season?
@@ -1075,9 +1189,9 @@ const styles = StyleSheet.create({
   input: {
     height: 48,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#e0e0e0",
     padding: 10,
-    backgroundColor: "#e0e0e0",
+    backgroundColor: "#e3e3e3",
     borderRadius: 8,
   },
 
