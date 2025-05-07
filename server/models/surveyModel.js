@@ -41,10 +41,10 @@ const surveySchema = new Schema({
 
   quantity: { type: String },
   quantityReason: { type: String },
-  quantityRating: { type: Number, min: 1, max: 5, required: true },
+  quantityRating: { type: Number, min: 1, max: 5 },
   quality: { type: String },
   qualityReason: { type: String },
-  qualityRating: { type: Number, min: 1, max: 5, required: true },
+  qualityRating: { type: Number, min: 1, max: 5,  },
 
 
 
@@ -61,19 +61,19 @@ const surveySchema = new Schema({
   q3: { type: String },
   q3Reason: { type: String },
   challenges: { type: String },
-  relevanceRating: { type: Number, min: 1, max: 5, required: true },
+  relevanceRating: { type: Number, min: 1, max: 5,  },
 
   q4: { type: String },
   q4Reason: { type: String },
   q5: { type: String },
   q5Reason: { type: String },
-  coherenceRating: { type: Number, min: 1, max: 5, required: true },
+  coherenceRating: { type: Number, min: 1, max: 5,  },
   q6: { type: String },
   q6Reason: { type: String },
   q7Satisfied: { type: String },
   q7_1: { type: String},
   q7_1Reason: { type: String },
-  satisfactionRating: { type: Number, min: 1, max: 5, required: true },
+  satisfactionRating: { type: Number, min: 1, max: 5,  },
   q7_2: { type: String },
   q7_2Reason: { type: String },
   q8: { type: String },
@@ -98,13 +98,13 @@ const surveySchema = new Schema({
   q9_13other: { type: String },
   q9_14: { type: String},
   
-  impactRating: { type: Number, min: 1, max: 5, required: true },
+  impactRating: { type: Number, min: 1, max: 5,  },
 
   q10_e: { type: String },
   q10: { type: String },
   q10Reason: { type: String },
   q10_1: { type: String },
-  sustainabilityRating: { type: Number, min: 1, max: 5, required: true },
+  sustainabilityRating: { type: Number, min: 1, max: 5,  },
 
 
   q11: { type: String },
