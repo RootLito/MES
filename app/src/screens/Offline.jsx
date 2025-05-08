@@ -1,19 +1,9 @@
-import NetInfo from "@react-native-community/netinfo";
-import {
-  Platform,
-  StatusBar,
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  FlatList,
-} from "react-native";
-
-import { useState, useEffect } from "react";
-import Icon from "react-native-vector-icons/Feather";
+import React, { useState, useEffect } from "react";
+import { View, Text, Button, FlatList, StyleSheet, Platform, StatusBar } from "react-native";
 import * as FileSystem from "expo-file-system";
+import NetInfo from "@react-native-community/netinfo";
+import Icon from "react-native-vector-icons/Feather";
 import { AppState } from "react-native";
-
 
 export default function List() {
   const [isConnected, setIsConnected] = useState(null);
@@ -36,6 +26,7 @@ export default function List() {
     };
   }, []);
 
+  // Fetch saved data from file system
   const fetchSavedData = async () => {
     try {
       const fileUri = FileSystem.documentDirectory + "formData.json";
@@ -49,9 +40,8 @@ export default function List() {
       const content = await FileSystem.readAsStringAsync(fileUri);
       const parsedData = JSON.parse(content);
 
-      // If it's a single form, wrap in array; if already array, leave as-is
       const dataArray = Array.isArray(parsedData) ? parsedData : [parsedData];
-      setSavedData(dataArray); // assuming you declared: const [savedData, setSavedData] = useState([])
+      setSavedData(dataArray);
     } catch (error) {
       console.error("Error reading saved data:", error);
     }
@@ -60,17 +50,41 @@ export default function List() {
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (nextAppState === "active") {
-        fetchSavedData(); // refresh when user returns
+        fetchSavedData(); // Refresh when user returns
       }
     });
-  
-    fetchSavedData(); // initial load
-  
+
+    fetchSavedData(); // Initial load
+
     return () => {
       subscription.remove();
     };
   }, []);
-  
+
+  // Save data to MongoDB
+  const saveDataToMongoDB = async () => {
+    if (isConnected) {
+      try {
+        const response = await fetch("https://bfar-server.onrender.com/survey/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data: savedData }), // Send the saved data
+        });
+
+        if (response.ok) {
+          console.log("Data saved successfully");
+        } else {
+          console.error("Failed to save data", response.status);
+        }
+      } catch (error) {
+        console.error("Error saving data to MongoDB:", error);
+      }
+    } else {
+      alert("You are offline. Please check your internet connection.");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -134,6 +148,8 @@ export default function List() {
             </View>
           )}
         />
+        {/* Button to save data to MongoDB */}
+        <Button title="Save to MongoDB" onPress={saveDataToMongoDB} />
       </View>
     </View>
   );
@@ -191,23 +207,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  reloadButton: {
-    marginTop: 20,
-    alignSelf: "center",
-  },
-  tableContainer: {
-    marginTop: 20,
-  },
-  tableHeader: {
-    backgroundColor: "#ADD8E6",
-  },
-  emptyText: {
-    textAlign: "center",
-    marginTop: 10,
-    fontSize: 16,
-    color: "gray",
-  },
-  // FLATLIST
   header: {
     flexDirection: "row",
     gap: 10,

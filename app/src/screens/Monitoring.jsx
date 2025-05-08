@@ -527,15 +527,15 @@ export default function Monitoring() {
                   <Text style={styles.label}>No. of Units Received</Text>
                   <TextInput
                     style={styles.input}
-                    value={formData.form.dateReceived}
-                    onChangeText={(text) => handleChange("dateReceived", text)}
+                    value={formData.form.noUnitsReceived}
+                    onChangeText={(text) => handleChange("noUnitsReceived", text)}
                   />
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                   <Text style={styles.label}>Date Received</Text>
                   <TextInput
                     style={styles.input}
-                    value={formData.email}
+                    value={formData.form.dateReceived}
                     onChangeText={(text) => handleChange("email", text)}
                   />
                 </View>
