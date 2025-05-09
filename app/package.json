@@ -11,6 +11,7 @@
   "dependencies": {
     "@eva-design/eva": "^2.2.0",
     "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-native-community/checkbox": "^0.5.17",
     "@react-native-community/netinfo": "^11.4.1",
     "@react-native-picker/picker": "^2.9.0",
     "@react-navigation/bottom-tabs": "^7.3.1",
@@ -36,7 +37,8 @@
     "react-native-safe-area-context": "^5.3.0",
     "react-native-screens": "^4.9.2",
     "react-native-ui-datepicker": "^3.1.2",
-    "react-native-vector-icons": "^10.2.0"
+    "react-native-vector-icons": "^10.2.0",
+    "expo-checkbox": "~4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

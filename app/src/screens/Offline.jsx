@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Button, FlatList, StyleSheet, Platform, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  FlatList,
+  StyleSheet,
+  Platform,
+  StatusBar,
+} from "react-native";
 import * as FileSystem from "expo-file-system";
 import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Feather";
-import { AppState } from "react-native";
+import { AppState, Alert } from "react-native";
 
 export default function List() {
   const [isConnected, setIsConnected] = useState(null);
@@ -28,63 +36,120 @@ export default function List() {
 
   // Fetch saved data from file system
   const fetchSavedData = async () => {
-    try {
-      const fileUri = FileSystem.documentDirectory + "formData.json";
-      const fileInfo = await FileSystem.getInfoAsync(fileUri);
+  try {
+    const dir = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
+    const formFiles = dir.filter(
+      (fileName) =>
+        fileName.startsWith("formData-") && fileName.endsWith(".json")
+    );
 
-      if (!fileInfo.exists) {
-        console.log("File not found");
-        return;
-      }
+    const dataArray = [];
+    console.log("Form Files Found:", formFiles); // Debugging line
 
+    for (const fileName of formFiles) {
+      const fileUri = FileSystem.documentDirectory + fileName;
       const content = await FileSystem.readAsStringAsync(fileUri);
-      const parsedData = JSON.parse(content);
-
-      const dataArray = Array.isArray(parsedData) ? parsedData : [parsedData];
-      setSavedData(dataArray);
-    } catch (error) {
-      console.error("Error reading saved data:", error);
+      const parsed = JSON.parse(content);
+      dataArray.push(parsed);
     }
-  };
+
+    console.log("Parsed Data:", dataArray); // Debugging line
+    setSavedData(dataArray);
+  } catch (error) {
+    console.error("Error reading saved data:", error);
+  }
+};
+
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (nextAppState === "active") {
-        fetchSavedData(); // Refresh when user returns
+        fetchSavedData();
       }
     });
 
-    fetchSavedData(); // Initial load
+    fetchSavedData();
 
     return () => {
       subscription.remove();
     };
   }, []);
 
-  // Save data to MongoDB
   const saveDataToMongoDB = async () => {
-    if (isConnected) {
-      try {
-        const response = await fetch("https://bfar-server.onrender.com/survey/add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ data: savedData }), // Send the saved data
-        });
-
-        if (response.ok) {
-          console.log("Data saved successfully");
-        } else {
-          console.error("Failed to save data", response.status);
-        }
-      } catch (error) {
-        console.error("Error saving data to MongoDB:", error);
+    if (!isConnected) {
+      Alert.alert(
+        "Connection Error",
+        "You are offline. Please check your internet connection.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+  
+    try {
+      const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
+  
+      // Filter only valid JSON survey files
+      const formFiles = files.filter(
+        (file) => file.startsWith("formData-") && file.endsWith(".json")
+      );
+  
+      // 🚫 No survey files found
+      if (formFiles.length === 0) {
+        Alert.alert("No Data", "No saved survey data to upload yet.");
+        return;
       }
-    } else {
-      alert("You are offline. Please check your internet connection.");
+  
+      const allFormData = [];
+  
+      for (const file of formFiles) {
+        const fileUri = FileSystem.documentDirectory + file;
+        const fileContent = await FileSystem.readAsStringAsync(fileUri);
+  
+        try {
+          const parsedData = JSON.parse(fileContent);
+          allFormData.push(parsedData);
+        } catch (err) {
+          console.warn(`Failed to parse ${file}:`, err);
+        }
+      }
+  
+      // 🚫 No valid JSON inside the files
+      if (allFormData.length === 0) {
+        Alert.alert("Invalid Data", "No valid survey data found in files.");
+        return;
+      }
+  
+      // ✅ Upload actual parsed data
+      const response = await fetch("https://bfar-server.onrender.com/survey/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ data: allFormData }),
+      });
+  
+      if (response.ok) {
+        console.log("Data saved successfully");
+  
+        // Delete local JSON files after successful upload
+        for (const file of formFiles) {
+          const fileUri = FileSystem.documentDirectory + file;
+          await FileSystem.deleteAsync(fileUri, { idempotent: true });
+          console.log("Deleted file:", fileUri);
+        }
+  
+        setSavedData([]);
+        Alert.alert("Success", "Data uploaded and local files deleted.", [{ text: "OK" }]);
+      } else {
+        console.error("Failed to save data:", response.status);
+      }
+    } catch (error) {
+      console.error("Error during upload:", error);
     }
   };
+  
+  
+  
 
   return (
     <View style={styles.container}>
@@ -148,8 +213,8 @@ export default function List() {
             </View>
           )}
         />
-        {/* Button to save data to MongoDB */}
-        <Button title="Save to MongoDB" onPress={saveDataToMongoDB} />
+
+        <Button title="Upload Forms" onPress={saveDataToMongoDB} />
       </View>
     </View>
   );

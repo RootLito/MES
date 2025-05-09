@@ -4,19 +4,16 @@ import {
   StyleSheet,
   View,
   Text,
-  Alert,
   TextInput,
   ScrollView,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
-import { Rating } from "react-native-ratings";
 import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/Feather";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
 import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
-
+import Checkbox from "expo-checkbox";
 import * as FileSystem from "expo-file-system";
 
 export default function Monitoring() {
@@ -167,6 +164,8 @@ export default function Monitoring() {
     "others",
   ];
 
+  const q9_11Options = ["Consumption", "Education", "Other HH needs"];
+
   const handleChange = (name, value, type = "text", checked = false) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -185,7 +184,9 @@ export default function Monitoring() {
   const handleSubmit = async () => {
     try {
       const dataToSave = formData.form;
-      const fileUri = FileSystem.documentDirectory + "formData.json";
+      const timestamp = new Date().getTime();
+      const fileName = `formData-${timestamp}.json`;
+      const fileUri = FileSystem.documentDirectory + fileName;
 
       if (isConnected) {
         const response = await fetch(
@@ -200,28 +201,16 @@ export default function Monitoring() {
         );
 
         const text = await response.text();
-        console.log("Upload response status:", response.status);
-        console.log("Upload response body:", text);
 
         if (response.ok) {
-          alert("Data successfully submitted to MongoDB!");
+          alert("Data successfully submitted!");
         } else {
-          throw new Error("Failed to upload to MongoDB. Saving locally.");
+          throw new Error("Server error. Saving locally.");
         }
       } else {
-        let existingData = [];
-
-        const fileInfo = await FileSystem.getInfoAsync(fileUri);
-        if (fileInfo.exists) {
-          const fileContent = await FileSystem.readAsStringAsync(fileUri);
-          existingData = JSON.parse(fileContent);
-        }
-
-        existingData.push(dataToSave); // Add new form to array
-
         await FileSystem.writeAsStringAsync(
           fileUri,
-          JSON.stringify(existingData, null, 2)
+          JSON.stringify(dataToSave, null, 2)
         );
         console.log("Saved locally to:", fileUri);
         alert("Offline: Data saved locally.");
@@ -299,7 +288,9 @@ export default function Monitoring() {
                 </Text>
               </View>
 
-              <Text style={styles.label}>Name</Text>
+              <Text style={styles.label}>
+                Name <Text style={{ color: "red" }}>*</Text>
+              </Text>
               <TextInput
                 style={styles.input}
                 value={formData.form.name}
@@ -307,7 +298,9 @@ export default function Monitoring() {
                 placeholder="Last Name, First Name, Middle Initial"
               />
 
-              <Text style={styles.label}>Respondent Type</Text>
+              <Text style={styles.label}>
+                Respondent Type <Text style={{ color: "red" }}>*</Text>
+              </Text>
 
               <View
                 style={{
@@ -332,7 +325,9 @@ export default function Monitoring() {
 
               <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>Civil Status</Text>
+                  <Text style={styles.label}>
+                    Civil Status <Text style={{ color: "red" }}>*</Text>
+                  </Text>
 
                   <View
                     style={{
@@ -359,7 +354,9 @@ export default function Monitoring() {
                   </View>
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>Sex</Text>
+                  <Text style={styles.label}>
+                    Sex <Text style={{ color: "red" }}>*</Text>
+                  </Text>
 
                   <View
                     style={{
@@ -385,7 +382,9 @@ export default function Monitoring() {
 
               <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>Age</Text>
+                  <Text style={styles.label}>
+                    Age <Text style={{ color: "red" }}>*</Text>
+                  </Text>
                   <TextInput
                     style={styles.input}
                     keyboardType="numeric"
@@ -394,7 +393,9 @@ export default function Monitoring() {
                   />
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>No. of HH Member</Text>
+                  <Text style={styles.label}>
+                    No. of HH Member <Text style={{ color: "red" }}>*</Text>
+                  </Text>
                   <TextInput
                     style={styles.input}
                     keyboardType="numeric"
@@ -406,7 +407,9 @@ export default function Monitoring() {
 
               <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>FishR</Text>
+                  <Text style={styles.label}>
+                    FishR <Text style={{ color: "red" }}>*</Text>
+                  </Text>
                   <View
                     style={{
                       height: 48,
@@ -436,7 +439,9 @@ export default function Monitoring() {
                   </View>
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>BoatR</Text>
+                  <Text style={styles.label}>
+                    BoatR <Text style={{ color: "red" }}>*</Text>
+                  </Text>
                   <View
                     style={{
                       height: 48,
@@ -464,7 +469,9 @@ export default function Monitoring() {
                 </View>
               </View>
 
-              <Text style={styles.label}>Name of Association</Text>
+              <Text style={styles.label}>
+                Name of Association <Text style={{ color: "red" }}>*</Text>
+              </Text>
               <TextInput
                 style={styles.input}
                 value={formData.form.nameAssoc}
@@ -483,75 +490,223 @@ export default function Monitoring() {
                 </>
               )}
 
-              <Text style={styles.label}>Province</Text>
+              <Text style={styles.label}>
+                Province <Text style={{ color: "red" }}>*</Text>
+              </Text>
               <TextInput
                 style={styles.input}
                 value={formData.form.province}
                 onChangeText={(text) => handleChange("province", text)}
               />
 
-              <Text style={styles.label}>Municipality</Text>
+              <Text style={styles.label}>
+                Municipality <Text style={{ color: "red" }}>*</Text>
+              </Text>
               <TextInput
                 style={styles.input}
                 value={formData.form.municipality}
                 onChangeText={(text) => handleChange("municipality", text)}
               />
 
-              <Text style={styles.label}>Barangay</Text>
+              <Text style={styles.label}>
+                Barangay <Text style={{ color: "red" }}>*</Text>
+              </Text>
               <TextInput
                 style={styles.input}
                 value={formData.form.baranggay}
                 onChangeText={(text) => handleChange("baranggay", text)}
               />
 
-              <Text style={styles.label}>Project Received</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                value={formData.email}
-                onChangeText={(text) => handleChange("email", text)}
-              />
+              <Text style={styles.label}>
+                Project Received <Text style={{ color: "red" }}>*</Text>
+              </Text>
+              <RadioButtonGroup
+                size={16}
+                containerStyle={{ flexDirection: "column", gap: 5 }}
+                value={formData.form.projectReceived}
+                onSelected={(value) => handleChange("projectReceived", value)}
+                radioBackground="green"
+              >
+                <RadioButtonItem
+                  value="Capture"
+                  label=" Capture"
+                  style={
+                    formData.form.projectReceived === "Capture"
+                      ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                      : {}
+                  }
+                />
+                <RadioButtonItem
+                  value="Aquaculture"
+                  label=" Aquaculture"
+                  style={
+                    formData.form.projectReceived === "Aquaculture"
+                      ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                      : {}
+                  }
+                />
+                <RadioButtonItem
+                  value="Post-harvest"
+                  label=" Post-harvest"
+                  style={
+                    formData.form.projectReceived === "Post-harvest"
+                      ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                      : {}
+                  }
+                />
+                <RadioButtonItem
+                  value="Techno-demo"
+                  label=" Techno-demo"
+                  style={
+                    formData.form.projectReceived === "Techno-demo"
+                      ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                      : {}
+                  }
+                />
+                <RadioButtonItem
+                  value="Others"
+                  label=" Others"
+                  style={
+                    formData.form.projectReceived === "Others"
+                      ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                      : {}
+                  }
+                />
+              </RadioButtonGroup>
 
-              <Text style={styles.label}>Specific Project</Text>
+              <Text style={styles.label}>
+                Specific Project <Text style={{ color: "red" }}>*</Text>
+              </Text>
+
+              {formData.form.projectReceived === "Capture" ? (
+                <View style={styles.selectWrapper}>
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("specProject", value)
+                    }
+                    value={formData.form.specProject}
+                    items={capture.map((item) => ({
+                      label: item,
+                      value: item,
+                    }))}
+                  />
+                </View>
+              ) : formData.form.projectReceived === "Aquaculture" ? (
+                <View style={styles.selectWrapper}>
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("specProject", value)
+                    }
+                    value={formData.form.specProject}
+                    items={aquaculture.map((item) => ({
+                      label: item,
+                      value: item,
+                    }))}
+                  />
+                </View>
+              ) : formData.form.projectReceived === "Post-harvest" ? (
+                <View style={styles.selectWrapper}>
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("specProject", value)
+                    }
+                    value={formData.form.specProject}
+                    items={postHarvest.map((item) => ({
+                      label: item,
+                      value: item,
+                    }))}
+                  />
+                </View>
+              ) : formData.form.projectReceived === "Techno-demo" ? (
+                <View style={styles.selectWrapper}>
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("specProject", value)
+                    }
+                    value={formData.form.specProject}
+                    items={technoDemo.map((item) => ({
+                      label: item,
+                      value: item,
+                    }))}
+                  />
+                </View>
+              ) : formData.form.projectReceived === "Others" ? (
+                <TextInput
+                  style={styles.input}
+                  value={formData.form.specOther}
+                  placeholder="Please specify"
+                  onChangeText={(text) => handleChange("specOther", text)}
+                />
+              ) : null}
+
+              <Text style={styles.label}>Remarks</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                value={formData.email}
-                onChangeText={(text) => handleChange("email", text)}
+                placeholder="Otional"
+                value={formData.form.specRemarks}
+                onChangeText={(text) => handleChange("specRemarks", text)}
               />
 
               <View style={{ width: "100%", flexDirection: "row", gap: 10 }}>
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>No. of Units Received</Text>
+                  <Text style={styles.label}>
+                    No. of Units Received{" "}
+                    <Text style={{ color: "red" }}>*</Text>
+                  </Text>
                   <TextInput
                     style={styles.input}
                     value={formData.form.noUnitsReceived}
-                    onChangeText={(text) => handleChange("noUnitsReceived", text)}
+                    keyboardType="numeric"
+                    onChangeText={(text) =>
+                      handleChange("noUnitsReceived", text)
+                    }
                   />
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>Date Received</Text>
+                  <Text style={styles.label}>
+                    Date Received <Text style={{ color: "red" }}>*</Text>
+                  </Text>
                   <TextInput
                     style={styles.input}
                     value={formData.form.dateReceived}
-                    onChangeText={(text) => handleChange("email", text)}
+                    onChangeText={(text) => handleChange("dateReceived", text)}
+                    placeholder="mm/dd/yyyy"
                   />
                 </View>
               </View>
 
-              <View style={{ width: "100%", flexDirection: "row", gap: 10, marginBottom: 24 }}>
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  gap: 10,
+                  marginBottom: 24,
+                }}
+              >
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>Main Source if Income</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={formData.form.mainIncome}
-                    onChangeText={(text) => handleChange("mainIncome", text)}
-                  />
+                  <Text style={styles.label}>
+                    Main Source if Income{" "}
+                    <Text style={{ color: "red" }}>*</Text>
+                  </Text>
+                  <View style={styles.selectWrapper}>
+                    <RNPickerSelect
+                      onValueChange={(value) =>
+                        handleChange("mainIncome", value)
+                      }
+                      value={formData.form.mainIncome}
+                      items={[
+                        { label: "Fishing", value: "Fishing" },
+                        { label: "Agri", value: "Agri" },
+                        { label: "Others", value: "Others" },
+                      ]}
+                    />
+                  </View>
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>Other Source of Income</Text>
+                  <Text style={styles.label}>
+                    Other Source of Income{" "}
+                    <Text style={{ color: "red" }}>*</Text>
+                  </Text>
                   <TextInput
                     style={styles.input}
                     value={formData.form.otherIncome}
@@ -559,8 +714,6 @@ export default function Monitoring() {
                   />
                 </View>
               </View>
-
-              
             </ProgressStep>
 
             {/* ACTUAL FORM  */}
@@ -898,9 +1051,9 @@ export default function Monitoring() {
                     onValueChange={(value) => handleChange("duration", value)}
                     value={formData.form.duration}
                     items={[
-                      { label: "< 6 months", value: "<6 months" },
-                      { label: "< 1 year", value: "<1 year" },
-                      { label: "> 1 year", value: ">1 year" },
+                      { label: "(<6 months)", value: "<6 months" },
+                      { label: "(<1 yeear)", value: "<1 year" },
+                      { label: "(> 1 Year)", value: ">1 year" },
                     ]}
                   />
                 </View>
@@ -1480,22 +1633,77 @@ export default function Monitoring() {
                   9. Benefits from the project
                 </Text>
                 <Text>- Did it increase your catch/production (kg)?</Text>
-                <Text>Yes</Text>
-                <Text>No</Text>
-                <Text>N/A</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
-                />
+                <RadioButtonGroup
+                  size={16}
+                  containerStyle={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
+                  value={formData.form.q9_1}
+                  onSelected={(value) => handleChange("q9_1", value)}
+                  radioBackground="green"
+                >
+                  <RadioButtonItem
+                    value="Yes"
+                    label=" Yes"
+                    style={
+                      formData.form.q9_1 === "Yes"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="No"
+                    label=" No"
+                    style={
+                      formData.form.q9_1 === "No"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="N/A"
+                    label=" N/A"
+                    style={
+                      formData.form.q9_1 === "N/A"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                </RadioButtonGroup>
+
+                {(formData.form.q9_1 === "Yes" ||
+                  formData.form.q9_1 === "No") && (
+                  <>
+                    <TextInput
+                      placeholder="If no, state reason why not operational/used"
+                      style={[
+                        styles.input,
+                        formData.form.q9_1Spec.trim() === "" &&
+                          formData.form.q9_1 !== "" && {
+                            borderColor: "red",
+                          },
+                      ]}
+                      value={formData.form.q9_1Spec}
+                      onChangeText={(text) => handleChange("q9_1Spec", text)}
+                    />
+                    {formData.form.q9_1Spec.trim() === "" &&
+                      formData.form.q9_1 !== "" && (
+                        <Text style={{ color: "red" }}>
+                          This field is required!
+                        </Text>
+                      )}
+                  </>
+                )}
 
                 <Text style={{ marginTop: 12 }}>
                   - Catch/yield before project was given
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
+                  value={formData.form.q9_2}
+                  onChangeText={(text) => handleChange("q9_2", text)}
                 />
 
                 <Text style={{ marginTop: 12 }}>
@@ -1503,17 +1711,17 @@ export default function Monitoring() {
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
+                  value={formData.form.q9_3}
+                  onChangeText={(text) => handleChange("q9_3", text)}
                 />
 
                 <Text style={{ marginTop: 12 }}>
-                  - Contribution to Production
+                  - Contribution to Production in kgs.
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
+                  value={formData.form.q9_4}
+                  onChangeText={(text) => handleChange("q9_4", text)}
                 />
 
                 <Text style={{ marginTop: 12 }}>
@@ -1521,8 +1729,8 @@ export default function Monitoring() {
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
+                  value={formData.form.q9_5}
+                  onChangeText={(text) => handleChange("q9_5", text)}
                 />
 
                 <Text style={{ marginTop: 12 }}>
@@ -1530,26 +1738,59 @@ export default function Monitoring() {
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
+                  value={formData.form.q9_6}
+                  onChangeText={(text) => handleChange("q9_6", text)}
                 />
 
-                <Text>- Did it increase your income (Php)?</Text>
-                <Text>Yes</Text>
-                <Text>No</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
-                />
+                <Text style={{ marginTop: 12 }}>
+                  - Did it increase your income (Php)?
+                </Text>
+                <RadioButtonGroup
+                  size={16}
+                  containerStyle={{
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
+                  value={formData.form.q9_7}
+                  onSelected={(value) => handleChange("q9_7", value)}
+                  radioBackground="green"
+                >
+                  <RadioButtonItem
+                    value="Yes"
+                    label=" Yes"
+                    style={
+                      formData.form.q9_7 === "Yes"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="No"
+                    label=" No"
+                    style={
+                      formData.form.q9_7 === "No"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="N/A"
+                    label=" N/A"
+                    style={
+                      formData.form.q9_7 === "N/A"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                </RadioButtonGroup>
 
                 <Text style={{ marginTop: 12 }}>
                   - Income before project was given (net/operation)
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
+                  value={formData.form.q9_8}
+                  onChangeText={(text) => handleChange("q9_8", text)}
                 />
 
                 <Text style={{ marginTop: 12 }}>
@@ -1557,39 +1798,211 @@ export default function Monitoring() {
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
+                  value={formData.form.q9_9}
+                  onChangeText={(text) => handleChange("q9_9", text)}
                 />
 
-                <Text>- Any improvement in your family/household?</Text>
-                <Text>Yes</Text>
-                <Text>No</Text>
+                <Text style={{ marginTop: 12 }}>
+                  - Any improvement in your family/household?
+                </Text>
+                <RadioButtonGroup
+                  size={16}
+                  containerStyle={{
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
+                  value={formData.form.q9_10}
+                  onSelected={(value) => handleChange("q9_10", value)}
+                  radioBackground="green"
+                >
+                  <RadioButtonItem
+                    value="yes"
+                    label=" Yes"
+                    style={
+                      formData.form.q9_10 === "yes"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="no"
+                    label=" No"
+                    style={
+                      formData.form.q9_10 === "no"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                </RadioButtonGroup>
 
-                <Text>Consumption</Text>
-                <Text>Education</Text>
-                <Text>Other HH needs</Text>
+                {formData.form.q9_10 === "yes" &&
+                  q9_11Options.map((option) => (
+                    <>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, }}>
+                      <Checkbox
+                        value={formData.form.q9_11?.includes(option)}
+                        onValueChange={(checked) => {
+                          const updated = checked
+                            ? [...(formData.form.q9_11 || []), option]
+                            : (formData.form.q9_11 || []).filter((item) => item !== option);
+                  
+                          handleChange("q9_11", updated);
+                        }}
+                        color={formData.form.q9_11?.includes(option) ? "#54cf95" : undefined}
+                        style={{ height: 16, width: 16, borderRadius: 5, borderColor: "#ccc" }}
+                      />
+                      <Text style={{ marginLeft: 10, fontSize: 16 }}>{option}</Text>
+                    </View>
+                  </>
+                  
+                  ))}
 
-                <Text>- Any improvement in your association?</Text>
-                <Text>Yes</Text>
-                <Text>No</Text>
+                <Text style={{ marginTop: 12 }}>
+                  - Any improvement in your association?
+                </Text>
 
-                <Text>Improved Skills/Knowledge</Text>
-                <Text>From Association to Coop</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
-                />
+                <RadioButtonGroup
+                  size={16}
+                  containerStyle={{
+                    flexDirection: "row",
+                    gap: 20,
+                  }}
+                  value={formData.form.q9_12}
+                  onSelected={(value) => handleChange("q9_12", value)}
+                  radioBackground="green"
+                >
+                  <RadioButtonItem
+                    value="yes"
+                    label=" Yes"
+                    style={
+                      formData.form.q9_12 === "yes"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="no"
+                    label=" No"
+                    style={
+                      formData.form.q9_12 === "no"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                </RadioButtonGroup>
 
-                <Text>- Any improvement in the community?</Text>
-                <Text>Yes</Text>
-                <Text>No</Text>
-                <Text>N/A</Text>
-                <TextInput
-                  style={styles.input}
-                  value={formData.email}
-                  onChangeText={(text) => handleChange("email", text)}
-                />
+                {formData.form.q9_12 === "yes" && (
+                  <>
+                    <View style={[styles.selectWrapper, { marginTop: 12 }]}>
+                      <RNPickerSelect
+                        onValueChange={(value) => handleChange("q9_13", value)}
+                        value={formData.form.q9_13}
+                        items={[
+                          {
+                            label: "Improved Skills/Knowledge",
+                            value: "Improved Skills/Knowledge",
+                          },
+                          {
+                            label: "From Association to Coop",
+                            value: "From Association to Coop",
+                          },
+                          { label: "Other", value: "Others" },
+                        ]}
+                      />
+                    </View>
+
+                    {formData.form.q9_13 === "Others" && (
+                      <>
+                        <TextInput
+                          placeholder="Others (please specify)"
+                          style={[
+                            styles.input,
+                            formData.form.q9_13other.trim() === "" &&
+                              formData.form.q9_13 !== "" && {
+                                borderColor: "red",
+                              },
+                          ]}
+                          value={formData.form.q9_13other}
+                          onChangeText={(text) =>
+                            handleChange("q9_13other", text)
+                          }
+                        />
+                        {formData.form.q9_13other.trim() === "" &&
+                          formData.form.q9_13 !== "" && (
+                            <Text style={{ color: "red" }}>
+                              This field is required!
+                            </Text>
+                          )}
+                      </>
+                    )}
+                  </>
+                )}
+
+                <Text style={{ marginTop: 12 }}>
+                  - Any improvement in the community?
+                </Text>
+                <RadioButtonGroup
+                  size={16}
+                  containerStyle={{
+                    flexDirection: "row",
+                    gap: 20,
+                    marginBottom: 10,
+                  }}
+                  value={formData.form.q9_14}
+                  onSelected={(value) => handleChange("q9_14", value)}
+                  radioBackground="green"
+                >
+                  <RadioButtonItem
+                    value="yes"
+                    label=" Yes"
+                    style={
+                      formData.form.q9_14 === "yes"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="none"
+                    label=" No"
+                    style={
+                      formData.form.q9_14 === "none"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                  <RadioButtonItem
+                    value="N/A"
+                    label=" N/A"
+                    style={
+                      formData.form.q9_14 === "N/A"
+                        ? { borderColor: "#54cf95", backgroundColor: "#54cf95" }
+                        : {}
+                    }
+                  />
+                </RadioButtonGroup>
+
+                {formData.form.q9_14 === "yes" && (
+                  <>
+                    <TextInput
+                      placeholder="Please specify"
+                      style={[
+                        styles.input,
+                        formData.form.q9_12Spec.trim() === "" &&
+                          formData.form.q9_14 !== "" && {
+                            borderColor: "red",
+                          },
+                      ]}
+                      value={formData.form.q9_12Spec}
+                      onChangeText={(text) => handleChange("q9_12Spec", text)}
+                    />
+                    {formData.form.q9_12Spec.trim() === "" &&
+                      formData.form.q9_14 !== "" && (
+                        <Text style={{ color: "red" }}>
+                          This field is required!
+                        </Text>
+                      )}
+                  </>
+                )}
 
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
                   Rating on Impact
@@ -1801,14 +2214,12 @@ export default function Monitoring() {
                         backgroundColor: "#e3e3e3",
                         borderRadius: 8,
                         justifyContent: "center",
-                        marginBottom: 12,
+                        marginBottom: 28,
                       }}
                     >
                       <RNPickerSelect
-                        onValueChange={(value) =>
-                          handleChange("sustainabilityRating", value)
-                        }
-                        value={formData.form.sustainabilityRating}
+                        onValueChange={(value) => handleChange("q11_1", value)}
+                        value={formData.form.q11_1}
                         items={[
                           { label: "Vending", value: "Vending" },
                           { label: "Local Martket", value: "Local Martket" },
@@ -1896,7 +2307,7 @@ export default function Monitoring() {
                   onChangeText={(text) => handleChange("note", text)}
                 />
                 <Text style={{ fontWeight: "bold", marginTop: 12 }}>
-                  Evaluator's Name
+                  Evaluator's Name <Text style={{ color: "red" }}>*</Text>
                 </Text>
                 <TextInput
                   style={[styles.input, { marginBottom: 24 }]}
@@ -1914,6 +2325,15 @@ export default function Monitoring() {
 }
 
 const styles = StyleSheet.create({
+  selectWrapper: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 8,
+    justifyContent: "center",
+    marginBottom: 10,
+  },
   container: {
     flex: 1,
     alignContent: "center",
@@ -1958,8 +2378,8 @@ const styles = StyleSheet.create({
     height: 48,
     borderWidth: 1,
     borderColor: "#e0e0e0",
-    padding: 10,
     backgroundColor: "#e3e3e3",
+    padding: 10,
     borderRadius: 8,
   },
 

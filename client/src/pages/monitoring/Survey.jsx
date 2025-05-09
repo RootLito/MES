@@ -750,7 +750,7 @@ const Survey = () => {
           <p className="text-sm">Remarks</p>
           <input
             name="specRemarks"
-            placeholder="Please specify"
+            placeholder="Optional"
             type="text"
             className="border-1 px-3 h-[42px] rounded-md focus:outline-none border-gray-400"
             value={formData.form.specRemarks}

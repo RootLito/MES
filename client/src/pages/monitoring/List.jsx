@@ -1,12 +1,7 @@
 import { React, useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {
-  MdDeleteForever,
-  MdEditDocument,
-  MdVisibility
-} from "react-icons/md";
-
+import { MdDeleteForever, MdEditDocument, MdVisibility } from "react-icons/md";
 
 const List = () => {
   const [selectedSurvey, setSelectedSurvey] = useState(null);
@@ -16,21 +11,18 @@ const List = () => {
   const [deleted, setDeleted] = useState(false);
   const [delError, setDelError] = useState(null);
 
-
   // Search filter and pagination
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [filteredSurveys, setFilteredSurveys] = useState([]);
 
-
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
 
-
     if (query) {
-      const filteredData = surveys.filter(survey => {
+      const filteredData = surveys.filter((survey) => {
         return (
           survey.name.toLowerCase().includes(query) ||
           survey.baranggay.toLowerCase().includes(query) ||
@@ -46,19 +38,19 @@ const List = () => {
     }
   };
 
-
   const modalRef = useRef(null);
   const navigate = useNavigate();
 
-
   const fetchSurveys = async () => {
     try {
-      const response = await axios.get("https://bfar-server.onrender.com/survey");
-  
+      const response = await axios.get(
+        "https://bfar-server.onrender.com/survey"
+      );
+
       const sortedSurveys = response.data.sort((a, b) => {
-        return new Date(b.createdAt) - new Date(a.createdAt);  
+        return new Date(b.createdAt) - new Date(a.createdAt);
       });
-  
+
       setSurveys(sortedSurveys);
       setFilteredSurveys(sortedSurveys);
     } catch (err) {
@@ -67,13 +59,10 @@ const List = () => {
       setLoading(false);
     }
   };
-  
-
 
   useEffect(() => {
     fetchSurveys();
   }, []);
-
 
   if (loading) {
     return (
@@ -86,7 +75,6 @@ const List = () => {
     );
   }
 
-
   if (error) {
     return (
       <div className="toast toast-top toast-center">
@@ -97,20 +85,16 @@ const List = () => {
     );
   }
 
-
   const onClick = (link) => {
     navigate(link);
   };
 
-
   // OPEN MODAL
-
 
   const openModal = (id) => {
     setSelectedSurvey(id);
     modalRef.current.showModal();
   };
-
 
   // DELETE
   const handleDelete = async (id) => {
@@ -133,7 +117,9 @@ const List = () => {
         }, 3000);
       }
       setSurveys((prevSurveys) => prevSurveys.filter(({ _id }) => _id !== id));
-      setFilteredSurveys((prevFilteredSurveys) => prevFilteredSurveys.filter(({ _id }) => _id !== id));
+      setFilteredSurveys((prevFilteredSurveys) =>
+        prevFilteredSurveys.filter(({ _id }) => _id !== id)
+      );
     } catch (err) {
       return (
         <div className="toast toast-top toast-center">
@@ -145,20 +131,19 @@ const List = () => {
     }
   };
 
-
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentSurveys = filteredSurveys.slice(indexOfFirstItem, indexOfLastItem);
-
+  const currentSurveys = filteredSurveys.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
 
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(filteredSurveys.length / itemsPerPage); i++) {
     pageNumbers.push(i);
   }
-
 
   return (
     <div className="flex-1 mx-auto p-5 flex flex-col relative">
@@ -172,8 +157,24 @@ const List = () => {
         </div>
       )}
 
+      <div className="flex w-full justify-between items-center">
       <label className="input w-1/2 bg-gray-100">
-        <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></g></svg>
+        <svg
+          className="h-[1em] opacity-50"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <g
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            strokeWidth="2.5"
+            fill="none"
+            stroke="currentColor"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </g>
+        </svg>
         <input
           type="search"
           className="grow "
@@ -182,7 +183,16 @@ const List = () => {
           onChange={handleSearch}
         />
       </label>
-
+      <button
+        onClick={() => {
+          setLoading(true);
+          fetchSurveys();
+        }}
+        className="btn btn-outline btn-primary"
+      >
+        Refresh Table
+      </button>
+      </div>
 
       <div className="rounded-box border border-base-content/5 bg-base-100 my-4">
         <table className="table overflow-hidden">
@@ -209,22 +219,32 @@ const List = () => {
                     {survey.baranggay}, {survey.municipality}, {survey.province}
                   </td>
                   <td>
-                    {
-                        survey.projectReceived === "Capture" ? (
-                        <div className="badge badge-error text-white">{survey.projectReceived}</div>
-                        ) : survey.projectReceived === "Aquaculture" ? ( 
-                        <div className="badge badge-warning text-white">{survey.projectReceived}</div>
-                        ) : survey.projectReceived === "Post-harvest" ? (
-                        <div className="badge badge-accent text-white">{survey.projectReceived}</div>
-                        ) : survey.projectReceived === "Techno-demo" ? (
-                        <div className="badge badge-info text-white">{survey.projectReceived}</div>
-                        ) : survey.projectReceived === "Others" ? (
-                        <div className="badge badge-success text-white">{survey.projectReceived}</div>
-                        ) : (
-                        <div className="badge badge-soft badge-warning">{survey.projectReceived}</div>
-                        )
-                    }
-                    </td>
+                    {survey.projectReceived === "Capture" ? (
+                      <div className="badge badge-error text-white">
+                        {survey.projectReceived}
+                      </div>
+                    ) : survey.projectReceived === "Aquaculture" ? (
+                      <div className="badge badge-warning text-white">
+                        {survey.projectReceived}
+                      </div>
+                    ) : survey.projectReceived === "Post-harvest" ? (
+                      <div className="badge badge-accent text-white">
+                        {survey.projectReceived}
+                      </div>
+                    ) : survey.projectReceived === "Techno-demo" ? (
+                      <div className="badge badge-info text-white">
+                        {survey.projectReceived}
+                      </div>
+                    ) : survey.projectReceived === "Others" ? (
+                      <div className="badge badge-success text-white">
+                        {survey.projectReceived}
+                      </div>
+                    ) : (
+                      <div className="badge badge-soft badge-warning">
+                        {survey.projectReceived}
+                      </div>
+                    )}
+                  </td>
 
                   <td>{survey.evaluator}</td>
                   <td>
@@ -233,11 +253,11 @@ const List = () => {
                       : "N/A"}
                   </td>
 
-
                   <td className="flex gap-3 text-xl">
                     <MdVisibility
                       className="text-green-600 cursor-pointer"
-                      onClick={() => navigate(`/lists/view/${survey._id}`)} />
+                      onClick={() => navigate(`/lists/view/${survey._id}`)}
+                    />
                     <MdEditDocument
                       className="text-primary cursor-pointer"
                       onClick={() => navigate(`/lists/update/${survey._id}`)}
@@ -252,20 +272,24 @@ const List = () => {
             )}
           </tbody>
         </table>
-
       </div>
 
       <div className="join flex justify-center">
-        <button className="join-item btn"
+        <button
+          className="join-item btn"
           onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}>«</button>
+          disabled={currentPage === 1}
+        >
+          «
+        </button>
 
-
-        {pageNumbers.map(number => (
+        {pageNumbers.map((number) => (
           <button
             key={number}
             onClick={() => paginate(number)}
-            className={`join-item btn ${currentPage === number ? 'btn-active' : ''}`}
+            className={`join-item btn ${
+              currentPage === number ? "btn-active" : ""
+            }`}
           >
             {number}
           </button>
@@ -273,10 +297,11 @@ const List = () => {
         <button
           className="join-item btn"
           onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage >= pageNumbers.length}>»</button>
+          disabled={currentPage >= pageNumbers.length}
+        >
+          »
+        </button>
       </div>
-
-
 
       <dialog ref={modalRef} id="delete_modal" className="modal">
         <div className="modal-box">
@@ -302,6 +327,5 @@ const List = () => {
     </div>
   );
 };
-
 
 export default List;
