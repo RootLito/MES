@@ -5,54 +5,63 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView,
   Image,
   ActivityIndicator,
-  Alert,
   FlatList,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Icon from "react-native-vector-icons/Feather";
 import axios from "axios";
 import Coordinates from "../components/Coordinates";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 export default function Home() {
+  const navigation = useNavigation();
   const [isConnected, setIsConnected] = useState(null);
   const [surveys, setSurveys] = useState([]);
   const [totalRes, setTotalRes] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Monitor internet connection
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected);
     });
-
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const fetchSurveys = async () => {
-      try {
-        const response = await axios.get(
-          "https://bfar-server.onrender.com/survey"
-        );
-        setSurveys(response.data);
-        setTotalRes(response.data.length);
-      } catch (error) {
-        console.error("Error fetching surveys:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Reload data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [isConnected])
+  );
 
-    fetchSurveys();
-  }, []);
+  // Fetch surveys (safe against offline)
+  const fetchData = async () => {
+    setLoading(true);
+
+    if (!isConnected) {
+      console.log("Offline: Skipping fetch.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get("https://bfar-server.onrender.com/survey");
+      setSurveys(response.data);
+      setTotalRes(response.data.length);
+    } catch (error) {
+      console.log("Error fetching surveys, axios error:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.actionBar}>
         <Text style={styles.text}>HOME</Text>
-
         <View style={styles.wifi}>
           <Icon
             name={isConnected ? "wifi" : "wifi-off"}
@@ -78,7 +87,6 @@ export default function Home() {
         <View style={styles.total}>
           <View
             style={{
-              display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
@@ -97,9 +105,11 @@ export default function Home() {
         </View>
 
         <View style={{ marginTop: 16 }}>
-          <Text style={{ fontWeight: "bold", marginBottom: 4 }}>GPS Coordinates:</Text>
+          <Text style={{ fontWeight: "bold", marginBottom: 4 }}>
+            GPS Coordinates:
+          </Text>
           <Coordinates
-            onLocation={(loc) => console.log("Current Location:", loc)}
+            onLocation={(loc) => ("Current Location:", loc)}
           />
         </View>
 
@@ -110,13 +120,13 @@ export default function Home() {
             <Text
               style={{ fontSize: 30, fontWeight: "bold", color: "#ec6978" }}
             >
-              Error Fetching Data
+              Offline Mode
             </Text>
-            <Text>No internet connection, use offline mode</Text>
+            <Text>No internet connection</Text>
             <Image
               source={require("./../../assets/bfar.png")}
               style={{ width: 200, height: 200, opacity: 0.2 }}
-            ></Image>
+            />
           </View>
         ) : loading ? (
           <View
@@ -157,37 +167,21 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignContent: "center",
-  },
-
+  container: { flex: 1 },
   actionBar: {
     width: "100%",
     height: Platform.OS === "ios" ? 44 : 56,
     backgroundColor: "#182553",
-    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
     marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-
-  text: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-
-  textStatus: {
-    fontSize: 14,
-  },
-
+  text: { fontSize: 16, fontWeight: "bold", color: "#fff" },
+  textStatus: { fontSize: 14 },
   wifi: {
-    display: "flex",
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
     gap: 4,
     backgroundColor: "#fff",
@@ -195,20 +189,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-
+  content: { flex: 1, padding: 16 },
   total: {
     width: "100%",
     backgroundColor: "#182553",
     padding: 16,
     borderRadius: 8,
   },
-
-  // FLATLIST
   header: {
     flexDirection: "row",
     gap: 10,
@@ -216,10 +203,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
-  headerText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
+  headerText: { color: "#fff", fontWeight: "bold" },
   row: {
     flexDirection: "row",
     padding: 10,
@@ -227,17 +211,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
     gap: 10,
   },
-  cell1: {
-    flex: 1,
-    textAlign: "left",
-    fontWeight: "bold",
-  },
-  cell2: {
-    flex: 4,
-    textAlign: "left",
-  },
-  cell3: {
-    flex: 5,
-    textAlign: "left",
-  },
+  cell1: { flex: 1, textAlign: "left", fontWeight: "bold" },
+  cell2: { flex: 4, textAlign: "left" },
+  cell3: { flex: 5, textAlign: "left" },
 });

@@ -11,17 +11,19 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app needs location to work offline."
-      }
+      },
+      "bundleIdentifier": "com.chunkzdev.bfar"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/bfar.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["ACCESS_FINE_LOCATION"],
+      "permissions": [
+        "ACCESS_FINE_LOCATION"
+      ],
       "package": "com.anonymous.MyApp"
     },
-
     "web": {
       "favicon": "./assets/favicon.png"
     },

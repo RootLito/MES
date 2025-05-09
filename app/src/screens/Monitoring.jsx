@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
@@ -14,16 +15,17 @@ import Icon from "react-native-vector-icons/Feather";
 import RNPickerSelect from "react-native-picker-select";
 import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
 import Checkbox from "expo-checkbox";
+import { useNavigation } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system";
-import { useNavigation } from '@react-navigation/native';
-
+import * as Location from "expo-location";
 
 export default function Monitoring() {
   const [isConnected, setIsConnected] = useState(null);
   const [savedData, setSavedData] = useState([]);
   const [rating, setRating] = useState(0);
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     form: {
       name: "",
@@ -171,7 +173,6 @@ export default function Monitoring() {
 
   const [activeStep, setActiveStep] = useState(0);
 
-
   const handleChange = (name, value, type = "text", checked = false) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -187,7 +188,37 @@ export default function Monitoring() {
     }));
   };
 
+  // COORDINATES
+  const getLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === "granted") {
+        const location = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = location.coords;
+
+        setFormData((prevData) => ({
+          ...prevData,
+          form: {
+            ...prevData.form,
+            lat: latitude.toString(),
+            lon: longitude.toString(),
+          },
+        }));
+      } else {
+        Alert.alert("Permission Denied", "Unable to get location");
+      }
+    } catch (error) {
+      console.error("Error getting location:", error);
+    }
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+  //HANDLE SUBMIT
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       const dataToSave = formData.form;
       const timestamp = new Date().getTime();
@@ -212,7 +243,7 @@ export default function Monitoring() {
           alert("Data successfully submitted!");
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Monitoring' }], 
+            routes: [{ name: "Monitoring" }],
           });
         } else {
           throw new Error("Server error. Saving locally.");
@@ -224,12 +255,12 @@ export default function Monitoring() {
         );
         console.log("Saved locally to:", fileUri);
         alert("Offline: Data saved locally.");
-
-        setFormData({ form: {} });
       }
     } catch (error) {
       console.error("Error saving data:", error);
       alert("An error occurred while saving the data.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -267,10 +298,17 @@ export default function Monitoring() {
         </View>
       </View>
 
+      {loading && (
+        <View style={{ paddingVertical: 10, alignItems: "center" }}>
+          <ActivityIndicator size="small" color="#54cf95" />
+          <Text style={{ marginTop: 4 }}>Submitting form...</Text>
+        </View>
+      )}
+
       <ScrollView style={styles.formContainer}>
         <View style={{ flex: 1 }}>
           <ProgressSteps
-          activeStep={activeStep}
+            activeStep={activeStep}
             activeStepIconBorderColor="#54cf95"
             completedProgressBarColor="#54cf95"
             activeStepIconColor="transparent"
@@ -593,18 +631,16 @@ export default function Monitoring() {
                     Scale <Text style={{ color: "red" }}>*</Text>
                   </Text>
                   <View style={styles.selectWrapper}>
-                  <RNPickerSelect
-                    onValueChange={(value) =>
-                      handleChange("scale", value)
-                    }
-                    value={formData.form.scale}
-                    items={[
-                        {label: "Small-scale",value:"Small-scale" },
-                        {label: "Medium-scale",value:"Medium-scale" },
-                        {label: "Large-scale",value:"Large-scale" },
-                    ]}
-                  />
-                </View>
+                    <RNPickerSelect
+                      onValueChange={(value) => handleChange("scale", value)}
+                      value={formData.form.scale}
+                      items={[
+                        { label: "Small-scale", value: "Small-scale" },
+                        { label: "Medium-scale", value: "Medium-scale" },
+                        { label: "Large-scale", value: "Large-scale" },
+                      ]}
+                    />
+                  </View>
                 </>
               )}
 
@@ -675,16 +711,12 @@ export default function Monitoring() {
 
               {formData.form.specProject === "others" && (
                 <TextInput
-                style={styles.input}
-                value={formData.form.otherProject}
-                placeholder="Please specify"
-                onChangeText={(text) => handleChange("otherProject", text)}
-              />
+                  style={styles.input}
+                  value={formData.form.otherProject}
+                  placeholder="Please specify"
+                  onChangeText={(text) => handleChange("otherProject", text)}
+                />
               )}
-
-
-
-
 
               <Text style={styles.label}>Remarks</Text>
               <TextInput
@@ -750,9 +782,7 @@ export default function Monitoring() {
                   </View>
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
-                  <Text style={styles.label}>
-                    Other Source of Income
-                  </Text>
+                  <Text style={styles.label}>Other Source of Income</Text>
                   <TextInput
                     style={styles.input}
                     value={formData.form.otherIncome}
@@ -1097,9 +1127,9 @@ export default function Monitoring() {
                     onValueChange={(value) => handleChange("duration", value)}
                     value={formData.form.duration}
                     items={[
-                      { label: "(<6 months)", value: "<6 months" },
-                      { label: "(<1 yeear)", value: "<1 year" },
-                      { label: "(> 1 Year)", value: ">1 year" },
+                      { label: "<6 months", value: "(<6 months)" },
+                      { label: "<1 year", value: "(<1 year)" },
+                      { label: ">1 year", value: "(> 1 Year)" },
                     ]}
                   />
                 </View>

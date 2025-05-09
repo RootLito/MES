@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  Button,
+  TouchableOpacity,
   FlatList,
   StyleSheet,
   Platform,
   StatusBar,
+  ActivityIndicator 
 } from "react-native";
 import * as FileSystem from "expo-file-system";
 import NetInfo from "@react-native-community/netinfo";
@@ -16,6 +17,7 @@ import { AppState, Alert } from "react-native";
 export default function List() {
   const [isConnected, setIsConnected] = useState(null);
   const [savedData, setSavedData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -36,30 +38,29 @@ export default function List() {
 
   // Fetch saved data from file system
   const fetchSavedData = async () => {
-  try {
-    const dir = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
-    const formFiles = dir.filter(
-      (fileName) =>
-        fileName.startsWith("formData-") && fileName.endsWith(".json")
-    );
+    try {
+      const dir = await FileSystem.readDirectoryAsync(
+        FileSystem.documentDirectory
+      );
+      const formFiles = dir.filter(
+        (fileName) =>
+          fileName.startsWith("formData-") && fileName.endsWith(".json")
+      );
 
-    const dataArray = [];
-    console.log("Form Files Found:", formFiles); // Debugging line
+      const dataArray = [];
 
-    for (const fileName of formFiles) {
-      const fileUri = FileSystem.documentDirectory + fileName;
-      const content = await FileSystem.readAsStringAsync(fileUri);
-      const parsed = JSON.parse(content);
-      dataArray.push(parsed);
+      for (const fileName of formFiles) {
+        const fileUri = FileSystem.documentDirectory + fileName;
+        const content = await FileSystem.readAsStringAsync(fileUri);
+        const parsed = JSON.parse(content);
+        dataArray.push(parsed);
+      }
+
+      setSavedData(dataArray);
+    } catch (error) {
+      console.error("Error reading saved data:", error);
     }
-
-    console.log("Parsed Data:", dataArray); // Debugging line
-    setSavedData(dataArray);
-  } catch (error) {
-    console.error("Error reading saved data:", error);
-  }
-};
-
+  };
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
@@ -84,72 +85,60 @@ export default function List() {
       );
       return;
     }
-  
+
+    setLoading(true); // Start loading
+
     try {
-      const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
-  
-      // Filter only valid JSON survey files
+      const files = await FileSystem.readDirectoryAsync(
+        FileSystem.documentDirectory
+      );
+
       const formFiles = files.filter(
         (file) => file.startsWith("formData-") && file.endsWith(".json")
       );
-  
-      // 🚫 No survey files found
+
       if (formFiles.length === 0) {
         Alert.alert("No Data", "No saved survey data to upload yet.");
         return;
       }
-  
-      const allFormData = [];
-  
+
       for (const file of formFiles) {
         const fileUri = FileSystem.documentDirectory + file;
         const fileContent = await FileSystem.readAsStringAsync(fileUri);
-  
+
         try {
           const parsedData = JSON.parse(fileContent);
-          allFormData.push(parsedData);
+
+          const response = await fetch(
+            "https://bfar-server.onrender.com/survey/add",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(parsedData),
+            }
+          );
+
+          if (response.ok) {
+            await FileSystem.deleteAsync(fileUri, { idempotent: true });
+          } else {
+            console.error(`Failed to save data from ${file}:`, response.status);
+          }
         } catch (err) {
           console.warn(`Failed to parse ${file}:`, err);
         }
       }
-  
-      // 🚫 No valid JSON inside the files
-      if (allFormData.length === 0) {
-        Alert.alert("Invalid Data", "No valid survey data found in files.");
-        return;
-      }
-  
-      // ✅ Upload actual parsed data
-      const response = await fetch("https://bfar-server.onrender.com/survey/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ data: allFormData }),
-      });
-  
-      if (response.ok) {
-        console.log("Data saved successfully");
-  
-        // Delete local JSON files after successful upload
-        for (const file of formFiles) {
-          const fileUri = FileSystem.documentDirectory + file;
-          await FileSystem.deleteAsync(fileUri, { idempotent: true });
-          console.log("Deleted file:", fileUri);
-        }
-  
-        setSavedData([]);
-        Alert.alert("Success", "Data uploaded and local files deleted.", [{ text: "OK" }]);
-      } else {
-        console.error("Failed to save data:", response.status);
-      }
+
+      setSavedData([]); // Clear state
+      Alert.alert("Success", "All data uploaded and local files deleted.", [
+        { text: "OK" },
+      ]);
     } catch (error) {
       console.error("Error during upload:", error);
+      Alert.alert("Error", "An error occurred while uploading data.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
-  
-  
-  
 
   return (
     <View style={styles.container}>
@@ -191,6 +180,13 @@ export default function List() {
           </View>
         </View>
 
+        {loading && (
+          <View style={{ paddingVertical: 10, alignItems: "center" }}>
+            <ActivityIndicator size="small" color="#54cf95" />
+            <Text style={{ marginTop: 4 }}>Uploading saved forms...</Text>
+          </View>
+        )}
+
         <FlatList
           style={{ flex: 1, marginTop: 16 }}
           showsVerticalScrollIndicator={false}
@@ -214,7 +210,28 @@ export default function List() {
           )}
         />
 
-        <Button title="Upload Forms" onPress={saveDataToMongoDB} />
+        <TouchableOpacity
+          onPress={saveDataToMongoDB}
+          style={{
+            backgroundColor: "#54cf95", // Green background
+            paddingVertical: 12, // Padding top and bottom
+            paddingHorizontal: 20, // Padding left and right
+            borderRadius: 8, // Rounded corners
+            alignItems: "center", // Center the content horizontally
+            justifyContent: "center", // Center the content vertically
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 16, // Text size
+              color: "#fff", // White text
+              fontWeight: "bold", // Bold text
+              textTransform: "none", // Prevent text from being capitalized
+            }}
+          >
+            Upload Forms
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
