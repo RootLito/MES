@@ -15,12 +15,15 @@ import RNPickerSelect from "react-native-picker-select";
 import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
 import Checkbox from "expo-checkbox";
 import * as FileSystem from "expo-file-system";
+import { useNavigation } from '@react-navigation/native';
+
 
 export default function Monitoring() {
   const [isConnected, setIsConnected] = useState(null);
   const [savedData, setSavedData] = useState([]);
   const [rating, setRating] = useState(0);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const navigation = useNavigation();
   const [formData, setFormData] = useState({
     form: {
       name: "",
@@ -166,6 +169,9 @@ export default function Monitoring() {
 
   const q9_11Options = ["Consumption", "Education", "Other HH needs"];
 
+  const [activeStep, setActiveStep] = useState(0);
+
+
   const handleChange = (name, value, type = "text", checked = false) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -204,6 +210,10 @@ export default function Monitoring() {
 
         if (response.ok) {
           alert("Data successfully submitted!");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Monitoring' }], 
+          });
         } else {
           throw new Error("Server error. Saving locally.");
         }
@@ -214,6 +224,8 @@ export default function Monitoring() {
         );
         console.log("Saved locally to:", fileUri);
         alert("Offline: Data saved locally.");
+
+        setFormData({ form: {} });
       }
     } catch (error) {
       console.error("Error saving data:", error);
@@ -258,6 +270,7 @@ export default function Monitoring() {
       <ScrollView style={styles.formContainer}>
         <View style={{ flex: 1 }}>
           <ProgressSteps
+          activeStep={activeStep}
             activeStepIconBorderColor="#54cf95"
             completedProgressBarColor="#54cf95"
             activeStepIconColor="transparent"
@@ -574,6 +587,27 @@ export default function Monitoring() {
                 />
               </RadioButtonGroup>
 
+              {formData.form.projectReceived === "Aquaculture" && (
+                <>
+                  <Text style={styles.label}>
+                    Scale <Text style={{ color: "red" }}>*</Text>
+                  </Text>
+                  <View style={styles.selectWrapper}>
+                  <RNPickerSelect
+                    onValueChange={(value) =>
+                      handleChange("scale", value)
+                    }
+                    value={formData.form.scale}
+                    items={[
+                        {label: "Small-scale",value:"Small-scale" },
+                        {label: "Medium-scale",value:"Medium-scale" },
+                        {label: "Large-scale",value:"Large-scale" },
+                    ]}
+                  />
+                </View>
+                </>
+              )}
+
               <Text style={styles.label}>
                 Specific Project <Text style={{ color: "red" }}>*</Text>
               </Text>
@@ -639,10 +673,23 @@ export default function Monitoring() {
                 />
               ) : null}
 
+              {formData.form.specProject === "others" && (
+                <TextInput
+                style={styles.input}
+                value={formData.form.otherProject}
+                placeholder="Please specify"
+                onChangeText={(text) => handleChange("otherProject", text)}
+              />
+              )}
+
+
+
+
+
               <Text style={styles.label}>Remarks</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Otional"
+                placeholder="Optional"
                 value={formData.form.specRemarks}
                 onChangeText={(text) => handleChange("specRemarks", text)}
               />
@@ -704,8 +751,7 @@ export default function Monitoring() {
                 </View>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                   <Text style={styles.label}>
-                    Other Source of Income{" "}
-                    <Text style={{ color: "red" }}>*</Text>
+                    Other Source of Income
                   </Text>
                   <TextInput
                     style={styles.input}
@@ -1838,23 +1884,41 @@ export default function Monitoring() {
                 {formData.form.q9_10 === "yes" &&
                   q9_11Options.map((option) => (
                     <>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, }}>
-                      <Checkbox
-                        value={formData.form.q9_11?.includes(option)}
-                        onValueChange={(checked) => {
-                          const updated = checked
-                            ? [...(formData.form.q9_11 || []), option]
-                            : (formData.form.q9_11 || []).filter((item) => item !== option);
-                  
-                          handleChange("q9_11", updated);
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginTop: 12,
                         }}
-                        color={formData.form.q9_11?.includes(option) ? "#54cf95" : undefined}
-                        style={{ height: 16, width: 16, borderRadius: 5, borderColor: "#ccc" }}
-                      />
-                      <Text style={{ marginLeft: 10, fontSize: 16 }}>{option}</Text>
-                    </View>
-                  </>
-                  
+                      >
+                        <Checkbox
+                          value={formData.form.q9_11?.includes(option)}
+                          onValueChange={(checked) => {
+                            const updated = checked
+                              ? [...(formData.form.q9_11 || []), option]
+                              : (formData.form.q9_11 || []).filter(
+                                  (item) => item !== option
+                                );
+
+                            handleChange("q9_11", updated);
+                          }}
+                          color={
+                            formData.form.q9_11?.includes(option)
+                              ? "#54cf95"
+                              : undefined
+                          }
+                          style={{
+                            height: 16,
+                            width: 16,
+                            borderRadius: 5,
+                            borderColor: "#ccc",
+                          }}
+                        />
+                        <Text style={{ marginLeft: 10, fontSize: 16 }}>
+                          {option}
+                        </Text>
+                      </View>
+                    </>
                   ))}
 
                 <Text style={{ marginTop: 12 }}>
