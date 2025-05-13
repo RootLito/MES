@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getSurveys, getSurveyById, createSurvey, updateSurvey, deleteSurvey } = require('../controllers/surveyController');
+const { getSurveys, getSurveyById, createSurvey, updateSurvey, deleteSurvey, deleteMultipleSurveys } = require('../controllers/surveyController');
 
 router.get('/', getSurveys);
 router.get('/:id', getSurveyById)
