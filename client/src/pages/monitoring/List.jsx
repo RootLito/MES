@@ -9,48 +9,52 @@ const List = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleted, setDeleted] = useState(false);
-  const [delError, setDelError] = useState(null);
+  const [selectedSurveys, setSelectedSurveys] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
-  // Search filter and pagination
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(10);
   const [filteredSurveys, setFilteredSurveys] = useState([]);
-
-  const handleSearch = (e) => {
-    const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
-
-    if (query) {
-      const filteredData = surveys.filter((survey) => {
-        return (
-          survey.name.toLowerCase().includes(query) ||
-          survey.baranggay.toLowerCase().includes(query) ||
-          survey.municipality.toLowerCase().includes(query) ||
-          survey.province.toLowerCase().includes(query) ||
-          survey.projectReceived.toLowerCase().includes(query) ||
-          survey.specProject.toLowerCase().includes(query)
-        );
-      });
-      setFilteredSurveys(filteredData);
-    } else {
-      setFilteredSurveys(surveys);
-    }
-  };
 
   const modalRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchSurveys();
+  }, []);
+
+  useEffect(() => {
+    setSelectAll(
+      filteredSurveys.length > 0 &&
+        selectedSurveys.length === filteredSurveys.length
+    );
+  }, [selectedSurveys, filteredSurveys]);
+
+  useEffect(() => {
+    const filteredData = surveys.filter(
+      (survey) =>
+        survey.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        survey.baranggay.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        survey.municipality.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        survey.province.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        survey.projectReceived
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        survey.specProject.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredSurveys(filteredData);
+    setCurrentPage(1); 
+  }, [searchQuery, surveys]);
 
   const fetchSurveys = async () => {
     try {
       const response = await axios.get(
         "https://bfar-server.onrender.com/survey"
       );
-
-      const sortedSurveys = response.data.sort((a, b) => {
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      });
-
+      const sortedSurveys = response.data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
       setSurveys(sortedSurveys);
       setFilteredSurveys(sortedSurveys);
     } catch (err) {
@@ -60,9 +64,76 @@ const List = () => {
     }
   };
 
-  useEffect(() => {
-    fetchSurveys();
-  }, []);
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSelectAll = () => {
+    if (!selectAll) {
+      const allIds = filteredSurveys.map((s) => s._id);
+      setSelectedSurveys(allIds);
+    } else {
+      setSelectedSurveys([]);
+    }
+    setSelectAll(!selectAll);
+  };
+
+  const handleCheckboxChange = (id) => {
+    setSelectedSurveys((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const isSurveySelected = (id) => selectedSurveys.includes(id);
+
+  const handleDeleteSelected = async () => {
+    if (selectedSurveys.length === 0) return;
+
+    try {
+      await axios.delete("/api/surveys/multiple", {
+        data: { ids: selectedSurveys },
+      });
+      setSelectedSurveys([]);
+      setSelectAll(false);
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const res = await axios.delete(
+        `https://bfar-server.onrender.com/survey/delete/${id}`
+      );
+      if (!res) return;
+      setDeleted(true);
+      setTimeout(() => setDeleted(false), 3000);
+
+      setSurveys((prev) => prev.filter(({ _id }) => _id !== id));
+      setFilteredSurveys((prev) => prev.filter(({ _id }) => _id !== id));
+    } catch (err) {
+      console.error("Failed to delete form");
+    }
+  };
+
+  const openModal = (id) => {
+    setSelectedSurvey(id);
+    modalRef.current.showModal();
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentSurveys = filteredSurveys.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(filteredSurveys.length / itemsPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
   if (loading) {
     return (
@@ -85,66 +156,6 @@ const List = () => {
     );
   }
 
-  const onClick = (link) => {
-    navigate(link);
-  };
-
-  // OPEN MODAL
-
-  const openModal = (id) => {
-    setSelectedSurvey(id);
-    modalRef.current.showModal();
-  };
-
-  // DELETE
-  const handleDelete = async (id) => {
-    try {
-      const res = await axios.delete(
-        `https://bfar-server.onrender.com/survey/delete/${id}`
-      );
-      if (!res) {
-        return (
-          <div className="toast toast-top toast-center">
-            <div className="alert alert-error text-white text-center">
-              <span>Failed to delete form</span>
-            </div>
-          </div>
-        );
-      } else {
-        setDeleted(true);
-        setTimeout(() => {
-          setDeleted(false);
-        }, 3000);
-      }
-      setSurveys((prevSurveys) => prevSurveys.filter(({ _id }) => _id !== id));
-      setFilteredSurveys((prevFilteredSurveys) =>
-        prevFilteredSurveys.filter(({ _id }) => _id !== id)
-      );
-    } catch (err) {
-      return (
-        <div className="toast toast-top toast-center">
-          <div className="alert alert-error text-white text-center">
-            <span>Failed to delete form</span>
-          </div>
-        </div>
-      );
-    }
-  };
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentSurveys = filteredSurveys.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(filteredSurveys.length / itemsPerPage); i++) {
-    pageNumbers.push(i);
-  }
-
   return (
     <div className="flex-1 mx-auto p-5 flex flex-col relative">
       {deleted && (
@@ -158,46 +169,62 @@ const List = () => {
       )}
 
       <div className="flex w-full justify-between items-center">
-      <label className="input w-1/2 bg-gray-100">
-        <svg
-          className="h-[1em] opacity-50"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-        >
-          <g
-            strokeLinejoin="round"
-            strokeLinecap="round"
-            strokeWidth="2.5"
-            fill="none"
-            stroke="currentColor"
+        <label className="input w-1/2 bg-gray-100">
+          <svg
+            className="h-[1em] opacity-50"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
           >
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.3-4.3"></path>
-          </g>
-        </svg>
-        <input
-          type="search"
-          className="grow "
-          placeholder="Search"
-          value={searchQuery}
-          onChange={handleSearch}
-        />
-      </label>
-      <button
-        onClick={() => {
-          setLoading(true);
-          fetchSurveys();
-        }}
-        className="btn btn-outline btn-primary"
-      >
-        Refresh Table
-      </button>
+            <g
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              strokeWidth="2.5"
+              fill="none"
+              stroke="currentColor"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </g>
+          </svg>
+          <input
+            type="search"
+            className="grow"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+        </label>
+
+        <div className="flex gap-2 items-center">
+          {selectedSurveys.length > 0 && (
+            <button className="btn btn-error text-white" onClick={handleDeleteSelected}>
+              Delete Selected ({selectedSurveys.length})
+            </button>
+          )}
+
+          <button
+            onClick={() => {
+              setLoading(true);
+              fetchSurveys();
+            }}
+            className="btn btn-outline btn-primary"
+          >
+            Refresh Table
+          </button>
+        </div>
       </div>
 
       <div className="rounded-box border border-base-content/5 bg-base-100 my-4">
         <table className="table overflow-hidden">
           <thead>
             <tr className="bg-blue-950 text-white">
+              <th>
+                <input
+                  type="checkbox"
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                />
+              </th>
               <th>Survey #</th>
               <th>Name</th>
               <th>Address</th>
@@ -209,50 +236,49 @@ const List = () => {
           </thead>
           <tbody>
             {currentSurveys.length === 0 ? (
-              <td colSpan="7">No Records</td>
+              <tr>
+                <td colSpan="8">No Records</td>
+              </tr>
             ) : (
               currentSurveys.map((survey, index) => (
                 <tr key={survey._id} className="hover:bg-base-300">
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={isSurveySelected(survey._id)}
+                      onChange={() => handleCheckboxChange(survey._id)}
+                    />
+                  </td>
                   <th>{indexOfFirstItem + index + 1}</th>
                   <td>{survey.name}</td>
                   <td>
                     {survey.baranggay}, {survey.municipality}, {survey.province}
                   </td>
                   <td>
-                    {survey.projectReceived === "Capture" ? (
-                      <div className="badge badge-error text-white">
-                        {survey.projectReceived}
-                      </div>
-                    ) : survey.projectReceived === "Aquaculture" ? (
-                      <div className="badge badge-warning text-white">
-                        {survey.projectReceived}
-                      </div>
-                    ) : survey.projectReceived === "Post-harvest" ? (
-                      <div className="badge badge-accent text-white">
-                        {survey.projectReceived}
-                      </div>
-                    ) : survey.projectReceived === "Techno-demo" ? (
-                      <div className="badge badge-info text-white">
-                        {survey.projectReceived}
-                      </div>
-                    ) : survey.projectReceived === "Others" ? (
-                      <div className="badge badge-success text-white">
-                        {survey.projectReceived}
-                      </div>
-                    ) : (
-                      <div className="badge badge-soft badge-warning">
-                        {survey.projectReceived}
-                      </div>
-                    )}
+                    <div
+                      className={`badge text-white ${
+                        survey.projectReceived === "Capture"
+                          ? "badge-error"
+                          : survey.projectReceived === "Aquaculture"
+                          ? "badge-warning"
+                          : survey.projectReceived === "Post-harvest"
+                          ? "badge-accent"
+                          : survey.projectReceived === "Techno-demo"
+                          ? "badge-info"
+                          : survey.projectReceived === "Others"
+                          ? "badge-success"
+                          : "badge bg-gray-300"
+                      }`}
+                    >
+                      {survey.projectReceived}
+                    </div>
                   </td>
-
                   <td>{survey.evaluator}</td>
                   <td>
                     {survey.createdAt
                       ? new Date(survey.createdAt).toLocaleDateString("en-CA")
                       : "N/A"}
                   </td>
-
                   <td className="flex gap-3 text-xl">
                     <MdVisibility
                       className="text-green-600 cursor-pointer"
@@ -282,7 +308,6 @@ const List = () => {
         >
           «
         </button>
-
         {pageNumbers.map((number) => (
           <button
             key={number}
@@ -310,7 +335,7 @@ const List = () => {
           <div className="modal-action">
             <button
               type="button"
-              className="btn btn-success text-white mr-2 w-[60px] focus:right-0"
+              className="btn btn-success text-white mr-2 w-[60px]"
               onClick={() => {
                 handleDelete(selectedSurvey);
                 modalRef.current.close();
