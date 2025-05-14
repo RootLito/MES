@@ -462,13 +462,13 @@ const deleteSurvey = async (req, res) => {
 
 // DELETE multiple surveys
 const deleteMultipleSurveys = async (req, res) => {
-  const { ids } = req.body; // Expecting an array of survey IDs
+  const { ids } = req.body; 
 
   try {
     const result = await Survey.deleteMany({ _id: { $in: ids } });
 
     res.status(200).json({
-      message: `${result.deletedCount} surveys deleted successfully`,
+      message: `${result.deletedCount} forms deleted successfully`,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
