@@ -419,7 +419,7 @@ const Reports = () => {
             </thead>
 
             <tbody className="bg-white">
-              {surveys.map((survey, index) => (
+              {surveys.slice().reverse().map((survey, index) => (
                 <tr key={index} className="py-0">
                   <th className="py-2 whitespace-nowrap">{index + 1}</th>
 

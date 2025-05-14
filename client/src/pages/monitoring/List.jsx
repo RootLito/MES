@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { MdDeleteForever, MdEditDocument, MdVisibility } from "react-icons/md";
@@ -11,7 +11,7 @@ const List = () => {
   const [deleted, setDeleted] = useState(false);
   const [selectedSurveys, setSelectedSurveys] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-
+  const modalRefBulk = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -44,7 +44,7 @@ const List = () => {
         survey.specProject.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredSurveys(filteredData);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   }, [searchQuery, surveys]);
 
   const fetchSurveys = async () => {
@@ -86,15 +86,48 @@ const List = () => {
 
   const isSurveySelected = (id) => selectedSurveys.includes(id);
 
+  //   const handleDeleteSelected = async () => {
+  //     if (selectedSurveys.length === 0) return;
+
+  //     try {
+  //       const res = await axios.delete("https://bfar-server.onrender.com/survey/multiple", {
+  //         data: { ids: selectedSurveys },
+  //       });
+  //       setSelectedSurveys([]);
+  //       setSelectAll(false);
+  //       if (!res) return;
+  //       setDeleted(true);
+  //       setTimeout(() => setDeleted(false), 3000);
+
+  //       setSurveys((prev) => prev.filter(({ _id }) => _id !== id));
+  //       setFilteredSurveys((prev) => prev.filter(({ _id }) => _id !== id));
+  //     } catch (err) {
+  //       console.error("Delete error:", err);
+  //     }
+  //   };
   const handleDeleteSelected = async () => {
     if (selectedSurveys.length === 0) return;
 
     try {
-      await axios.delete("/api/surveys/multiple", {
-        data: { ids: selectedSurveys },
-      });
+      const res = await axios.delete(
+        "https://bfar-server.onrender.com/survey/multiple",
+        {
+          data: { ids: selectedSurveys },
+        }
+      );
       setSelectedSurveys([]);
       setSelectAll(false);
+      if (!res) return;
+
+      setDeleted(true);
+      setTimeout(() => setDeleted(false), 3000);
+
+      setSurveys((prev) =>
+        prev.filter(({ _id }) => !selectedSurveys.includes(_id))
+      );
+      setFilteredSurveys((prev) =>
+        prev.filter(({ _id }) => !selectedSurveys.includes(_id))
+      );
     } catch (err) {
       console.error("Delete error:", err);
     }
@@ -196,8 +229,11 @@ const List = () => {
         </label>
 
         <div className="flex gap-2 items-center">
-          {selectedSurveys.length > 0 && (
-            <button className="btn btn-error text-white" onClick={handleDeleteSelected}>
+          {selectedSurveys.length > 1 && (
+            <button
+              className="btn btn-error text-white"
+              onClick={() => modalRefBulk.current.showModal()}
+            >
               Delete Selected ({selectedSurveys.length})
             </button>
           )}
@@ -213,6 +249,31 @@ const List = () => {
           </button>
         </div>
       </div>
+
+      <dialog ref={modalRefBulk} className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Delete Selected</h3>
+          <p className="py-4">
+            Are you sure you want to delete the selected surveys (
+            {selectedSurveys.length})?
+          </p>
+          <div className="modal-action">
+            <button
+              type="button"
+              className="btn btn-success text-white mr-2"
+              onClick={() => {
+                handleDeleteSelected();
+                modalRefBulk.current.close();
+              }}
+            >
+              Yes
+            </button>
+            <form method="dialog">
+              <button className="btn btn-error text-white">Cancel</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
 
       <div className="rounded-box border border-base-content/5 bg-base-100 my-4">
         <table className="table overflow-hidden">
@@ -273,7 +334,7 @@ const List = () => {
                       {survey.projectReceived}
                     </div>
                   </td>
-                  <td>{survey.evaluator}</td>
+                  <td>{survey.evaluator?.trim() ? survey.evaluator : "N/A"}</td>
                   <td>
                     {survey.createdAt
                       ? new Date(survey.createdAt).toLocaleDateString("en-CA")
