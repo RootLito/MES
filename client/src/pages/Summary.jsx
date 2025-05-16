@@ -43,6 +43,11 @@ const Summary = () => {
   const [other, setOther] = useState(0);
   const currentDate = new Date();
   const date = format(currentDate, "MM/dd/yyyy");
+  const [provinces, setProvinces] = useState([]);
+  const [selectedProvinces, setSelectedProvinces] = useState([]);
+  const [allMun, setAllMun] = useState([]);
+  const [selectedMunicipalities, setSelectedMunicipalities] = useState([]);
+  const [surveys, setSurveys] = useState([]);
   const [civilStatusCounts, setCivilStatusCounts] = useState({
     Single: 0,
     Married: 0,
@@ -50,15 +55,10 @@ const Summary = () => {
     Divorced: 0,
     Separated: 0,
   });
-  const [provinces, setProvinces] = useState([]);
-  const [selectedProvinces, setSelectedProvinces] = useState([]);
-  const [allMun, setAllMun] = useState([]);
-  const [selectedMunicipalities, setSelectedMunicipalities] = useState([]);
-  const [surveys, setSurveys] = useState([]);
 
-  const handleTabChange = (event) => {
-    setSelectedTab(event.target.getAttribute("aria-label"));
-  };
+  //   const handleTabChange = (event) => {
+  //     setSelectedTab(event.target.getAttribute("aria-label"));
+  //   };
 
   const fetchSurveys = async () => {
     try {
@@ -66,6 +66,8 @@ const Summary = () => {
         "https://bfar-server.onrender.com/survey"
       );
       const surveys = response.data;
+      console.log(surveys);
+
       setSurveys(surveys);
       setTotalRes(surveys.length);
 
@@ -137,12 +139,6 @@ const Summary = () => {
         return acc;
       }, {});
       setProvinceData(provinceCounts);
-
-      const municipalityCounts = surveys.reduce((acc, survey) => {
-        acc[survey.municipality] = (acc[survey.municipality] || 0) + 1;
-        return acc;
-      }, {});
-      setMunicipalityData(municipalityCounts);
 
       const barangayCounts = surveys.reduce((acc, survey) => {
         acc[survey.baranggay] = (acc[survey.baranggay] || 0) + 1;
@@ -216,14 +212,15 @@ const Summary = () => {
     );
   };
 
-  const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedBarangays(allBarangays);
-    } else {
-      setSelectedBarangays([]);
-    }
-  };
+  //   const handleSelectAll = (e) => {
+  //     if (e.target.checked) {
+  //       setSelectedBarangays(allBarangays);
+  //     } else {
+  //       setSelectedBarangays([]);
+  //     }
+  //   };
 
+  //   FETCH MUNICIPALITIES ----------------------
   const fetchMunicipalities = async () => {
     try {
       const responses = await Promise.all(
@@ -233,6 +230,18 @@ const Summary = () => {
           )
         )
       );
+
+      const response = await axios.get(
+        "https://bfar-server.onrender.com/survey"
+      );
+      const surveys = response.data;
+      const municipalityCounts = surveys.reduce((acc, survey) => {
+        acc[survey.municipality] = (acc[survey.municipality] || 0) + 1;
+        return acc;
+      }, {});
+
+      setMunicipalityData(municipalityCounts);
+      console.log(municipalityCounts);
 
       const allMunicipalities = responses.flatMap((res) => res.data);
       setAllMun(allMunicipalities);
@@ -727,113 +736,10 @@ const Summary = () => {
               No. of Respondents
             </div>
 
-            {/* {isVisible ? (
-              <div className="tabs tabs-lift mt-6">
-                <input
-                  type="radio"
-                  name="my_tabs_3"
-                  className="tab"
-                  aria-label="Province"
-                  defaultChecked
-                  onChange={handleTabChange}
-                />
-                <div className="tab-content bg-base-100 border-base-300 p-6 h-full">
-                  {selectedTab === "Province" && (
-                    <div>
-                      <table className="table table-zebra w-full">
-                        <thead>
-                          <tr className="bg-blue-950 text-white ">
-                            <th>Province</th>
-                            <th>Count</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Object.entries(provinceData).map(
-                            ([province, count]) => (
-                              <tr key={province}>
-                                <td>{province}</td>
-                                <td>{count}</td>
-                              </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-
-                <input
-                  type="radio"
-                  name="my_tabs_3"
-                  className="tab"
-                  aria-label="Municipality"
-                  onChange={handleTabChange}
-                />
-                <div className="tab-content bg-base-100 border-base-300 p-6">
-                  {selectedTab === "Municipality" && (
-                    <div>
-                      <table className="table table-zebra w-full">
-                        <thead>
-                          <tr className="bg-blue-950 text-white ">
-                            <th>Municipality</th>
-                            <th>Count</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Object.entries(municipalityData).map(
-                            ([municipality, count]) => (
-                              <tr key={municipality}>
-                                <td>{municipality}</td>
-                                <td>{count}</td>
-                              </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-
-                <input
-                  type="radio"
-                  name="my_tabs_3"
-                  className="tab"
-                  aria-label="Barangay"
-                  onChange={handleTabChange}
-                />
-                <div className="tab-content bg-base-100 border-base-300 p-6">
-                  {selectedTab === "Barangay" && (
-                    <div>
-                      <table className="table table-zebra w-full ">
-                        <thead>
-                          <tr className="bg-blue-950 text-white ">
-                            <th>Barangay</th>
-                            <th>Count</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Object.entries(barangayData).map(
-                            ([barangay, count]) => (
-                              <tr key={barangay}>
-                                <td>{barangay}</td>
-                                <td>{count}</td>
-                              </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="flex-1 flex items-center justify-center">
-                <span className="loading loading-spinner loading-xl"></span>
-              </div>
-            )} */}
-
             <div className="w-full flex gap-10">
               <div className="w-1/2 h-full flex flex-col">
+                {/* PROVINCE ----------------------- */}
+
                 <div className="w-full">
                   <div className="w-full flex justify-between items-center">
                     <h1 className="font-black text-lg text-blue-950">
@@ -871,13 +777,20 @@ const Summary = () => {
                   </div>
 
                   <div className="flex flex-col">
-                    {provinces.map((province) => (
-                      <tr key={province.code}>
-                        <td>{provinceData[province.name] || 0}</td>{" "}
-                      </tr>
-                    ))}
+                    <table>
+                      <tbody>
+                        {provinces.map((province) => (
+                          <tr key={province.code}>
+                            <td>{provinceData[province.name] || 0}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
+
+
+                {/* MUNICIPALITY ----------------------- */}
 
                 <div className="w-full flex justify-between items-center">
                   <h1 className="font-black text-lg text-blue-950">
@@ -894,19 +807,36 @@ const Summary = () => {
                   </label>
                 </div>
 
-                <div className="w-full h-82 overflow-y-auto flex flex-col pl-5 gap-1 py-2">
-                  {allMun.map((mun) => (
-                    <label key={mun.name} className="text-md cursor-pointer">
-                      <input
-                        type="checkbox"
-                        value={mun.name}
-                        checked={selectedMunicipalities.includes(mun.name)}
-                        onChange={() => handleMunicipalityChange(mun.name)}
-                        className="mr-2"
-                      />
-                      {mun.name}
-                    </label>
-                  ))}
+                <div className="w-full h-82 overflow-y-auto flex justify-between pl-5 gap-1 py-2">
+                  <div className="flex flex-col">
+                    {allMun.map((mun) => (
+                      <label
+                        key={mun.code || mun.name}
+                        className="text-md cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          value={mun.name}
+                          checked={selectedMunicipalities.includes(mun.name)}
+                          onChange={() => handleMunicipalityChange(mun.name)}
+                          className="mr-2"
+                        />
+                        {mun.name}
+                      </label>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col">
+                    <table>
+                      <tbody>
+                        {provinces.map((province) => (
+                          <tr key={province.code}>
+                            <td>{provinceData[province.name] || 0}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
 
@@ -931,6 +861,35 @@ const Summary = () => {
                   )}
                 </div>
               </div>
+
+              {/* <div className="w-full overflow-x-auto rounded-box border border-base-content/5 bg-white my-5 ">
+                <table className="table table-sm">
+                  <thead>
+                    <tr className="bg-blue-950 text-white ">
+                      <th className="w-1/3 text-sm">Province</th>
+                      <th className="w-1/3 text-sm">Municipality</th>
+                      <th className="w-1/3 text-sm">Barangay</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Cy Ganderton</td>
+                      <td>Quality Control Specialist</td>
+                      <td>Blue</td>
+                    </tr>
+                    <tr>
+                      <td>Hart Hagerty</td>
+                      <td>Desktop Support Technician</td>
+                      <td>Purple</td>
+                    </tr>
+                    <tr>
+                      <td>Brice Swyre</td>
+                      <td>Tax Accountant</td>
+                      <td>Red</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div> */}
             </div>
           </div>
         </div>
