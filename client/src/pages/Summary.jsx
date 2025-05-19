@@ -18,14 +18,14 @@ import users from "./../assets/images/users.png";
 import status from "./../assets/images/status.png";
 
 const Summary = () => {
+  const currentDate = new Date();
+  const date = format(currentDate, "MM/dd/yyyy");
   const location = useLocation();
   const [maleCount, setMaleCount] = useState(0);
   const [femaleCount, setFemaleCount] = useState(0);
   const [totalRes, setTotalRes] = useState(0);
   const [data, setData] = useState([]);
-  const [selectedTab, setSelectedTab] = useState("Province");
   const [provinceData, setProvinceData] = useState({});
-  const [municipalityData, setMunicipalityData] = useState({});
   const [barangayData, setBarangayData] = useState({});
   const [fishingCount, setFishingCount] = useState(0);
   const [agriCount, setAgriCount] = useState(0);
@@ -41,13 +41,15 @@ const Summary = () => {
   const [post, setPost] = useState(0);
   const [techno, setTechno] = useState(0);
   const [other, setOther] = useState(0);
-  const currentDate = new Date();
-  const date = format(currentDate, "MM/dd/yyyy");
   const [provinces, setProvinces] = useState([]);
   const [selectedProvinces, setSelectedProvinces] = useState([]);
   const [allMun, setAllMun] = useState([]);
   const [selectedMunicipalities, setSelectedMunicipalities] = useState([]);
   const [surveys, setSurveys] = useState([]);
+  const [municipalityCounts, setMunicipalityCounts] = useState({});
+  const [barangay, setBarangay] = useState([]);
+  const [allBarangaysSelected, setAllBarangaysSelected] = useState(false);
+
   const [civilStatusCounts, setCivilStatusCounts] = useState({
     Single: 0,
     Married: 0,
@@ -56,17 +58,12 @@ const Summary = () => {
     Separated: 0,
   });
 
-  //   const handleTabChange = (event) => {
-  //     setSelectedTab(event.target.getAttribute("aria-label"));
-  //   };
-
   const fetchSurveys = async () => {
     try {
       const response = await axios.get(
         "https://bfar-server.onrender.com/survey"
       );
       const surveys = response.data;
-      console.log(surveys);
 
       setSurveys(surveys);
       setTotalRes(surveys.length);
@@ -100,7 +97,7 @@ const Summary = () => {
       ).length;
       setOther(ot);
 
-      //   main income
+      //  MAIN INCOME
       const fishing = surveys.filter(
         (survey) => survey.mainIncome === "Fishing"
       ).length;
@@ -117,7 +114,7 @@ const Summary = () => {
       ).length;
       setOthersCount(others);
 
-      //   other income
+      //  OTHER INCOME
       const othersInc = surveys.filter(
         (survey) =>
           survey.mainIncome !== "Fishing" && survey.mainIncome !== "Agri"
@@ -170,7 +167,6 @@ const Summary = () => {
         Object.entries(ageGroups).map(([name, value]) => ({ name, value }))
       );
 
-      // Use filter to count each civil status directly
       const statCounts = {
         Single: surveys.filter((survey) => survey.civilStatus === "Single")
           .length,
@@ -185,7 +181,6 @@ const Summary = () => {
         ).length,
       };
 
-      // Update the state with the counts
       setCivilStatusCounts(statCounts);
     } catch (error) {
       console.error("Error fetching survey data:", error);
@@ -204,58 +199,52 @@ const Summary = () => {
       });
   }, []);
 
-  const handleCheckboxChange = (name) => {
-    setSelectedProvinces((prevSelected) =>
-      prevSelected.includes(name)
-        ? prevSelected.filter((n) => n !== name)
-        : [...prevSelected, name]
+  // FILTER PROV, MUN, BAR COUNTS ---------------------------
+  useEffect(() => {
+    const filteredSurveys = surveys.filter((survey) =>
+      selectedProvinces.includes(survey.province)
+    );
+
+    // Barangay-level count
+    const barangayCounts = {};
+    filteredSurveys.forEach(({ province, municipality, barangay }) => {
+      const key = `${province}__${municipality}__${barangay}`;
+      if (!barangayCounts[key]) {
+        barangayCounts[key] = {
+          province,
+          municipality,
+          barangay,
+          count: 0,
+        };
+      }
+      barangayCounts[key].count += 1;
+    });
+
+    // Municipality-level count
+    const municipalityCounts = {};
+    filteredSurveys.forEach(({ province, municipality }) => {
+      const key = `${province}__${municipality}`;
+      if (!municipalityCounts[key]) {
+        municipalityCounts[key] = {
+          province,
+          municipality,
+          count: 0,
+        };
+      }
+      municipalityCounts[key].count += 1;
+    });
+
+    setBarangayData(Object.values(barangayCounts));
+    setMunicipalityCounts(Object.values(municipalityCounts));
+  }, [selectedProvinces, surveys]);
+
+  const handleCheckboxChange = (provinceName) => {
+    setSelectedProvinces((prev) =>
+      prev.includes(provinceName)
+        ? prev.filter((name) => name !== provinceName)
+        : [...prev, provinceName]
     );
   };
-
-  //   const handleSelectAll = (e) => {
-  //     if (e.target.checked) {
-  //       setSelectedBarangays(allBarangays);
-  //     } else {
-  //       setSelectedBarangays([]);
-  //     }
-  //   };
-
-  //   FETCH MUNICIPALITIES ----------------------
-  const fetchMunicipalities = async () => {
-    try {
-      const responses = await Promise.all(
-        selectedProvinces.map((code) =>
-          axios.get(
-            `https://psgc.cloud/api/provinces/${code}/cities-municipalities`
-          )
-        )
-      );
-
-      const response = await axios.get(
-        "https://bfar-server.onrender.com/survey"
-      );
-      const surveys = response.data;
-      const municipalityCounts = surveys.reduce((acc, survey) => {
-        acc[survey.municipality] = (acc[survey.municipality] || 0) + 1;
-        return acc;
-      }, {});
-
-      setMunicipalityData(municipalityCounts);
-      console.log(municipalityCounts);
-
-      const allMunicipalities = responses.flatMap((res) => res.data);
-      setAllMun(allMunicipalities);
-      console.log(allMunicipalities);
-    } catch (error) {
-      console.error("Error fetching cities/municipalities:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (selectedProvinces.length > 0) {
-      fetchMunicipalities();
-    }
-  }, [selectedProvinces]);
 
   const handleMunicipalityChange = (name) => {
     setSelectedMunicipalities((prevSelected) =>
@@ -264,6 +253,34 @@ const Summary = () => {
         : [...prevSelected, name]
     );
   };
+  useEffect(() => {
+    // Filter surveys based on selected municipalities
+    const filteredSurveys = surveys.filter((survey) =>
+      selectedMunicipalities.includes(survey.municipality)
+    );
+
+    // Barangay-level count for selected municipalities
+    const barangayCounts = {};
+
+    filteredSurveys.forEach(({ province, municipality, baranggay }) => {
+      const key = `${province}__${municipality}__${baranggay}`;
+      if (!barangayCounts[key]) {
+        barangayCounts[key] = {
+          province,
+          municipality,
+          barangay: baranggay, // assign to correct key
+          count: 0,
+        };
+      }
+      barangayCounts[key].count += 1;
+    });
+
+    // Convert object to array
+    const barangayArray = Object.values(barangayCounts);
+
+    // Set state with the array of barangay counts
+    setBarangay(barangayArray);
+  }, [selectedMunicipalities, surveys]);
 
   const filteredSurveys = surveys.filter((survey) =>
     selectedMunicipalities.includes(survey.municipality)
@@ -283,7 +300,7 @@ const Summary = () => {
 
   const handleSelectAllProvinces = (e) => {
     if (e.target.checked) {
-      setSelectedProvinces(provinces.map((province) => province.code));
+      setSelectedProvinces(provinces.map((province) => province.name));
     } else {
       setSelectedProvinces([]);
     }
@@ -745,50 +762,57 @@ const Summary = () => {
                     <h1 className="font-black text-lg text-blue-950">
                       Province
                     </h1>
-                    <label className="text-md cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="mr-1"
-                        checked={allProvincesSelected}
-                        onChange={handleSelectAllProvinces}
-                      />
-                      Select All
-                    </label>
                   </div>
                 </div>
 
-                <div className="w-full h-36 overflow-y-auto flex justify-between  pl-5 gap-1 py-2">
-                  <div className="flex flex-col">
-                    {provinces.map((province) => (
-                      <label
-                        key={province.code}
-                        className="text-md cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          value={province.code}
-                          checked={selectedProvinces.includes(province.code)}
-                          onChange={() => handleCheckboxChange(province.code)}
-                          className="mr-2"
-                        />
-                        {province.name}
-                      </label>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-col">
-                    <table>
+                <div className="w-full overflow-y-auto flex justify-between mb-5 gap-1 py-2">
+                  <div className="flex flex-col flex-1">
+                    <table className="table border-collapse border border-gray-300 w-full">
+                      <thead className="bg-gray-100">
+                        <tr>
+                          <th className="border border-gray-300 px-4 py-2 text-left w-4">
+                            <input
+                              type="checkbox"
+                              checked={allProvincesSelected}
+                              onChange={handleSelectAllProvinces}
+                            />
+                          </th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">
+                            Province
+                          </th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">
+                            Count
+                          </th>
+                        </tr>
+                      </thead>
                       <tbody>
                         {provinces.map((province) => (
                           <tr key={province.code}>
-                            <td>{provinceData[province.name] || 0}</td>
+                            <td className="border border-gray-300 px-4 py-2">
+                              <input
+                                type="checkbox"
+                                value={province.name}
+                                checked={selectedProvinces.includes(
+                                  province.name
+                                )}
+                                onChange={() =>
+                                  handleCheckboxChange(province.name)
+                                }
+                                className="cursor-pointer"
+                              />
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                              {province.name}
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                              {provinceData[province.name] || 0}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
-
 
                 {/* MUNICIPALITY ----------------------- */}
 
@@ -796,46 +820,72 @@ const Summary = () => {
                   <h1 className="font-black text-lg text-blue-950">
                     Municipality
                   </h1>
-                  <label className="text-md cursor-pointer">
-                    <input
-                      type="checkbox"
-                      className="mr-1"
-                      checked={allMunicipalitiesSelected}
-                      onChange={handleSelectAllMunicipalities}
-                    />
-                    Select All
-                  </label>
                 </div>
 
-                <div className="w-full h-82 overflow-y-auto flex justify-between pl-5 gap-1 py-2">
-                  <div className="flex flex-col">
-                    {allMun.map((mun) => (
-                      <label
-                        key={mun.code || mun.name}
-                        className="text-md cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          value={mun.name}
-                          checked={selectedMunicipalities.includes(mun.name)}
-                          onChange={() => handleMunicipalityChange(mun.name)}
-                          className="mr-2"
-                        />
-                        {mun.name}
-                      </label>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-col">
-                    <table>
-                      <tbody>
-                        {provinces.map((province) => (
-                          <tr key={province.code}>
-                            <td>{provinceData[province.name] || 0}</td>
+                <div className="w-full h-82 overflow-y-auto flex justify-between gap-1 py-2">
+                  <div className="flex flex-col flex-1">
+                    {Object.keys(municipalityCounts).length === 0 ? (
+                      <p className="text-gray-600">
+                        Select at least one province
+                      </p>
+                    ) : (
+                      <table className="table-auto border-collapse border border-gray-300 w-full">
+                        <thead className="text-gray-500">
+                          <tr className="bg-gray-100">
+                            <th className="border border-gray-300 px-4 py-2 text-left">
+          
+                            </th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">
+                              Municipality
+                            </th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">
+                              Count
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {municipalityCounts.length === 0 ? (
+                            <tr>
+                              <td colSpan={3} className="text-gray-600">
+                                Select at least one province
+                              </td>
+                            </tr>
+                          ) : (
+                            municipalityCounts.map(
+                              ({ municipality, province, count }) => (
+                                <tr key={`${province}__${municipality}`}>
+                                  <td className="border border-gray-300 px-4 py-2 w-4">
+                                    <input
+                                      type="checkbox"
+                                      value={municipality}
+                                      className="cursor-pointer"
+                                      checked={selectedMunicipalities.includes(
+                                        municipality
+                                      )}
+                                      onChange={() =>
+                                        handleMunicipalityChange(municipality)
+                                      }
+                                    />
+                                  </td>
+                                  <td className="border border-gray-300 px-4 py-2">
+                                    <div className="flex justify-between">
+                                      <span>{municipality}</span>
+                                      <span className="text-gray-400 text-xs">
+                                        {province}
+                                      </span>
+                                    </div>
+                                  </td>
+
+                                  <td className="border border-gray-300 px-4 py-2">
+                                    {count}
+                                  </td>
+                                </tr>
+                              )
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                    )}
                   </div>
                 </div>
               </div>
@@ -843,53 +893,47 @@ const Summary = () => {
               <div className="flex flex-col w-1/2 h-full ">
                 <h1 className="font-black text-lg text-blue-950">Barangay</h1>
 
-                <div className="w-full h-120 mt-2 overflow-y-auto">
-                  <div className="flex w-full justify-between text-blue-950 font-black mb-2">
-                    <div>Name</div>
-                    <div>Total</div>
+                <div className="w-full h-82 overflow-y-auto flex justify-between gap-1 py-2">
+                  <div className="flex flex-col flex-1">
+                    {barangay.length === 0 ? (
+                      <p className="text-gray-600">
+                        Select at least one municipality
+                      </p>
+                    ) : (
+                      <table className="table-auto border-collapse border border-gray-300 w-full">
+                        <thead className="text-gray-500">
+                          <tr className="bg-gray-100">
+                            <th className="border border-gray-300 px-4 py-2 text-left">
+                              Barangay
+                            </th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">
+                              Count
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {barangay.map(({ barangay, municipality, count }) => (
+                            <tr key={`${municipality}__${barangay}`}>
+                              <td className="border border-gray-300 px-4 py-2">
+                                <div className="flex justify-between">
+                                  <span>{barangay}</span>
+                                  <span className="text-gray-400 text-xs">
+                                    {municipality}
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td className="border border-gray-300 px-4 py-2">
+                                {count}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
                   </div>
-                  {Object.entries(barangayCounts).map(
-                    ([barangayName, count]) => (
-                      <div
-                        key={barangayName}
-                        className="w-full flex justify-between hover:bg-gray-200 pr-2"
-                      >
-                        <div>{barangayName}</div>
-                        <div className="font-black">{count}</div>
-                      </div>
-                    )
-                  )}
                 </div>
               </div>
-
-              {/* <div className="w-full overflow-x-auto rounded-box border border-base-content/5 bg-white my-5 ">
-                <table className="table table-sm">
-                  <thead>
-                    <tr className="bg-blue-950 text-white ">
-                      <th className="w-1/3 text-sm">Province</th>
-                      <th className="w-1/3 text-sm">Municipality</th>
-                      <th className="w-1/3 text-sm">Barangay</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Cy Ganderton</td>
-                      <td>Quality Control Specialist</td>
-                      <td>Blue</td>
-                    </tr>
-                    <tr>
-                      <td>Hart Hagerty</td>
-                      <td>Desktop Support Technician</td>
-                      <td>Purple</td>
-                    </tr>
-                    <tr>
-                      <td>Brice Swyre</td>
-                      <td>Tax Accountant</td>
-                      <td>Red</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div> */}
             </div>
           </div>
         </div>
