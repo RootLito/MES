@@ -213,20 +213,20 @@ export default function List() {
         <TouchableOpacity
           onPress={saveDataToMongoDB}
           style={{
-            backgroundColor: "#54cf95", // Green background
-            paddingVertical: 12, // Padding top and bottom
-            paddingHorizontal: 20, // Padding left and right
-            borderRadius: 8, // Rounded corners
-            alignItems: "center", // Center the content horizontally
-            justifyContent: "center", // Center the content vertically
+            backgroundColor: "#54cf95", 
+            paddingVertical: 12, 
+            paddingHorizontal: 20, 
+            borderRadius: 8, 
+            alignItems: "center", 
+            justifyContent: "center", 
           }}
         >
           <Text
             style={{
-              fontSize: 16, // Text size
-              color: "#fff", // White text
-              fontWeight: "bold", // Bold text
-              textTransform: "none", // Prevent text from being capitalized
+              fontSize: 16, 
+              color: "#fff",
+              fontWeight: "bold", 
+              textTransform: "none", 
             }}
           >
             Upload Forms
