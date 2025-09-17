@@ -168,6 +168,7 @@ const Update = () => {
       q9_13: "",
       q9_13other: "",
       q9_14: "",
+      q9_upt: "",
       impactRating: "",
       q10: "",
       q10Reason: "",
@@ -1757,6 +1758,22 @@ const Update = () => {
                 className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
                 name="q9_6"
                 value={formData.form.q9_6 || ""}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
+            <div className="flex flex-col flex-1">
+              <p className="text-sm sm:indent-10">
+                Species
+              </p>
+            </div>
+            <div className="flex flex-col flex-1 gap-2">
+              <input
+                type="text"
+                className="border-1 border-gray-400 px-3 h-[42px] rounded-md focus:outline-none"
+                name="q9_upt"
+                value={formData.form.q9_upt || ""}
                 onChange={handleChange}
               />
             </div>

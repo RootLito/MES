@@ -235,6 +235,7 @@ const View = () => {
                         <span className="indent-4">- Contribution to Production in kgs.</span>
                         <span className="indent-4"><i>Aquaculture (culture period, survival rate, no. of pcs/kilo)</i></span>
                         <span className="indent-4"><i>Capture (catch/day, no. of fishing operations- day/month)</i></span>
+                        <span className="indent-4">Species: </span>
                         <span>- Did it increase your income (Php)?</span>
                         <span className="indent-4">- Income before project was given (net/operation)</span>
                         <span className="indent-4">- Income after project was given (net/operation)</span>
@@ -251,6 +252,7 @@ const View = () => {
                         <span><b>{survey.q9_4 || "N/A"}</b></span>
                         <span><b>{survey.q9_5 || "N/A"}</b></span>
                         <span><b>{survey.q9_6 || "N/A"}</b></span>
+                        <span><b>{survey.q9_upt || "N/A"}</b></span>
                         <span><b>{survey.q9_7 || "N/A"}</b></span>
                         <span><b>{survey.q9_8 || "N/A"}</b></span>
                         <span><b>{survey.q9_9 || "N/A"}</b></span>

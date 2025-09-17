@@ -49,6 +49,7 @@ const createSurvey = async (req, res) => {
 
       province,
       municipality,
+      district,
       baranggay,
 
       projectReceived,
@@ -121,6 +122,7 @@ const createSurvey = async (req, res) => {
       q9_13,
       q9_13other,
       q9_14,
+      q9_upt,
       impactRating,
 
       q10_e,
@@ -151,6 +153,7 @@ const createSurvey = async (req, res) => {
 
       province,
       municipality,
+      district,
       baranggay,
 
       projectReceived,
@@ -223,6 +226,7 @@ const createSurvey = async (req, res) => {
       q9_13,
       q9_13other,
       q9_14,
+      q9_upt,
       impactRating,
 
       q10_e,
@@ -264,6 +268,7 @@ const updateSurvey = async (req, res) => {
 
       province,
       municipality,
+      district,
       baranggay,
 
       projectReceived,
@@ -336,6 +341,7 @@ const updateSurvey = async (req, res) => {
       q9_13,
       q9_13other,
       q9_14,
+      q9_upt,
       impactRating,
 
       q10_e,
@@ -368,6 +374,7 @@ const updateSurvey = async (req, res) => {
     if (totalMember) survey.totalMember = totalMember;
     if (province) survey.province = province;
     if (municipality) survey.municipality = municipality;
+    if (district) survey.district = district;
     if (baranggay) survey.baranggay = baranggay;
     if (projectReceived) survey.projectReceived = projectReceived;
     if (specProject) survey.specProject = specProject;
@@ -418,6 +425,7 @@ const updateSurvey = async (req, res) => {
     if (q9_10) survey.q9_10 = q9_10;
     if (q10_e) survey.q10_e = q10_e;
     if (q9_11) survey.q9_11 = q9_11;
+    if (q9_upt) survey.q9_upt = q9_upt;
     if (q9_11other) survey.q9_11other = q9_11other;
     if (q9_12) survey.q9_12 = q9_12;
     if (q9_12Spec) survey.q9_12Spec = q9_12Spec;
