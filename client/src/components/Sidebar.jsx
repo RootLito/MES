@@ -9,6 +9,7 @@ import {
   MdFolder,
   MdDriveFileRenameOutline,
   MdPeopleAlt,
+  MdMenuBook,
 } from "react-icons/md";
 
 const Sidebar = () => {
@@ -83,17 +84,17 @@ const Sidebar = () => {
             Report Summary
           </NavLink>
 
-          {/* <NavLink
-            to="/evaluators"
+          <NavLink
+            to="/documentation"
             className={({ isActive }) =>
               isActive
                 ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
                 : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-gray-100 shadow-none"
             }
           >
-            <MdPeopleAlt className="ml-5" size={18} />
-            Evaluators
-          </NavLink> */}
+            <MdMenuBook className="ml-5" size={18} />
+            Documentation
+          </NavLink>
         </div>
         <button
           className="btn btn-error text-red-200 hover:text-white mt-auto"
@@ -105,13 +106,19 @@ const Sidebar = () => {
         <dialog id="my_modal_1" className="modal">
           <div className="modal-box">
             <h3 className="font-bold text-lg">Logout</h3>
-            <p className="py-4">
-            Are you sure you want to log out?
-            </p>
+            <p className="py-4">Are you sure you want to log out?</p>
             <div className="modal-action">
               <form method="dialog">
-                <button className="btn btn-success text-white" onClick={handleLogout} > Logout </button>
-                <button className="btn btn-error ml-2 text-white">Cancel</button>
+                <button
+                  className="btn btn-success text-white"
+                  onClick={handleLogout}
+                >
+                  {" "}
+                  Logout{" "}
+                </button>
+                <button className="btn btn-error ml-2 text-white">
+                  Cancel
+                </button>
               </form>
             </div>
           </div>

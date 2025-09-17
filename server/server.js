@@ -4,6 +4,8 @@ const cors = require( 'cors' )
 const mongoose = require( 'mongoose' ) 
 const surveyRoutes = require('./routes/surveyRoute')
 const authRoutes = require('./routes/auth');
+const documentRoutes = require('./routes/documentRoute');
+const path = require('path');
 
 
 // VARIABLE DECLARATION
@@ -15,11 +17,13 @@ const port = process.env.PORT || 5000
 // MIDDLEWARE
 app.use(cors())
 app.use(express.json())
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 // ROUTES
 app.use('/survey', surveyRoutes);
 app.use('/api', authRoutes);
+app.use('/api/documents', documentRoutes);
 
 
 // DB CONNECTION 

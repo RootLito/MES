@@ -11,6 +11,7 @@ import Evaluator from "./pages/Evaluator";
 
 import Login from "./auth/Login";
 import Summary from "./pages/Summary";
+import Docs from "./pages/Docs";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/evaluators" element={<Evaluator />} />
+          <Route path="/documentation" element={<Docs />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
