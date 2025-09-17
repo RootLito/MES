@@ -114,6 +114,92 @@ export default function Monitoring() {
     },
   });
 
+  const initialFormState = {
+    name: "",
+    resType: "",
+    civilStatus: "",
+    sex: "",
+    age: "",
+    hhMember: "",
+    fishR: "",
+    boatR: "",
+    nameAssoc: "",
+    totalMember: "",
+    province: "",
+    municipality: "",
+    baranggay: "",
+    projectReceived: "",
+    scale: "",
+    specProject: "",
+    specRemarks: "",
+    specOther: "",
+    noUnitsReceived: "",
+    dateReceived: "",
+    mainIncome: "",
+    otherIncome: "",
+    lat: "",
+    lon: "",
+    quantity: "",
+    quantityReason: "",
+    quantityRating: "",
+    quality: "",
+    qualityReason: "",
+    qualityRating: "",
+    q2: "",
+    q2Reason: "",
+    timelinessRating: "",
+    uponRequest: "",
+    duration: "",
+    q3: "",
+    q3Reason: "",
+    challenges: "",
+    relevanceRating: "",
+    q4: "",
+    q4Reason: "",
+    q5: "",
+    q5Reason: "",
+    coherenceRating: "",
+    q6: "",
+    q6Reason: "",
+    q7Satisfied: "",
+    q7_1: "",
+    satisfactionRating: "",
+    q7_2: "",
+    q7_2Reason: "",
+    q8: "",
+    q8Reason: "",
+    q9_1: "",
+    q9_1Spec: "",
+    q9_2: "",
+    q9_3: "",
+    q9_4: "",
+    q9_5: "",
+    q9_6: "",
+    q9_7: "",
+    q9_8: "",
+    q9_9: "",
+    q9_10: "",
+    q10_e: "",
+    q9_11: [],
+    q9_11other: "",
+    q9_12: "",
+    q9_12Spec: "",
+    q9_13: "",
+    q9_13other: "",
+    q9_14: "",
+    impactRating: "",
+    q10: "",
+    q10Reason: "",
+    q10_1: "",
+    sustainabilityRating: "",
+    q11: "",
+    q11_1: "",
+    q11_1spec: "",
+    q12: "",
+    note: "",
+    evaluator: "",
+  };
+
   const capture = [
     "shallow water payao",
     "lambaklad",
@@ -241,10 +327,7 @@ export default function Monitoring() {
 
         if (response.ok) {
           alert("Data successfully submitted!");
-        //   navigation.reset({
-        //     index: 0,
-        //     routes: [{ name: "Monitoring" }],
-        //   });
+          setFormData({ form: initialFormState });
         } else {
           throw new Error("Server error. Saving locally.");
         }
@@ -786,7 +869,8 @@ export default function Monitoring() {
               1. Quantity and quality of goods/project received
             </Text>
             <Text style={{ marginTop: 10 }}>
-              - Is it sufficient/enough? (Quantity) <Text style={{ color: "red" }}>*</Text>
+              - Is it sufficient/enough? (Quantity){" "}
+              <Text style={{ color: "red" }}>*</Text>
             </Text>
 
             <RadioButtonGroup
@@ -866,7 +950,10 @@ export default function Monitoring() {
               />
             </View>
 
-            <Text>- Is it new, has no defect or suitable? (quality) <Text style={{ color: "red" }}>*</Text></Text>
+            <Text>
+              - Is it new, has no defect or suitable? (quality){" "}
+              <Text style={{ color: "red" }}>*</Text>
+            </Text>
             <RadioButtonGroup
               size={16}
               containerStyle={{
@@ -949,8 +1036,9 @@ export default function Monitoring() {
               />
             </View>
 
-            <Text style={{ fontWeight: "bold", marginTop: 12 }}> 
-              2. Is it timely with the fishing/production/stocking season? <Text style={{ color: "red" }}>*</Text>
+            <Text style={{ fontWeight: "bold", marginTop: 12 }}>
+              2. Is it timely with the fishing/production/stocking season?{" "}
+              <Text style={{ color: "red" }}>*</Text>
             </Text>
             <RadioButtonGroup
               size={16}
@@ -1034,7 +1122,9 @@ export default function Monitoring() {
               />
             </View>
 
-            <Text>Is it upon request? <Text style={{ color: "red" }}>*</Text></Text>
+            <Text>
+              Is it upon request? <Text style={{ color: "red" }}>*</Text>
+            </Text>
             <RadioButtonGroup
               size={16}
               containerStyle={{
@@ -1066,7 +1156,9 @@ export default function Monitoring() {
               />
             </RadioButtonGroup>
 
-            <Text>Duration <Text style={{ color: "red" }}>*</Text></Text>
+            <Text>
+              Duration <Text style={{ color: "red" }}>*</Text>
+            </Text>
             <View
               style={{
                 height: 48,
@@ -1109,7 +1201,8 @@ export default function Monitoring() {
             </View>
 
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
-              3. Did the project address your key needs and{"\n"} challenges? <Text style={{ color: "red" }}>*</Text>
+              3. Did the project address your key needs and{"\n"} challenges?{" "}
+              <Text style={{ color: "red" }}>*</Text>
             </Text>
             <RadioButtonGroup
               size={16}
@@ -1201,7 +1294,8 @@ export default function Monitoring() {
             </View>
 
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
-              4. Was the project suitable for the local environment and economic conditions? <Text style={{ color: "red" }}>*</Text>
+              4. Was the project suitable for the local environment and economic
+              conditions? <Text style={{ color: "red" }}>*</Text>
             </Text>
             <RadioButtonGroup
               size={16}
@@ -1278,7 +1372,7 @@ export default function Monitoring() {
 
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
               5. Were beneficiaries/stakeholders engaged and coordinated
-              throughout the project?  <Text style={{ color: "red" }}>*</Text>
+              throughout the project? <Text style={{ color: "red" }}>*</Text>
             </Text>
             <RadioButtonGroup
               size={16}
@@ -1333,7 +1427,9 @@ export default function Monitoring() {
               </>
             )}
 
-            <Text style={{ fontWeight: "bold" }}>Rating on Coherence <Text style={{ color: "red" }}>*</Text></Text>
+            <Text style={{ fontWeight: "bold" }}>
+              Rating on Coherence <Text style={{ color: "red" }}>*</Text>
+            </Text>
 
             <View
               style={{
@@ -1361,7 +1457,8 @@ export default function Monitoring() {
             </View>
 
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
-              6. Were there any complementarity or duplications with other projects or initiatives? <Text style={{ color: "red" }}>*</Text>
+              6. Were there any complementarity or duplications with other
+              projects or initiatives? <Text style={{ color: "red" }}>*</Text>
             </Text>
             <RadioButtonGroup
               size={16}
@@ -1438,7 +1535,10 @@ export default function Monitoring() {
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
               7. Satisfaction on the project received
             </Text>
-            <Text>- Were you satisfied with the project given?  <Text style={{ color: "red" }}>*</Text></Text>
+            <Text>
+              - Were you satisfied with the project given?{" "}
+              <Text style={{ color: "red" }}>*</Text>
+            </Text>
             <RadioButtonGroup
               size={16}
               containerStyle={{
@@ -1493,7 +1593,7 @@ export default function Monitoring() {
             )}
 
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
-              Rating on Satisfaction  <Text style={{ color: "red" }}>*</Text>
+              Rating on Satisfaction <Text style={{ color: "red" }}>*</Text>
             </Text>
 
             <View
@@ -1522,7 +1622,10 @@ export default function Monitoring() {
               />
             </View>
 
-            <Text>- Were you able to use it as soon as given?  <Text style={{ color: "red" }}>*</Text></Text>
+            <Text>
+              - Were you able to use it as soon as given?{" "}
+              <Text style={{ color: "red" }}>*</Text>
+            </Text>
             <RadioButtonGroup
               size={16}
               containerStyle={{
@@ -1577,7 +1680,8 @@ export default function Monitoring() {
             )}
 
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
-              8. Were there problems encountered during project operation?  <Text style={{ color: "red" }}>*</Text>
+              8. Were there problems encountered during project operation?{" "}
+              <Text style={{ color: "red" }}>*</Text>
             </Text>
             <RadioButtonGroup
               size={16}
@@ -1655,7 +1759,10 @@ export default function Monitoring() {
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
               9. Benefits from the project
             </Text>
-            <Text>- Did it increase your catch/production (kg)?  <Text style={{ color: "red" }}>*</Text></Text>
+            <Text>
+              - Did it increase your catch/production (kg)?{" "}
+              <Text style={{ color: "red" }}>*</Text>
+            </Text>
             <RadioButtonGroup
               size={16}
               containerStyle={{
@@ -2090,7 +2197,8 @@ export default function Monitoring() {
               </Text>
             </View>
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
-              10. Is the project ongoing/operational/used?  <Text style={{ color: "red" }}>*</Text>
+              10. Is the project ongoing/operational/used?{" "}
+              <Text style={{ color: "red" }}>*</Text>
             </Text>
             <RadioButtonGroup
               size={16}
@@ -2168,7 +2276,7 @@ export default function Monitoring() {
             </View>
 
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
-              Rating on Sustainability  <Text style={{ color: "red" }}>*</Text>
+              Rating on Sustainability <Text style={{ color: "red" }}>*</Text>
             </Text>
 
             <View
@@ -2197,7 +2305,8 @@ export default function Monitoring() {
             </View>
 
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
-              11. Availability of market for the produce (fresh or processed)?  <Text style={{ color: "red" }}>*</Text>
+              11. Availability of market for the produce (fresh or processed)?{" "}
+              <Text style={{ color: "red" }}>*</Text>
             </Text>
             <RadioButtonGroup
               size={16}
@@ -2334,7 +2443,6 @@ export default function Monitoring() {
               value={formData.form.note}
               onChangeText={(text) => handleChange("note", text)}
               placeholder="Optional"
-
             />
             <Text style={{ fontWeight: "bold", marginTop: 12 }}>
               Evaluator's Name <Text style={{ color: "red" }}>*</Text>
