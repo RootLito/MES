@@ -716,14 +716,14 @@ const Summary = () => {
             </div>
           </div>
 
-          <div className="h-1/2 bg-white rounded-box shadow-sm p-6 flex flex-col">
+          <div className=" bg-white rounded-box shadow-sm p-6 flex flex-col">
             <div className="flex gap-2 items-center">
               <img src={coin} alt="" />
               <p className="font-black text-xl text-blue-950">
                 Other Source of Income
               </p>
             </div>
-            <div className="flex-1 flex items-center justify-center">
+            {/* <div className="flex-1 flex items-center justify-center">
               {otherIncomeBarData ? (
                 <div className="flex-1 h-full">
                   <ReactApexChart
@@ -738,6 +738,18 @@ const Summary = () => {
               ) : (
                 <span className="loading loading-spinner loading-xl"></span>
               )}
+            </div> */}
+            <div className="flex-1 flex items-center justify-center">
+              <ReactApexChart
+                options={{
+                  labels: incomeTypes,
+                  legend: { position: "right" },
+                }}
+                series={incomeCounts}
+                type="pie"
+                width={420}
+                height={420}
+              />
             </div>
           </div>
         </div>
@@ -832,9 +844,7 @@ const Summary = () => {
                       <table className="table-auto border-collapse border border-gray-300 w-full">
                         <thead className="text-gray-500">
                           <tr className="bg-gray-100">
-                            <th className="border border-gray-300 px-4 py-2 text-left">
-          
-                            </th>
+                            <th className="border border-gray-300 px-4 py-2 text-left"></th>
                             <th className="border border-gray-300 px-4 py-2 text-left">
                               Municipality
                             </th>
