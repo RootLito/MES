@@ -242,10 +242,10 @@ export default function Monitoring() {
 
         if (response.ok) {
           alert("Data successfully submitted!");
-          //   navigation.reset({
-          //     index: 0,
-          //     routes: [{ name: "Monitoring" }],
-          //   });
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Monitoring" }],
+            });
         } else {
           throw new Error("Server error. Saving locally.");
         }

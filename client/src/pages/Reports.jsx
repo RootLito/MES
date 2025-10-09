@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { format } from "date-fns";
+import { parse, format } from "date-fns";
 import axios from "axios";
 import { MdPrint, MdFileOpen } from "react-icons/md";
 import { useReactToPrint } from "react-to-print";
@@ -110,8 +110,8 @@ const Reports = () => {
     worksheet.mergeCells("B1:M1"); // Personal Information
     worksheet.mergeCells("N1:P1"); // Location
     worksheet.mergeCells("Q1:Q2"); // Project Received
-    worksheet.mergeCells("R1:R2"); 
-    worksheet.mergeCells("S1:S2"); 
+    worksheet.mergeCells("R1:R2");
+    worksheet.mergeCells("S1:S2");
 
     worksheet.mergeCells("T1:V1"); // Efficiency
     worksheet.mergeCells("W1:X1"); // Relevance
@@ -186,7 +186,7 @@ const Reports = () => {
         survey.boatR,
         survey.nameAssoc,
         survey.totalMember,
-        survey.mainIncome, 
+        survey.mainIncome,
         survey.otherIncome,
         survey.province,
         survey.municipality,
@@ -273,7 +273,7 @@ const Reports = () => {
 
         <div
           ref={contentRef}
-          className="h-120 overflow-x-auto  border border-base-content/5 bg-base-100 text-xs"
+          className="h-172 overflow-x-auto  border border-base-content/5 bg-base-100 text-xs"
         >
           <table
             ref={tableRef}
@@ -419,100 +419,119 @@ const Reports = () => {
             </thead>
 
             <tbody className="bg-white">
-              {surveys.slice().reverse().map((survey, index) => (
-                <tr key={index} className="py-0">
-                  <th className="py-2 whitespace-nowrap">{index + 1}</th>
+              {surveys
+                .slice()
+                .reverse()
+                .map((survey, index) => (
+                  <tr key={index} className="py-0">
+                    <th className="py-2 whitespace-nowrap">{index + 1}</th>
 
-                  <td className="py-2 whitespace-nowrap">{survey.resType}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.name}</td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.civilStatus}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">{survey.sex}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.age}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.hhMember}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.fishR}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.boatR}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.nameAssoc}</td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.totalMember}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.mainIncome}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.otherIncome}
-                  </td>
+                    <td className="py-2 whitespace-nowrap">{survey.resType}</td>
+                    <td className="py-2 whitespace-nowrap">{survey.name}</td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.civilStatus}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">{survey.sex}</td>
+                    <td className="py-2 whitespace-nowrap">{survey.age}</td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.hhMember}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">{survey.fishR}</td>
+                    <td className="py-2 whitespace-nowrap">{survey.boatR}</td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.nameAssoc}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.totalMember}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.mainIncome}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.otherIncome}
+                    </td>
 
-                  <td className="py-2 whitespace-nowrap">{survey.province}</td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.municipality}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">{survey.baranggay}</td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.projectReceived}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.specProject}
-                  </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.province}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.municipality}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.baranggay}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.projectReceived}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.specProject}
+                    </td>
 
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.noUnitsReceived}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.noUnitsReceived}
+                    </td>
+                    {/* <td className="py-2 whitespace-nowrap">
                     {survey.dateReceived
                       ? format(new Date(survey.dateReceived), "dd/MM/yyyy")
                       : "N/A"}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">{survey.quantity}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.quality}</td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.uponRequest} {survey.duration}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">{survey.q3}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.q4}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.q5}</td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.q6 === "Yes" ? survey.q6Reason : survey.q6}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.q7Satisfied}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.q8 === "none" ? survey.q8 : survey.q8Reason}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">{survey.q9_2}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.q9_3}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.q9_4}</td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.q9_1 !== "N/A" ? survey.q9_1Spec : survey.q9_1}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">{survey.q9_8}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.q9_9}</td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.q9_11?.join(", ") || "—"}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.q9_12 === "yes"
-                      ? survey.q9_13 === "others"
-                        ? survey.q9_13other
-                        : survey.q9_13
-                      : survey.q9_12}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.q9_14 == "yes" ? survey.q9_12Spec : survey.q9_14}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.q10 === "No" ? survey.q10Reason : survey.q10}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">
-                    {survey.q11 == "yes" ? survey.q11_1 : survey.q11}
-                  </td>
-                  <td className="py-2 whitespace-nowrap">{survey.q12}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.note}</td>
-                  <td className="py-2 whitespace-nowrap">{survey.evaluator}</td>
-                </tr>
-              ))}
+                  </td> */}
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.dateReceived}
+                    </td>
+
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.quantity}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">{survey.quality}</td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.uponRequest} {survey.duration}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">{survey.q3}</td>
+                    <td className="py-2 whitespace-nowrap">{survey.q4}</td>
+                    <td className="py-2 whitespace-nowrap">{survey.q5}</td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.q6 === "Yes" ? survey.q6Reason : survey.q6}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.q7Satisfied}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.q8 === "none" ? survey.q8 : survey.q8Reason}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">{survey.q9_2}</td>
+                    <td className="py-2 whitespace-nowrap">{survey.q9_3}</td>
+                    <td className="py-2 whitespace-nowrap">{survey.q9_4}</td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.q9_1 !== "N/A" ? survey.q9_1Spec : survey.q9_1}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">{survey.q9_8}</td>
+                    <td className="py-2 whitespace-nowrap">{survey.q9_9}</td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.q9_11?.join(", ") || "—"}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.q9_12 === "yes"
+                        ? survey.q9_13 === "others"
+                          ? survey.q9_13other
+                          : survey.q9_13
+                        : survey.q9_12}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.q9_14 == "yes" ? survey.q9_12Spec : survey.q9_14}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.q10 === "No" ? survey.q10Reason : survey.q10}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.q11 == "yes" ? survey.q11_1 : survey.q11}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">{survey.q12}</td>
+                    <td className="py-2 whitespace-nowrap">{survey.note}</td>
+                    <td className="py-2 whitespace-nowrap">
+                      {survey.evaluator}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
