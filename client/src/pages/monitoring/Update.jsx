@@ -219,7 +219,7 @@ const Update = () => {
         setShowToast(false);
       }, 3000);
 
-    //   console.log("Form updated successfully:", res.data);
+      //   console.log("Form updated successfully:", res.data);
     } catch (err) {
       console.error(
         "Error occurred:",
@@ -706,7 +706,7 @@ const Update = () => {
             </div>
             <div className="flex flex-col flex-1">
               <p className="text-sm">Date Received/Implemented</p>
-              <input
+              {/* <input
                 type="date"
                 name="dateReceived"
                 value={
@@ -715,6 +715,15 @@ const Update = () => {
                     : ""
                 }
                 onChange={handleChange}
+                className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
+                required
+              /> */}
+              <input
+                type="text"
+                name="dateReceived"
+                value={formData.form.dateReceived || ""}
+                onChange={handleChange}
+                placeholder="Enter date"
                 className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
                 required
               />
@@ -1764,9 +1773,7 @@ const Update = () => {
           </div>
           <div className="flex flex-col gap-2 px-5 sm:flex-row sm:p-2">
             <div className="flex flex-col flex-1">
-              <p className="text-sm sm:indent-10">
-                Species
-              </p>
+              <p className="text-sm sm:indent-10">Species</p>
             </div>
             <div className="flex flex-col flex-1 gap-2">
               <input
