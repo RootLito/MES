@@ -742,7 +742,7 @@ const Summary = () => {
 
             
             <div className="flex-1 flex items-center justify-center">
-              <ReactApexChart
+              {/* <ReactApexChart
                 options={{
                   labels: incomeTypes,
                   legend: { position: "right" },
@@ -751,7 +751,7 @@ const Summary = () => {
                 type="pie"
                 width={420}
                 height={420}
-              />
+              /> */}
             </div>
           </div>
         </div>
