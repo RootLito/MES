@@ -701,14 +701,14 @@ const Summary = () => {
             <div className="flex-1 flex items-center justify-center">
               {barData ? (
                 <div className="flex-1 h-full">
-                  {/* <ReactApexChart
+                  <ReactApexChart
                     key={JSON.stringify(barData)}
                     options={barData.options}
                     series={barData.series}
                     type="bar"
                     width="100%"
                     height="100%"
-                  /> */}
+                  />
                 </div>
               ) : (
                 <span className="loading loading-spinner loading-xl"></span>
@@ -740,18 +740,21 @@ const Summary = () => {
               )}
             </div> */}
 
-            
             <div className="flex-1 flex items-center justify-center">
-              {/* <ReactApexChart
-                options={{
-                  labels: incomeTypes,
-                  legend: { position: "right" },
-                }}
-                series={incomeCounts}
-                type="pie"
-                width={420}
-                height={420}
-              /> */}
+              {barData ? (
+                <ReactApexChart
+                  options={{
+                    labels: incomeTypes,
+                    legend: { position: "right" },
+                  }}
+                  series={incomeCounts}
+                  type="pie"
+                  width={420}
+                  height={420}
+                />
+              ) : (
+                <span className="loading loading-spinner loading-xl"></span>
+              )}
             </div>
           </div>
         </div>
