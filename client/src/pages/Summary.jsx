@@ -587,7 +587,7 @@ const Summary = () => {
               <p className="font-black text-xl text-blue-950">Age Bracket</p>
             </div>
             <div className="flex-1 flex items-center justify-center">
-              {barData ? (
+              {chartData ? (
                 <div className="flex-1 p-2">
                   <ReactApexChart
                     options={chartData.options}
@@ -741,7 +741,7 @@ const Summary = () => {
             </div> */}
 
             <div className="flex-1 flex items-center justify-center">
-              {barData ? (
+              {(incomeCounts.length > 0 || incomeTypes.length > 0) ? (
                 <ReactApexChart
                   options={{
                     labels: incomeTypes,
