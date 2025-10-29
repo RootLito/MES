@@ -739,7 +739,9 @@ const Summary = () => {
                 <span className="loading loading-spinner loading-xl"></span>
               )}
             </div> */}
-            <div className="flex-1 flex items-center justify-center">
+
+
+            {/* <div className="flex-1 flex items-center justify-center">
               <ReactApexChart
                 options={{
                   labels: incomeTypes,
@@ -749,7 +751,7 @@ const Summary = () => {
                 type="pie"
                 width={420}
                 height={420}
-              />
+              /> */}
             </div>
           </div>
         </div>
