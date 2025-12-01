@@ -9,10 +9,10 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/regions": {
-        target: "https://psgc.rootscratch.com", // The target URL
-        changeOrigin: true, // Ensures the `Origin` header is updated
-        secure: false, // Set to `false` if using self-signed certificates
-        rewrite: (path) => path.replace(/^\/regions/, ""), // Rewrite the path, if necessary
+        target: "https://psgc.rootscratch.com", 
+        changeOrigin: true,
+        secure: false, 
+        rewrite: (path) => path.replace(/^\/regions/, ""), 
       },
     },
   },

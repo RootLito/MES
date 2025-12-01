@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { MdDeleteForever, MdEditDocument, MdVisibility } from "react-icons/md";
+import {
+  MdDeleteForever,
+  MdEditDocument,
+  MdVisibility,
+  MdArrowBackIos,
+  MdArrowForwardIos,
+} from "react-icons/md";
 
 const List = () => {
   const [selectedSurvey, setSelectedSurvey] = useState(null);
@@ -11,12 +17,11 @@ const List = () => {
   const [deleted, setDeleted] = useState(false);
   const [selectedSurveys, setSelectedSurveys] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  const modalRefBulk = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [filteredSurveys, setFilteredSurveys] = useState([]);
-
+  const modalRefBulk = useRef(null);
   const modalRef = useRef(null);
   const navigate = useNavigate();
 
@@ -31,18 +36,42 @@ const List = () => {
     );
   }, [selectedSurveys, filteredSurveys]);
 
+  // useEffect(() => {
+  //   const filteredData = surveys.filter(
+  //     (survey) =>
+  //       survey.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //       survey.baranggay.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //       survey.municipality.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //       survey.province.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //       survey.projectReceived
+  //         .toLowerCase()
+  //         .includes(searchQuery.toLowerCase()) ||
+  //       survey.specProject.toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
+  //   setFilteredSurveys(filteredData);
+  //   setCurrentPage(1);
+  // }, [searchQuery, surveys]);
   useEffect(() => {
-    const filteredData = surveys.filter(
-      (survey) =>
-        survey.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        survey.baranggay.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        survey.municipality.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        survey.province.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        survey.projectReceived
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        survey.specProject.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredData = surveys.filter((survey) => {
+      return (
+        (survey.name &&
+          survey.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (survey.baranggay &&
+          survey.baranggay.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (survey.municipality &&
+          survey.municipality
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())) ||
+        (survey.province &&
+          survey.province.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (survey.projectReceived &&
+          survey.projectReceived
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())) ||
+        (survey.specProject &&
+          survey.specProject.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    });
     setFilteredSurveys(filteredData);
     setCurrentPage(1);
   }, [searchQuery, surveys]);
@@ -86,25 +115,6 @@ const List = () => {
 
   const isSurveySelected = (id) => selectedSurveys.includes(id);
 
-  //   const handleDeleteSelected = async () => {
-  //     if (selectedSurveys.length === 0) return;
-
-  //     try {
-  //       const res = await axios.delete("https://bfar-server.onrender.com/survey/multiple", {
-  //         data: { ids: selectedSurveys },
-  //       });
-  //       setSelectedSurveys([]);
-  //       setSelectAll(false);
-  //       if (!res) return;
-  //       setDeleted(true);
-  //       setTimeout(() => setDeleted(false), 3000);
-
-  //       setSurveys((prev) => prev.filter(({ _id }) => _id !== id));
-  //       setFilteredSurveys((prev) => prev.filter(({ _id }) => _id !== id));
-  //     } catch (err) {
-  //       console.error("Delete error:", err);
-  //     }
-  //   };
   const handleDeleteSelected = async () => {
     if (selectedSurveys.length === 0) return;
 
@@ -163,8 +173,18 @@ const List = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const pagesToShow = 3;
+  const totalPages = Math.ceil(filteredSurveys.length / itemsPerPage);
+
+  let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
+  let endPage = Math.min(totalPages, startPage + pagesToShow - 1);
+
+  if (endPage - startPage + 1 < pagesToShow) {
+    startPage = Math.max(1, endPage - pagesToShow + 1);
+  }
+
   const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(filteredSurveys.length / itemsPerPage); i++) {
+  for (let i = startPage; i <= endPage; i++) {
     pageNumbers.push(i);
   }
 
@@ -367,7 +387,7 @@ const List = () => {
           onClick={() => paginate(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          «
+          <MdArrowBackIos />
         </button>
         {pageNumbers.map((number) => (
           <button
@@ -383,9 +403,9 @@ const List = () => {
         <button
           className="join-item btn"
           onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage >= pageNumbers.length}
+          disabled={currentPage === totalPages}
         >
-          »
+          <MdArrowForwardIos />
         </button>
       </div>
 

@@ -718,6 +718,10 @@ const Update = () => {
                 className="input w-full border-1 border-gray-400 px-3 h-[42px] rounded-md focus:border-0 focus:outline-none"
                 required
               /> */}
+
+
+
+              {/* pansamantala  */}
               <input
                 type="text"
                 name="dateReceived"
