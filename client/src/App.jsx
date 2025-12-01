@@ -12,6 +12,7 @@ import Evaluator from "./pages/Evaluator";
 import Login from "./auth/Login";
 import Summary from "./pages/Summary";
 import Docs from "./pages/Docs";
+import SurveyMap from "./pages/SurveyMap";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/evaluators" element={<Evaluator />} />
           <Route path="/documentation" element={<Docs />} />
+          <Route path="/map" element={<SurveyMap />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

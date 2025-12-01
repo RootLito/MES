@@ -1,4 +1,4 @@
-import React from "react";
+import { FaMapLocationDot } from "react-icons/fa6";
 import logo from "./../assets/images/bfar.png";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -94,6 +94,18 @@ const Sidebar = () => {
           >
             <MdMenuBook className="ml-5" size={18} />
             Documentation
+          </NavLink>
+
+          <NavLink
+            to="/map"
+            className={({ isActive }) =>
+              isActive
+                ? "btn btn-active bg-blue-950 text-white border-0 justify-start"
+                : "btn hover:bg-blue-950 text-blue-950 hover:text-white border-0 justify-start bg-gray-100 shadow-none"
+            }
+          >
+            <FaMapLocationDot className="ml-5" size={18} />
+            Survey Map
           </NavLink>
         </div>
         <button
