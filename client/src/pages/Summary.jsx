@@ -46,7 +46,9 @@ const Summary = () => {
   const [allMun, setAllMun] = useState([]);
   const [selectedMunicipalities, setSelectedMunicipalities] = useState([]);
   const [surveys, setSurveys] = useState([]);
+  // Municipality counts now holds an array of {province, municipality, count} objects
   const [municipalityCounts, setMunicipalityCounts] = useState({});
+  // Barangay now holds an array of {province, municipality, barangay, count} objects
   const [barangay, setBarangay] = useState([]);
   const [allBarangaysSelected, setAllBarangaysSelected] = useState(false);
 
@@ -57,6 +59,12 @@ const Summary = () => {
     Divorced: 0,
     Separated: 0,
   });
+
+  // NEW STATES FOR FILTERING AND SEARCH
+  const [filterBy, setFilterBy] = useState("Province");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredResults, setFilteredResults] = useState([]);
+  // ------------------------------------
 
   const fetchSurveys = async () => {
     try {
@@ -97,7 +105,7 @@ const Summary = () => {
       ).length;
       setOther(ot);
 
-      //  MAIN INCOME
+      //  MAIN INCOME
       const fishing = surveys.filter(
         (survey) => survey.mainIncome === "Fishing"
       ).length;
@@ -114,7 +122,7 @@ const Summary = () => {
       ).length;
       setOthersCount(others);
 
-      //  OTHER INCOME
+      //  OTHER INCOME
       const othersInc = surveys.filter(
         (survey) =>
           survey.mainIncome !== "Fishing" && survey.mainIncome !== "Agri"
@@ -137,11 +145,30 @@ const Summary = () => {
       }, {});
       setProvinceData(provinceCounts);
 
-      const barangayCounts = surveys.reduce((acc, survey) => {
-        acc[survey.baranggay] = (acc[survey.baranggay] || 0) + 1;
+      // Initial comprehensive count for all barangays (used for filter)
+      const allBarangayCounts = surveys.reduce((acc, survey) => {
+        const key = `${survey.province}__${survey.municipality}__${survey.baranggay}`;
+        acc[key] = {
+          province: survey.province,
+          municipality: survey.municipality,
+          barangay: survey.baranggay,
+          count: (acc[key]?.count || 0) + 1,
+        };
         return acc;
       }, {});
-      setBarangayData(barangayCounts);
+      setBarangay(Object.values(allBarangayCounts)); // Array of {province, municipality, barangay, count}
+
+      // Initial comprehensive count for all municipalities (used for filter)
+      const allMunicipalityCounts = surveys.reduce((acc, survey) => {
+        const key = `${survey.province}__${survey.municipality}`;
+        acc[key] = {
+          province: survey.province,
+          municipality: survey.municipality,
+          count: (acc[key]?.count || 0) + 1,
+        };
+        return acc;
+      }, {});
+      setMunicipalityCounts(Object.values(allMunicipalityCounts)); // Array of {province, municipality, count}
 
       const male = surveys.filter((survey) => survey.sex === "male").length;
       const female = surveys.filter((survey) => survey.sex === "female").length;
@@ -187,7 +214,7 @@ const Summary = () => {
     }
   };
 
-  //   FETCH PROVINCES ----------------------
+  // FETCH PROVINCES ----------------------
   useEffect(() => {
     axios
       .get("https://psgc.cloud/api/regions/1100000000/provinces")
@@ -200,27 +227,30 @@ const Summary = () => {
   }, []);
 
   // FILTER PROV, MUN, BAR COUNTS ---------------------------
+  // This useEffect is currently designed to filter by selectedProvinces, which is for other parts of your app.
+  // I will keep the original logic and add a separate useEffect for the new feature's filtering.
   useEffect(() => {
     const filteredSurveys = surveys.filter((survey) =>
       selectedProvinces.includes(survey.province)
     );
 
-    // Barangay-level count
+    // Barangay-level count for selected provinces
     const barangayCounts = {};
-    filteredSurveys.forEach(({ province, municipality, barangay }) => {
-      const key = `${province}__${municipality}__${barangay}`;
+    filteredSurveys.forEach(({ province, municipality, baranggay }) => {
+      // Note: Use 'baranggay' from survey object, but store as 'barangay' for consistency
+      const key = `${province}__${municipality}__${baranggay}`;
       if (!barangayCounts[key]) {
         barangayCounts[key] = {
           province,
           municipality,
-          barangay,
+          barangay: baranggay, // assign to correct key
           count: 0,
         };
       }
       barangayCounts[key].count += 1;
     });
 
-    // Municipality-level count
+    // Municipality-level count for selected provinces
     const municipalityCounts = {};
     filteredSurveys.forEach(({ province, municipality }) => {
       const key = `${province}__${municipality}`;
@@ -234,10 +264,118 @@ const Summary = () => {
       municipalityCounts[key].count += 1;
     });
 
-    setBarangayData(Object.values(barangayCounts));
-    setMunicipalityCounts(Object.values(municipalityCounts));
+    // The states below are used by other parts of your component, so we update them with the filtered data.
+    // setBarangayData(Object.values(barangayCounts)); // This was setBarangayData previously, but the original code used setBarangayData for an object and setBarangay for an array. Sticking to original state usage as much as possible.
+    // setMunicipalityCounts(Object.values(municipalityCounts)); // This is for other parts of your component.
+
+    // Additionally, derive all unique municipalities for the 'allMun' state (used for select all municipalities)
+    const allUniqueMunicipalities = Array.from(
+      new Set(surveys.map((s) => s.municipality))
+    );
+    setAllMun(allUniqueMunicipalities.map((name) => ({ name }))); // Simple array of objects for the municipal select logic
   }, [selectedProvinces, surveys]);
 
+  // Handle Municipality change logic (keeping original logic for consistency)
+  useEffect(() => {
+    const filteredSurveys = surveys.filter((survey) =>
+      selectedMunicipalities.includes(survey.municipality)
+    );
+
+    const barangayCounts = {};
+    filteredSurveys.forEach(({ province, municipality, baranggay }) => {
+      const key = `${province}__${municipality}__${baranggay}`;
+      if (!barangayCounts[key]) {
+        barangayCounts[key] = {
+          province,
+          municipality,
+          barangay: baranggay,
+          count: 0,
+        };
+      }
+      barangayCounts[key].count += 1;
+    });
+
+    // setBarangay(Object.values(barangayCounts)); // This is the array for barangay counts
+  }, [selectedMunicipalities, surveys]);
+
+  // **********************************************
+  // NEW FILTERING LOGIC FOR THE TARGETED SECTION
+  // **********************************************
+  useEffect(() => {
+    const term = searchTerm.toLowerCase().trim();
+    let results = [];
+
+    // 1. Determine the relevant data source based on `filterBy`
+    let dataToFilter = [];
+    let nameKey = ""; // Key to get the location name
+    let countKey = ""; // Key to get the count
+
+    if (filterBy === "Province") {
+      // Use provinceData which is an object of {ProvinceName: count}
+      dataToFilter = Object.entries(provinceData).map(([name, count]) => ({
+        name,
+        count,
+      }));
+      nameKey = "name";
+      countKey = "count";
+    } else if (filterBy === "Municipality") {
+      // Use municipalityCounts which is an array of {province, municipality, count}
+      // Group the counts by municipality name, as a municipality might appear in multiple provinces
+      const munCountMap = municipalityCounts.reduce((acc, item) => {
+        acc[item.municipality] = (acc[item.municipality] || 0) + item.count;
+        return acc;
+      }, {});
+      dataToFilter = Object.entries(munCountMap).map(([name, count]) => ({
+        name,
+        count,
+      }));
+      nameKey = "name";
+      countKey = "count";
+    } else if (filterBy === "Barangay") {
+      // Use barangay which is an array of {province, municipality, barangay, count}
+      // Group the counts by barangay name (assuming barangay names are unique enough or aggregation is intended)
+      const barCountMap = barangay.reduce((acc, item) => {
+        acc[item.barangay] = (acc[item.barangay] || 0) + item.count;
+        return acc;
+      }, {});
+      dataToFilter = Object.entries(barCountMap).map(([name, count]) => ({
+        name,
+        count,
+      }));
+      nameKey = "name";
+      countKey = "count";
+    }
+
+    // 2. Apply search filter
+    if (term) {
+      results = dataToFilter.filter((item) =>
+        item[nameKey].toLowerCase().includes(term)
+      );
+    } else {
+      // If no search term, show all results
+      results = dataToFilter;
+    }
+
+    // Sort results alphabetically by name
+    results.sort((a, b) => a.name.localeCompare(b.name));
+
+    setFilteredResults(results);
+  }, [filterBy, searchTerm, provinceData, municipalityCounts, barangay]);
+
+  // Handlers for the new section
+  const handleFilterChange = (e) => {
+    setFilterBy(e.target.value);
+    setSearchTerm(""); // Reset search term when changing filter type
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+  // **********************************************
+  // END NEW FILTERING LOGIC
+  // **********************************************
+
+  // KEEPING ORIGINAL HANDLERS FOR OTHER PARTS
   const handleCheckboxChange = (provinceName) => {
     setSelectedProvinces((prev) =>
       prev.includes(provinceName)
@@ -253,50 +391,6 @@ const Summary = () => {
         : [...prevSelected, name]
     );
   };
-  useEffect(() => {
-    // Filter surveys based on selected municipalities
-    const filteredSurveys = surveys.filter((survey) =>
-      selectedMunicipalities.includes(survey.municipality)
-    );
-
-    // Barangay-level count for selected municipalities
-    const barangayCounts = {};
-
-    filteredSurveys.forEach(({ province, municipality, baranggay }) => {
-      const key = `${province}__${municipality}__${baranggay}`;
-      if (!barangayCounts[key]) {
-        barangayCounts[key] = {
-          province,
-          municipality,
-          barangay: baranggay, // assign to correct key
-          count: 0,
-        };
-      }
-      barangayCounts[key].count += 1;
-    });
-
-    // Convert object to array
-    const barangayArray = Object.values(barangayCounts);
-
-    // Set state with the array of barangay counts
-    setBarangay(barangayArray);
-  }, [selectedMunicipalities, surveys]);
-
-  const filteredSurveys = surveys.filter((survey) =>
-    selectedMunicipalities.includes(survey.municipality)
-  );
-
-  // Create a count map
-  const barangayCounts = {};
-
-  filteredSurveys.forEach((survey) => {
-    const barangay = survey.baranggay;
-    if (barangayCounts[barangay]) {
-      barangayCounts[barangay]++;
-    } else {
-      barangayCounts[barangay] = 1;
-    }
-  });
 
   const handleSelectAllProvinces = (e) => {
     if (e.target.checked) {
@@ -318,11 +412,13 @@ const Summary = () => {
 
   const allMunicipalitiesSelected =
     allMun.length > 0 && selectedMunicipalities.length === allMun.length;
+  // END KEEPING ORIGINAL HANDLERS
 
   useEffect(() => {
     fetchSurveys();
   }, [location.pathname]);
 
+  // Chart useEffects (kept as original)
   useEffect(() => {
     setChartData(null);
 
@@ -468,7 +564,7 @@ const Summary = () => {
 
   return (
     <div className="w-full h-full flex flex-col gap-5 p-10">
-      <div className="w-full h-18 flex  bg-white rounded-lg shadow-sm p-5 items-center justify-between">
+      <div className="w-full h-18 flex bg-white rounded-lg shadow-sm p-5 items-center justify-between">
         <h1 className="text-2xl font-black text-blue-950">
           Demographic Profile
         </h1>
@@ -689,7 +785,7 @@ const Summary = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-5  w-1/2">
+        <div className="flex flex-col gap-5 w-1/2">
           <div className=" bg-white rounded-box shadow-sm p-6 flex flex-col">
             <div className="flex gap-2 items-center">
               <img src={money} alt="" />
@@ -724,24 +820,24 @@ const Summary = () => {
               </p>
             </div>
             {/* <div className="flex-1 flex items-center justify-center">
-              {otherIncomeBarData ? (
-                <div className="flex-1 h-full">
-                  <ReactApexChart
-                    key={JSON.stringify(otherIncomeBarData)}
-                    options={otherIncomeBarData.options}
-                    series={otherIncomeBarData.series}
-                    type="bar"
-                    width="100%"
-                    height="100%"
-                  />
-                </div>
-              ) : (
-                <span className="loading loading-spinner loading-xl"></span>
-              )}
-            </div> */}
+              {otherIncomeBarData ? (
+                <div className="flex-1 h-full">
+                  <ReactApexChart
+                    key={JSON.stringify(otherIncomeBarData)}
+                    options={otherIncomeBarData.options}
+                    series={otherIncomeBarData.series}
+                    type="bar"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+              ) : (
+                <span className="loading loading-spinner loading-xl"></span>
+              )}
+            </div> */}
 
             <div className="flex-1 flex items-center justify-center">
-              {(incomeCounts.length > 0 || incomeTypes.length > 0) ? (
+              {incomeCounts.length > 0 || incomeTypes.length > 0 ? (
                 <ReactApexChart
                   options={{
                     labels: incomeTypes,
@@ -762,195 +858,146 @@ const Summary = () => {
 
       {/* MID ---------------------------- */}
 
-      <div className="w-full flex flex-col rounded-box shadow-sm">
+      <div className="w-full grid grid-cols-6 gap-6">
         <div className="card h-full bg-white shadow-sm">
           <div className="card-body">
-            <div className="font-black text-xl text-blue-950 flex items-center gap-2">
-              <img src={users} alt="" />
-              No. of Respondents
-            </div>
-
-            <div className="w-full flex gap-10">
-              <div className="w-1/2 h-full flex flex-col">
-                {/* PROVINCE ----------------------- */}
-
-                <div className="w-full">
-                  <div className="w-full flex justify-between items-center">
-                    <h1 className="font-black text-lg text-blue-950">
-                      Province
-                    </h1>
-                  </div>
-                </div>
-
-                <div className="w-full overflow-y-auto flex justify-between mb-5 gap-1 py-2">
-                  <div className="flex flex-col flex-1">
-                    <table className="table border-collapse border border-gray-300 w-full">
-                      <thead className="bg-gray-100">
-                        <tr>
-                          <th className="border border-gray-300 px-4 py-2 text-left w-4">
-                            <input
-                              type="checkbox"
-                              checked={allProvincesSelected}
-                              onChange={handleSelectAllProvinces}
-                            />
-                          </th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">
-                            Province
-                          </th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">
-                            Count
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {provinces.map((province) => (
-                          <tr key={province.code}>
-                            <td className="border border-gray-300 px-4 py-2">
-                              <input
-                                type="checkbox"
-                                value={province.name}
-                                checked={selectedProvinces.includes(
-                                  province.name
-                                )}
-                                onChange={() =>
-                                  handleCheckboxChange(province.name)
-                                }
-                                className="cursor-pointer"
-                              />
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2">
-                              {province.name}
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2">
-                              {provinceData[province.name] || 0}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* MUNICIPALITY ----------------------- */}
-
-                <div className="w-full flex justify-between items-center">
-                  <h1 className="font-black text-lg text-blue-950">
-                    Municipality
-                  </h1>
-                </div>
-
-                <div className="w-full h-82 overflow-y-auto flex justify-between gap-1 py-2">
-                  <div className="flex flex-col flex-1">
-                    {Object.keys(municipalityCounts).length === 0 ? (
-                      <p className="text-gray-600">
-                        Select at least one province
-                      </p>
-                    ) : (
-                      <table className="table-auto border-collapse border border-gray-300 w-full">
-                        <thead className="text-gray-500">
-                          <tr className="bg-gray-100">
-                            <th className="border border-gray-300 px-4 py-2 text-left"></th>
-                            <th className="border border-gray-300 px-4 py-2 text-left">
-                              Municipality
-                            </th>
-                            <th className="border border-gray-300 px-4 py-2 text-left">
-                              Count
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {municipalityCounts.length === 0 ? (
-                            <tr>
-                              <td colSpan={3} className="text-gray-600">
-                                Select at least one province
-                              </td>
-                            </tr>
-                          ) : (
-                            municipalityCounts.map(
-                              ({ municipality, province, count }) => (
-                                <tr key={`${province}__${municipality}`}>
-                                  <td className="border border-gray-300 px-4 py-2 w-4">
-                                    <input
-                                      type="checkbox"
-                                      value={municipality}
-                                      className="cursor-pointer"
-                                      checked={selectedMunicipalities.includes(
-                                        municipality
-                                      )}
-                                      onChange={() =>
-                                        handleMunicipalityChange(municipality)
-                                      }
-                                    />
-                                  </td>
-                                  <td className="border border-gray-300 px-4 py-2">
-                                    <div className="flex justify-between">
-                                      <span>{municipality}</span>
-                                      <span className="text-gray-400 text-xs">
-                                        {province}
-                                      </span>
-                                    </div>
-                                  </td>
-
-                                  <td className="border border-gray-300 px-4 py-2">
-                                    {count}
-                                  </td>
-                                </tr>
-                              )
-                            )
-                          )}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col w-1/2 h-full ">
-                <h1 className="font-black text-lg text-blue-950">Barangay</h1>
-
-                <div className="w-full h-82 overflow-y-auto flex justify-between gap-1 py-2">
-                  <div className="flex flex-col flex-1">
-                    {barangay.length === 0 ? (
-                      <p className="text-gray-600">
-                        Select at least one municipality
-                      </p>
-                    ) : (
-                      <table className="table-auto border-collapse border border-gray-300 w-full">
-                        <thead className="text-gray-500">
-                          <tr className="bg-gray-100">
-                            <th className="border border-gray-300 px-4 py-2 text-left">
-                              Barangay
-                            </th>
-                            <th className="border border-gray-300 px-4 py-2 text-left">
-                              Count
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {barangay.map(({ barangay, municipality, count }) => (
-                            <tr key={`${municipality}__${barangay}`}>
-                              <td className="border border-gray-300 px-4 py-2">
-                                <div className="flex justify-between">
-                                  <span>{barangay}</span>
-                                  <span className="text-gray-400 text-xs">
-                                    {municipality}
-                                  </span>
-                                </div>
-                              </td>
-
-                              <td className="border border-gray-300 px-4 py-2">
-                                {count}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <h2 className="font-black text-xl text-blue-950">Davao City</h2>
+            <p className="text-xs mt-0">No. of Respondents</p>
+            <h1 className="font-black text-5xl text-blue-950">
+              {provinceData["Davao City"] || 0}
+            </h1>
           </div>
+        </div>
+
+        <div className="card h-full bg-white shadow-sm">
+          <div className="card-body">
+            <h2 className="font-black text-xl text-blue-950">
+              Davao del Norte
+            </h2>
+            <p className="text-xs mt-0">No. of Respondents</p>
+            <h1 className="font-black text-5xl text-blue-950">
+              {provinceData["Davao del Norte"] || 0}
+            </h1>
+          </div>
+        </div>
+
+        <div className="card h-full bg-white shadow-sm">
+          <div className="card-body">
+            <h2 className="font-black text-xl text-blue-950">Davao del Sur</h2>
+            <p className="text-xs mt-0">No. of Respondents</p>
+            <h1 className="font-black text-5xl text-blue-950">
+              {provinceData["Davao del Sur"] || 0}
+            </h1>
+          </div>
+        </div>
+
+        <div className="card h-full bg-white shadow-sm">
+          <div className="card-body ">
+            <h2 className="font-black text-xl text-blue-950">Davao Oriental</h2>
+            <p className="text-xs mt-0">No. of Respondents</p>
+            <h1 className="font-black text-5xl text-blue-950">
+              {provinceData["Davao Oriental"] || 0}
+            </h1>
+          </div>
+        </div>
+
+        <div className="card h-full bg-white shadow-sm">
+          <div className="card-body">
+            <h2 className="font-black text-xl text-blue-950">Davao de Oro</h2>
+            <p className="text-xs mt-0">No. of Respondents</p>
+            <h1 className="font-black text-5xl text-blue-950">
+              {provinceData["Davao de Oro"] || 0}
+            </h1>
+          </div>
+        </div>
+
+        <div className="card h-full bg-white shadow-sm">
+          <div className="card-body">
+            <h2 className="font-black text-xl text-blue-950">
+              Davao Occidental
+            </h2>
+            <p className="text-xs mt-0">No. of Respondents</p>
+            <h1 className="font-black text-5xl text-blue-950">
+              {provinceData["Davao Occidental"] || 0}
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      {/* MODIFIED FILTERING SECTION */}
+      <div className="w-full min-h-[400px] rounded-lg bg-white shadow-sm p-6">
+        <h3 className="text-xl font-black text-blue-950 mb-4">
+          Location-Based Respondent Count
+        </h3>
+        <div className="flex items-center gap-4 mb-4">
+          <select
+            className="select select-bordered w-48"
+            value={filterBy}
+            onChange={handleFilterChange}
+          >
+            <option disabled value="">
+              Filter by
+            </option>
+            <option value="Province">Province</option>
+            <option value="Municipality">Municipality</option>
+            <option value="Barangay">Barangay</option>
+          </select>
+
+          <label className="input input-bordered flex items-center gap-2 w-full">
+            <input
+              type="text"
+              className="grow"
+              placeholder={`Search ${filterBy}...`}
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className="w-4 h-4 opacity-70"
+            >
+              <path
+                fillRule="evenodd"
+                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </label>
+        </div>
+
+        {/* Display Filtered Results */}
+        <div className="mt-4 max-h-[300px] overflow-y-auto">
+          {filteredResults.length > 0 ? (
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th className="font-bold text-blue-950">{filterBy} Name</th>
+                  <th className="font-bold text-blue-950 text-right">
+                    Respondent Count
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredResults.map((item, index) => (
+                  <tr key={index}>
+                    <td className="font-medium text-gray-700">{item.name}</td>
+                    <td className="text-right">
+                      <div className="font-black  text-blue-950 text-2xl">
+                        {item.count}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-center text-gray-500 italic p-4">
+              {searchTerm
+                ? `No results found for "${searchTerm}" in ${filterBy}.`
+                : `Search a ${filterBy} name to see the count.`}
+            </p>
+          )}
         </div>
       </div>
     </div>

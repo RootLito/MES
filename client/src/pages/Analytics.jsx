@@ -92,7 +92,7 @@ const Analytics = () => {
     legend: {
       show: false,
     },
-    colors: ["#007bff"],
+     colors: ["#172457"],
   };
 
   return (
